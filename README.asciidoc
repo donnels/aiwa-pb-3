@@ -18,4 +18,9 @@ We rebuild the PB-3 pack because Aiwa is gone and the cassette decks still run. 
 
 - `.github/workflows/cad-build.yml` orchestrates three jobs in a strict chain (`entry_openscad_render` → `cad_kicad_export` → `cad_publish_results`). Each runs in its own container, hands results forward via artifacts, and only the final job writes to `docs/generated/`.
 
+=== Container credits
+
+OpenSCAD renders:: https://github.com/donnels/openscad[ghcr.io/donnels/openscad:main] — workflow pattern lifted from https://github.com/donnels/openscad-examples[openscad-examples].
+KiCad exports:: https://github.com/INTI-CMNB/kicad_auto[ghcr.io/inti-cmnb/kicad_auto:ki8] — KiBot project CI image with `kicad-cli` baked in. See https://github.com/nguyen-v/KDT_Hierarchical_KiBot[KDT_Hierarchical_KiBot] for a full-featured KiBot template.
+
 AsciiDoc and PlantUML keep the story portable. KiCad handles the PCB. OpenSCAD covers shell geometry when we need it. No mystery files. All full text searchable.
