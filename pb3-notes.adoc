@@ -21,7 +21,7 @@ Build a present-day PB-3 pack that wakes an AIWA HS-PC202MII. That deck is the p
 |Low. Need deck-side schematic to confirm charge routine and pinout.
 
 |Chemistry and capacity
-|Original PB-3 spec sheet rated 470 mAh SLA. Community teardowns hint at 700–800 mAh service packs, but clones today ship 500 mAh LiPo with boost down to 2.4 V.footnote:s2g[]
+|Original PB-3 spec sheet rated 470 mAh SLA. Community teardowns hint at 700–800 mAh service packs, but clones today ship 500 mAh LiPo with buck down to 2.4 V.footnote:s2g[]
 |Medium. Need an unopened OEM cell for proof.
 
 |Community precedents
@@ -43,11 +43,11 @@ Build a present-day PB-3 pack that wakes an AIWA HS-PC202MII. That deck is the p
 
 === Derived Requirements
 * USB-C charging. Retire the fragile Aiwa wall wart.footnote:s2g[]
-* Runtime must beat the 470 mAh SLA. Target >1.2 Ah effective with LiFePO₄ plus an honest boost.footnote:s2g[]
+* Runtime must beat the 470 mAh SLA. Target >900 mAh effective at 2V output.footnote:s2g[]
 * Respect 68 mm × 17.8 mm × 8 mm overall and 52 mm × 15 mm × 6 mm cell cavity. Keep PB-4 top contacts alive.footnote:s2g[]
 * Plate every blade. Reinforce the connector window so owners stop snapping plastic.footnote:s2g[]
 * Terminate the cell on pads with relief. No bare wires surfing active parts.footnote:s2g[]
-* Add a fault clamp so output never drifts past 2.4 V even if the boost dies high. Make PB-S5 vs PB-3 voltage a resistor change.footnote:s2g[]
+* Add a fault clamp so output never drifts past 2.4 V even if the buck fails. Make PB-S5 vs PB-3 voltage a resistor change.footnote:s2g[]
 
 == Host Deck Reality
 * Runner: AIWA HS-PC202MII. This deck will see every prototype first and is the reason the project exists.
@@ -127,11 +127,11 @@ image::openscad/pb3-pack.png[]
 
 == Open Questions
 * Do any decks sniff a third pin? Need proof before adding logic.
-* Does the host trickle charge while on AC? Impacts boost topology.
+* Does the host trickle charge while on AC? Impacts design.
 * Did Aiwa rely on SLA resistance rise for end-of-life? Might need a small gauge IC to mimic it.
 
 == Next Immediate Steps
 . Source a PB-3 donor for teardown.
 . Measure connector plating and friction.
 . Spin initial KiCad sheets with placeholders.
-. Prototype the boost on eval hardware and log noise against the audio path.
+. Prototype the buck on eval hardware and log noise against the audio path.

@@ -11,7 +11,7 @@ USB-C rechargeable LiPo replacement for the AIWA PB-3/PB-4 battery pack.
 | Parameter | Original PB-3 | This Design
 | Chemistry | Lead-acid | LiPo
 | Cell voltage | 2V | 3.7V nominal
-| Output voltage | 2V | 2.4V (adjustable to 2.1V)
+| Output voltage | 2V | 2.0V (adjustable 2.0-2.4V)
 | Capacity | 470mAh | 500-1500mAh
 | Charging | Proprietary | USB-C 5V
 |===
