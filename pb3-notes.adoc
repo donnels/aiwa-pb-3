@@ -51,7 +51,7 @@ Build a present-day PB-3 pack that wakes an AIWA HS-PC202MII. That deck is the p
 
 == Host Deck Reality
 * Runner: AIWA HS-PC202MII. This deck will see every prototype first and is the reason the project exists.
-* Constraints: OEM wall wart is missing, OEM PB-3 pack is dead, and donor geometry comes only from shared photos and bought clone packs. Reverse engineering starts with images, not physical SLA references.
+* Constraints: OEM wall wart is missing, OEM PB-3 pack is dead, and donor geometry comes only from shared photos of clone packs. Reverse engineering starts with images, not physical SLA references.
 * Implication: Every measurement logged here is provisional until a physical PB-3 carcass arrives. Keep CAD parametric and expect rework once real hardware hits the bench.
 
 == Research To-Do List
@@ -61,44 +61,43 @@ Build a present-day PB-3 pack that wakes an AIWA HS-PC202MII. That deck is the p
 . **Archive**: dump every measurement, photo, and trace into this repo before CAD starts.
 
 == Proposed Replacement Strategy
-SLA is dead weight. Two chemistries remain.
+SLA is dead weight. Teardown of Aliexpress clone confirms the working approach.
 
-*LiFePO₄ single cell (3.2 V nominal)*::
-+ Pros: Voltage range rides close to SLA. Chemistry is forgiving. Simple BMS.
-+ Cons: Needs a low-drop boost to reach 4 V. Slight efficiency hit.
+*LiPo 1S (3.7V nominal) + buck to 2.0V*::
++ Matches existing clone design (LAOWANG_DIY board)
++ 500mAh cell → 900mAh effective at 2V output
++ Simpler than boost topology
++ BMS often on cell flex PCB
 
-*Li-ion 1S (NMC/NCA) + buck*::
-+ Pros: Easy to source, high density.
-+ Cons: Demands strict CC/CV charging and tighter protection. More parts.
-
-Baseline design: **1S LiFePO₄ plus a synchronous boost regulated at 4.0 V** so the deck always sees the SLA-era rail.
+Baseline design: **1S LiPo 500mAh + buck converter regulated at 2.0V** matching the original PB-3 output.
 
 == Electrical Block Requirements
-* Cell: ~1500 mAh LiFePO₄ pouch, ~6 mm thick, 30 C headroom for tape motor spikes.
-* BMS: DW01-F class or `BQ29702` tuned for 3.9 V OV and 2.0 V UV. Dual MOSFET stack.
-* Boost: TPS61023, MP3428, or similar. Configure for 4.05 V @ 1 A continuous with low ripple.
-* NTC: 10 kΩ part near the pouch to spoof the old SLA thermal tap.
-* Charge path: bring in USB-C 5 V through the BMS. Allow bench pads that bypass the boost during charge-only work.
+* Cell: 500mAh LiPo pouch, ~6mm thick, matches 52×15×6mm cavity
+* BMS: On cell flex PCB (clone) or discrete DW01A+FS8205 (our design)
+* Buck: SOT-23-6 IC, 2.2µH inductor, configured for 2.0V output
+* Rfb: 100k = 2.4V, 120k = 2.1V (per Stereo2Go mod). Adjust for 2.0V target.
+* Charge path: USB-C 5V → charger IC (SOT-23-6) → CC/CV 4.2V to cell
+* OVP: Zener/TVS clamp <3V to protect deck if buck fails (improvement over clone)
 
 == Mechanical Considerations
 * Stay inside the original outline so the bay latch still works. 0.8 mm FR-4 maximizes cell room.
 * Scan or caliper a donor shell. Build a STEP model for interference checks.
 * Reuse the original keyed blade if possible. If not, design a flex tail or custom edge connector footprint.
-* Rough CAD now lives in `mechanical/pb3-pack.scad` (OpenSCAD). Dimensions trace back to `measurements/IMG_9373.jpeg`–`IMG_9385.jpeg` plus the Stereo2Go thread captured in `research/`.
+* Rough CAD now lives in `openscad/pb3-pack.scad` (OpenSCAD). Dimensions trace back to `measurements/IMG_9373.jpeg`–`IMG_9385.jpeg` plus the Stereo2Go thread captured in `research/`.
 
 .First Solid CAD Model
 [source,scad]
 ----
-include::mechanical/pb3-pack.scad[]
+include::openscad/pb3-pack.scad[]
 ----
 
 .output image
-image::mechanical/pb3-pack.png[]
+image::openscad/pb3-pack.png[]
 
 == Living CAD + Automation
-* `mechanical/pb3-pack.scad` is the print gauge. Version 0.1 is embossed on the block so prints always tell you which assumption set they follow.
+* `openscad/pb3-pack.scad` is the print gauge. Version is embossed on the block so prints always tell you which assumption set they follow.
 * `kicad/pb3-replacement.kicad_pro` (plus `.kicad_sch`/`.kicad_pcb`) tracks the electrical build. It is tagged V0.1 in the title blocks so KiCad exports line up with the physical gauges.
-* `.github/workflows/cad-build.yml` is the single entry workflow. Jobs run in order: `entry_openscad_render` (SCAD), `cad_kicad_export` (KiCad), then `cad_publish_results` which copies artifacts into `docs/generated/` and commits.
+* `.github/workflows/cad-build.yml` is the single entry workflow. Jobs: `openscad`, `plantuml`, `kicad` → `publish` which copies artifacts into `docs/generated/` and commits.
 
 == Reverse-Engineering Workflow
 . De-pot a PB-3 with heat and patience. Photograph each layer.
@@ -114,8 +113,9 @@ image::mechanical/pb3-pack.png[]
 
 == Validation & Test Plan
 *Functional*
-* Charge through the deck for 12 hours. Log voltage and NTC curves.
-* Run a hungry deck like HS-PX505. Verify the boost holds ≥3.9 V during FF/REW punches.
+* Charge through USB-C. Log voltage and current curves.
+* Run a hungry deck like HS-PX505. Verify buck holds 2.0V ±0.1V during FF/REW.
+* Measure output with multimeter: target 2.0V (orig PB-3) or 2.4V (clone default).
 
 *Safety*
 * Bake at 40 °C ambient. Keep silicon <85 °C.

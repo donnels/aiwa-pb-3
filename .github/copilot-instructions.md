@@ -5,6 +5,7 @@
 - **DRY**: Don't repeat yourself.
 - **KISS**: Simple beats clever.
 - **MVP**: Minimum viable. Ship it.
+- **NO MAGIC**: Explicit over implicit. No hidden behavior.
 
 ## Rules
 1. No preamble. No summary unless asked.

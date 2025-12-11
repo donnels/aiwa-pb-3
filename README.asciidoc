@@ -3,25 +3,41 @@
 :sectnums:
 :sectnumlevels: 5
 
-We rebuild the PB-3 pack because Aiwa is gone and the cassette decks still run. The work lives here: schematics, notes, source images, and anything else needed to spin boards without guesswork.
+USB-C rechargeable LiPo replacement for the AIWA PB-3/PB-4 battery pack.
+
+== Specs
+
+|===
+| Parameter | Original PB-3 | This Design
+| Chemistry | Lead-acid | LiPo
+| Cell voltage | 2V | 3.7V nominal
+| Output voltage | 2V | 2.4V (adjustable to 2.1V)
+| Capacity | 470mAh | 500-1500mAh
+| Charging | Proprietary | USB-C 5V
+|===
+
+== Safety
+
+* Buck DC-DC steps 3.7V → 2.4V
+* **OVP (Zener/TVS)** clamps output <3V if buck fails
+* DW01A+FS8205A BMS: OV/UV/OC protection
 
 == Repository contents
 
-- `pb3-notes.adoc` — reverse engineering notebook.
-- `images/*.puml` — PlantUML block diagrams.
-- `research/` — frozen forum intel.
-- `mechanical/*.scad` — OpenSCAD solids.
-- `kicad/` — KiCad project + `kibot.yaml` config.
-- `.github/workflows/cad-build.yml` — CI: renders all CAD, commits to `docs/generated/`.
+- `pb3-notes.adoc` — reverse engineering notes
+- `images/*.plantuml` — block diagrams
+- `research/` — Stereo2Go forum teardown
+- `openscad/` — enclosure model (68×17.8×8mm)
+- `kicad/` — schematic + PCB + KiBot config
+- `.github/workflows/cad-build.yml` — CI renders all CAD
 
-== Automation
+== Credits
 
-Four parallel jobs: `openscad`, `plantuml`, `kicad` → `publish`. Only `publish` commits.
+* https://stereo2go.com/forums/threads/rechargeable-battery-replacement-for-aiwa-pb-3-pb-4.9025/[Stereo2Go forum] — original research
+* OpenSCAD: https://github.com/donnels/openscad[ghcr.io/donnels/openscad:main]
+* PlantUML: https://github.com/donnels/plantuml[ghcr.io/donnels/plantuml:main]
+* KiBot: https://github.com/INTI-CMNB/KiBot[INTI-CMNB/KiBot@v2_dk8]
 
-=== Credits
+== License
 
-OpenSCAD:: https://github.com/donnels/openscad[ghcr.io/donnels/openscad:main]
-PlantUML:: https://github.com/donnels/plantuml[ghcr.io/donnels/plantuml:main]
-KiCad/KiBot:: https://github.com/INTI-CMNB/KiBot[INTI-CMNB/KiBot@v2_dk8] — see https://github.com/nguyen-v/KDT_Hierarchical_KiBot[KDT_Hierarchical_KiBot] for full template.
-
-All text. All searchable.
+CC BY-SA 4.0
