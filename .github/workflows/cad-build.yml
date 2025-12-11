@@ -25,7 +25,7 @@ jobs:
       - name: Render
         run: |
           mkdir -p build/openscad
-          for f in openscad/**/*.scad; do
+          for f in openscad/*.scad openscad/**/*.scad; do
             [ -f "$f" ] || continue
             s=$(basename "$f" .scad)
             docker run --rm -v "$PWD":/w "$IMG_SCAD" openscad -o "/w/build/openscad/$s.stl" "/w/$f" &
