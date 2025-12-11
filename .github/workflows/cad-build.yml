@@ -85,9 +85,9 @@ jobs:
       - name: Sync
         run: |
           mkdir -p docs/generated/{openscad,plantuml,kicad}
-          rsync -a --delete build/openscad/ docs/generated/openscad/
-          rsync -a --delete build/plantuml/ docs/generated/plantuml/
-          rsync -a --delete build/kicad/ docs/generated/kicad/
+          [ -d build/openscad ] && rsync -a --delete build/openscad/ docs/generated/openscad/ || true
+          [ -d build/plantuml ] && rsync -a --delete build/plantuml/ docs/generated/plantuml/ || true
+          [ -d build/kicad ] && rsync -a --delete build/kicad/ docs/generated/kicad/ || true
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
