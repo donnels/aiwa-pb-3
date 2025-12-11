@@ -1,27 +1,23 @@
 @startuml PB3Architecture
-title Aiwa PB-3 Replacement Battery Architecture
-footer ©2025 Sean Donnellan
-skinparam backgroundColor #fff/aaf
+title PB-3 Replacement Block Diagram
+skinparam backgroundColor white
 skinparam componentStyle rectangle
-skinparam shadowing 1
 
-rectangle "Printed Shell" {
-  component "Connector\n(2-pin + NTC)" as Connector
-}
+rectangle "USB-C\n5V" as USB
+rectangle "CN3058E\nLFP Charger" as CHG
+rectangle "DW01A+FS8205A\nBMS" as BMS
+rectangle "LiFePO4\n1500mAh" as CELL
+rectangle "TPS61023\nBoost 4.0V" as BOOST
+rectangle "Deck\nOutput" as OUT
+rectangle "NTC\n10k" as NTC
 
-component "LiFePO4 Cell\n(1S 1500 mAh)" as Cell
-component "BMS\n(OCP/OVP/UVP)" as BMS
-component "NTC Sensor" as NTC
-component "Boost Converter\n4.05 V @ 1 A" as Boost
-component "Charge Pads" as Charge
-component "Host Deck" as Host
+USB --> CHG : 5V
+CHG --> BMS : CC/CV
+BMS <--> CELL : protect
+BMS --> BOOST : 2.5-3.6V
+BOOST --> OUT : 4.0V
+NTC --> CHG : temp
 
-Cell --> BMS : charge/discharge
-BMS --> Boost : protected supply
-Boost --> Connector : regulated 4.0 V
-BMS --> Charge : bypass for CC/CV charging
-NTC --> Connector : temp sense lead
-Connector --> Host : power + telemetry
-Host --> Charge : legacy charger (optional)
-
+note right of CHG : Rprog=2k → 500mA
+note right of BOOST : R2=560k R3=100k
 @enduml

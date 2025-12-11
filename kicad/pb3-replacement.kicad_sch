@@ -1,12 +1,505 @@
-(kicad_sch (version 20240108) (generator "GitHub Copilot")
-  (uuid 7b9a8e2d-8f7a-4a2c-bc3a-0c38a0b4d001)
+(kicad_sch
+  (version 20231120)
+  (generator "eeschema")
+  (generator_version "8.0")
+  (uuid "7b9a8e2d-8f7a-4a2c-bc3a-0c38a0b4d001")
   (paper "A4")
   (title_block
-    (title "PB-3 Replacement")
+    (title "PB-3 LiFePO4 Replacement")
+    (date "2024-12-11")
+    (rev "0.3")
     (company "AIWA HS-PC202MII")
-    (rev "V0.1")
-    (comment 1 "1S LiFePO4 + boost + USB-C charge"))
-  (text "Host deck: HS-PC202MII. Wall wart + OEM pack missing. Dimensions from measurement photos + Stereo2Go thread."
-    (at 30 40 0)
-    (effects (font (size 2 2))))
+    (comment 1 "Ref: wagiminator/Power-Boards CC BY-SA 3.0")
+    (comment 2 "CN3058E + HY2112 + MT3608")
+  )
+
+  (lib_symbols
+  )
+
+  (text "USB-C 5V IN" (at 25.4 50.8 0)
+    (effects (font (size 2.54 2.54)) (justify left))
+  )
+  (text "CN3058E\nLiFePO4 Charger" (at 63.5 50.8 0)
+    (effects (font (size 2.54 2.54)) (justify left))
+  )
+  (text "HY2112 + FS8205\n1S BMS" (at 114.3 50.8 0)
+    (effects (font (size 2.54 2.54)) (justify left))
+  )
+  (text "MT3608\nBoost 5V" (at 165.1 50.8 0)
+    (effects (font (size 2.54 2.54)) (justify left))
+  )
+  (text "TO DECK" (at 215.9 50.8 0)
+    (effects (font (size 2.54 2.54)) (justify left))
+  )
+
+  (text "LiFePO4\n1500mAh\n3.2V nom" (at 139.7 101.6 0)
+    (effects (font (size 2.54 2.54)) (justify left))
+  )
+
+  (wire (pts (xy 38.1 63.5) (xy 55.88 63.5)))
+  (wire (pts (xy 88.9 63.5) (xy 106.68 63.5)))
+  (wire (pts (xy 139.7 63.5) (xy 157.48 63.5)))
+  (wire (pts (xy 190.5 63.5) (xy 208.28 63.5)))
+
+  (wire (pts (xy 127 76.2) (xy 127 88.9)))
+  (wire (pts (xy 127 88.9) (xy 139.7 88.9)))
+
+  (global_label "VBUS" (at 38.1 63.5 0)
+    (shape input)
+    (uuid "gl-vbus")
+    (effects (font (size 1.27 1.27)) (justify left))
+  )
+  (global_label "VBAT" (at 127 63.5 0)
+    (shape bidirectional)
+    (uuid "gl-vbat")
+    (effects (font (size 1.27 1.27)) (justify left))
+  )
+  (global_label "VOUT" (at 208.28 63.5 0)
+    (shape output)
+    (uuid "gl-vout")
+    (effects (font (size 1.27 1.27)) (justify left))
+  )
+  (global_label "GND" (at 127 114.3 180)
+    (shape passive)
+    (uuid "gl-gnd")
+    (effects (font (size 1.27 1.27)) (justify right))
+  )
+
+  (symbol
+    (lib_id "Connector:USB_C_Receptacle_USB2.0")
+    (at 30.48 63.5 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-000000000001")
+    (property "Reference" "J1"
+      (at 30.48 45.72 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "USB_C"
+      (at 30.48 48.26 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Connector_USB:USB_C_Receptacle_GCT_USB4105-xx-A"
+      (at 30.48 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" ""
+      (at 30.48 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol
+    (lib_id "Regulator_Switching:CN3058E")
+    (at 71.12 63.5 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-000000000002")
+    (property "Reference" "U1"
+      (at 71.12 53.34 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "CN3058E"
+      (at 71.12 55.88 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Package_SO:SOP-8_3.9x4.9mm_P1.27mm_EP"
+      (at 71.12 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "https://datasheet.lcsc.com/szlcsc/ShangHai-Consonance-Elec-CN3058E_C112011.pdf"
+      (at 71.12 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "LCSC" "C112011"
+      (at 71.12 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol
+    (lib_id "Power_Protection:HY2112")
+    (at 121.92 63.5 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-000000000003")
+    (property "Reference" "U2"
+      (at 121.92 53.34 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "HY2112"
+      (at 121.92 55.88 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+      (at 121.92 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "https://datasheet.lcsc.com/szlcsc/1810010241_HYCON-Tech-HY2112-BB_C161942.pdf"
+      (at 121.92 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "LCSC" "C161942"
+      (at 121.92 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol
+    (lib_id "Transistor_FET:FS8205A")
+    (at 121.92 76.2 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-000000000004")
+    (property "Reference" "Q1"
+      (at 127 76.2 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "FS8205A"
+      (at 127 78.74 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+      (at 121.92 76.2 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" ""
+      (at 121.92 76.2 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "LCSC" "C32254"
+      (at 121.92 76.2 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol
+    (lib_id "Device:Battery_Cell")
+    (at 139.7 96.52 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-000000000005")
+    (property "Reference" "BT1"
+      (at 144.78 93.98 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "LiFePO4_1500mAh"
+      (at 144.78 96.52 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" ""
+      (at 139.7 96.52 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" ""
+      (at 139.7 96.52 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol
+    (lib_id "Regulator_Switching:MT3608")
+    (at 172.72 63.5 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-000000000006")
+    (property "Reference" "U3"
+      (at 172.72 53.34 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "MT3608"
+      (at 172.72 55.88 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+      (at 172.72 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "https://datasheet.lcsc.com/szlcsc/XI-AN-Aerosemi-Tech-MT3608_C84817.pdf"
+      (at 172.72 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "LCSC" "C84817"
+      (at 172.72 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol
+    (lib_id "Device:L")
+    (at 160.02 55.88 90)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-000000000007")
+    (property "Reference" "L1"
+      (at 160.02 50.8 90)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "22uH"
+      (at 160.02 53.34 90)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Inductor_SMD:L_7.3x7.3_H3.5"
+      (at 160.02 55.88 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" ""
+      (at 160.02 55.88 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "LCSC" "C334097"
+      (at 160.02 55.88 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol
+    (lib_id "Device:R")
+    (at 193.04 68.58 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-000000000008")
+    (property "Reference" "R5"
+      (at 195.58 66.04 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "10k"
+      (at 195.58 68.58 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 193.04 68.58 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" ""
+      (at 193.04 68.58 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol
+    (lib_id "Device:R")
+    (at 193.04 81.28 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-000000000009")
+    (property "Reference" "R6"
+      (at 195.58 78.74 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "15k"
+      (at 195.58 81.28 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 193.04 81.28 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" ""
+      (at 193.04 81.28 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol
+    (lib_id "Connector:Conn_01x02_Pin")
+    (at 215.9 63.5 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-00000000000a")
+    (property "Reference" "J2"
+      (at 215.9 55.88 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "DECK_5V"
+      (at 215.9 58.42 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
+      (at 215.9 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" ""
+      (at 215.9 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol
+    (lib_id "Device:LED")
+    (at 78.74 78.74 90)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-00000000000b")
+    (property "Reference" "D1"
+      (at 83.82 78.74 90)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "CHRG"
+      (at 81.28 81.28 90)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "LED_SMD:LED_0603_1608Metric"
+      (at 78.74 78.74 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" ""
+      (at 78.74 78.74 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol
+    (lib_id "Device:LED")
+    (at 86.36 78.74 90)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-00000000000c")
+    (property "Reference" "D2"
+      (at 91.44 78.74 90)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "FULL"
+      (at 88.9 81.28 90)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "LED_SMD:LED_0603_1608Metric"
+      (at 86.36 78.74 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" ""
+      (at 86.36 78.74 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol
+    (lib_id "Device:D_Schottky")
+    (at 185.42 63.5 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-00000000000d")
+    (property "Reference" "D3"
+      (at 185.42 58.42 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "SS34"
+      (at 185.42 60.96 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Diode_SMD:D_SMA"
+      (at 185.42 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" ""
+      (at 185.42 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "LCSC" "C8678"
+      (at 185.42 63.5 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol
+    (lib_id "Device:C")
+    (at 200.66 71.12 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-00000000000e")
+    (property "Reference" "C4"
+      (at 203.2 68.58 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "22uF"
+      (at 203.2 71.12 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+      (at 200.66 71.12 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" ""
+      (at 200.66 71.12 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "LCSC" "C77088"
+      (at 200.66 71.12 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol
+    (lib_id "Device:C")
+    (at 208.28 71.12 0)
+    (unit 1)
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid "00000001-0001-0001-0001-00000000000f")
+    (property "Reference" "C5"
+      (at 210.82 68.58 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "22uF"
+      (at 210.82 71.12 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+      (at 208.28 71.12 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" ""
+      (at 208.28 71.12 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "LCSC" "C77088"
+      (at 208.28 71.12 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
 )

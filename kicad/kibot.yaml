@@ -1,0 +1,44 @@
+kibot:
+  version: 1
+
+outputs:
+  - name: pdf_sch
+    type: pdf_sch_print
+    dir: .
+    options:
+      output: '%f-schematic.pdf'
+
+  - name: svg_pcb
+    type: svg
+    dir: .
+    layers:
+      - F.Cu
+      - B.Cu
+      - Edge.Cuts
+    options:
+      output: '%f-board.svg'
+
+  - name: gerbers
+    type: gerber
+    dir: gerbers
+    layers:
+      - copper
+      - F.SilkS
+      - B.SilkS
+      - F.Mask
+      - B.Mask
+      - Edge.Cuts
+
+  - name: drill
+    type: excellon
+    dir: gerbers
+    options:
+      metric_units: true
+      pth_and_npth_single_file: false
+
+  - name: bom
+    type: bom
+    dir: .
+    options:
+      format: CSV
+      output: '%f-bom.csv'

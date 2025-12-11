@@ -1,100 +1,90 @@
-name: CAD Build & Publish (entrypoint)
+name: Build
 
 on:
   push:
     paths:
-      - "mechanical/**/*.scad"
+      - "mechanical/**"
       - "kicad/**"
+      - "images/**"
       - ".github/workflows/cad-build.yml"
   workflow_dispatch:
 
 permissions:
   contents: write
-  packages: read
 
 env:
-  container_openscad: ghcr.io/donnels/openscad:main
-  container_kicad: ghcr.io/inti-cmnb/kicad_auto:ki8
+  IMG_SCAD: ghcr.io/donnels/openscad:main
+  IMG_PUML: ghcr.io/donnels/plantuml:main
 
 jobs:
-  entry_openscad_render:
+  openscad:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Pull OpenSCAD container
-        run: docker pull $container_openscad
-      - name: Render OpenSCAD assets
+      - name: Render
         run: |
-          set -euo pipefail
           mkdir -p build/openscad
-          find mechanical -name "*.scad" -type f | while read -r file; do
-            stem="${file%.scad}"
-            slug=$(echo "$stem" | tr '/.' '__')
-            echo "Rendering $file → ${slug}.stl + ${slug}.png"
-            docker run --rm -v "$PWD":/data "$container_openscad" \
-              openscad -o "/data/build/openscad/${slug}.stl" "/data/${file}" &
-            docker run --rm -v "$PWD":/data "$container_openscad" \
-              openscad --imgsize 1600,1200 --colorscheme Tomorrow \
-              -o "/data/build/openscad/${slug}.png" "/data/${file}" &
+          for f in mechanical/**/*.scad; do
+            [ -f "$f" ] || continue
+            s=$(basename "$f" .scad)
+            docker run --rm -v "$PWD":/w "$IMG_SCAD" openscad -o "/w/build/openscad/$s.stl" "/w/$f" &
+            docker run --rm -v "$PWD":/w "$IMG_SCAD" openscad --imgsize 1600,1200 --colorscheme Tomorrow -o "/w/build/openscad/$s.png" "/w/$f" &
             wait
           done
       - uses: actions/upload-artifact@v4
         with:
-          name: openscad-build
+          name: openscad
           path: build/openscad
 
-  cad_kicad_export:
+  plantuml:
     runs-on: ubuntu-latest
-    needs: entry_openscad_render
     steps:
       - uses: actions/checkout@v4
-      - name: Pull KiCad container
-        run: docker pull $container_kicad
-      - name: Export KiCad outputs
+      - name: Render
         run: |
-          mkdir -p build/kicad
-          docker run --rm -v "$PWD":/data "$container_kicad" \
-            kicad-cli sch export pdf /data/kicad/pb3-replacement.kicad_sch \
-            -o /data/build/kicad/pb3-replacement-schematic.pdf
-          docker run --rm -v "$PWD":/data "$container_kicad" \
-            kicad-cli pcb export svg /data/kicad/pb3-replacement.kicad_pcb \
-            -o /data/build/kicad/pb3-replacement-board.svg -l "F.Cu,B.Cu,Edge.Cuts"
+          mkdir -p build/plantuml
+          for f in images/*.puml images/*.plantuml; do
+            [ -f "$f" ] || continue
+            docker run --rm -v "$PWD":/w "$IMG_PUML" plantuml -tsvg -o /w/build/plantuml "/w/$f"
+          done
       - uses: actions/upload-artifact@v4
         with:
-          name: kicad-build
+          name: plantuml
+          path: build/plantuml
+
+  kicad:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: INTI-CMNB/KiBot@v2_dk8
+        with:
+          config: kicad/kibot.yaml
+          board: kicad/pb3-replacement.kicad_pcb
+          dir: build/kicad
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kicad
           path: build/kicad
 
-  cad_publish_results:
+  publish:
     runs-on: ubuntu-latest
-    needs: cad_kicad_export
+    needs: [openscad, plantuml, kicad]
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Download OpenSCAD artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
-          name: openscad-build
-          path: build/openscad
-      - name: Download KiCad artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: kicad-build
-          path: build/kicad
-      - name: Update generated assets
+          path: build
+      - name: Sync
         run: |
-          set -euo pipefail
-          mkdir -p docs/generated/openscad docs/generated/kicad
+          mkdir -p docs/generated/{openscad,plantuml,kicad}
           rsync -a --delete build/openscad/ docs/generated/openscad/
+          rsync -a --delete build/plantuml/ docs/generated/plantuml/
           rsync -a --delete build/kicad/ docs/generated/kicad/
-      - name: Commit and push if changed
+      - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/generated
-          if git diff --cached --quiet; then
-            echo "No generated changes to commit"
-          else
-            git commit -m "ci: refresh CAD outputs"
-            git push
-          fi
+          git diff --cached --quiet || git commit -m "ci: refresh outputs" && git push

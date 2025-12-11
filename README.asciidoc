@@ -7,20 +7,21 @@ We rebuild the PB-3 pack because Aiwa is gone and the cassette decks still run. 
 
 == Repository contents
 
-- `pb3-notes.adoc` — field log of every fact, hunch, and measurement that guides the KiCad design.
-- `images/pb3-architecture.puml` — block diagram of the LiFePO₄ cell, boost rail, and deck interface.
-- `research/` — frozen copies of forum intel so quotes survive link rot.
-- `mechanical/pb3-pack.scad` — OpenSCAD solid for the pack shell keyed off measurement photos.
-- `kicad/pb3-replacement.kicad_pro` — KiCad V0.1 skeleton (schematic + blank PCB) wired to the HS-PC202MII use case.
-- `.github/workflows/cad-build.yml` — Entry workflow. Job order: `entry_openscad_render` builds every SCAD file, `cad_kicad_export` emits schematic/PCB images, then `cad_publish_results` pushes the synced outputs into `docs/generated/`.
+- `pb3-notes.adoc` — reverse engineering notebook.
+- `images/*.puml` — PlantUML block diagrams.
+- `research/` — frozen forum intel.
+- `mechanical/*.scad` — OpenSCAD solids.
+- `kicad/` — KiCad project + `kibot.yaml` config.
+- `.github/workflows/cad-build.yml` — CI: renders all CAD, commits to `docs/generated/`.
 
 == Automation
 
-- `.github/workflows/cad-build.yml` orchestrates three jobs in a strict chain (`entry_openscad_render` → `cad_kicad_export` → `cad_publish_results`). Each runs in its own container, hands results forward via artifacts, and only the final job writes to `docs/generated/`.
+Four parallel jobs: `openscad`, `plantuml`, `kicad` → `publish`. Only `publish` commits.
 
-=== Container credits
+=== Credits
 
-OpenSCAD renders:: https://github.com/donnels/openscad[ghcr.io/donnels/openscad:main] — workflow pattern lifted from https://github.com/donnels/openscad-examples[openscad-examples].
-KiCad exports:: https://github.com/INTI-CMNB/kicad_auto[ghcr.io/inti-cmnb/kicad_auto:ki8] — KiBot project CI image with `kicad-cli` baked in. See https://github.com/nguyen-v/KDT_Hierarchical_KiBot[KDT_Hierarchical_KiBot] for a full-featured KiBot template.
+OpenSCAD:: https://github.com/donnels/openscad[ghcr.io/donnels/openscad:main]
+PlantUML:: https://github.com/donnels/plantuml[ghcr.io/donnels/plantuml:main]
+KiCad/KiBot:: https://github.com/INTI-CMNB/KiBot[INTI-CMNB/KiBot@v2_dk8] — see https://github.com/nguyen-v/KDT_Hierarchical_KiBot[KDT_Hierarchical_KiBot] for full template.
 
-AsciiDoc and PlantUML keep the story portable. KiCad handles the PCB. OpenSCAD covers shell geometry when we need it. No mystery files. All full text searchable.
+All text. All searchable.
