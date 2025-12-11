@@ -1,0 +1,20 @@
+(kicad_pcb (version 20240108) (generator "GitHub Copilot")
+  (general (thickness 1.6))
+  (paper "A4")
+  (title_block
+    (title "PB-3 Replacement Gauge")
+    (company "AIWA HS-PC202MII")
+    (rev "V0.1")
+    (comment 1 "Outline only. Populate once donor measurements confirmed."))
+  (layers
+    (0 "F.Cu" signal)
+    (31 "B.Cu" signal)
+    (34 "Edge.Cuts" user))
+  (setup
+    (stackup
+      (layer "F.Cu" (type signal))
+      (layer "dielectric 1" (type dielectric) (thickness 1.5))
+      (layer "B.Cu" (type signal)))
+    (grid_origin 0 0)
+  )
+)

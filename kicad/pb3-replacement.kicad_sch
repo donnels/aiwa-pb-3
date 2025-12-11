@@ -1,0 +1,12 @@
+(kicad_sch (version 20240108) (generator "GitHub Copilot")
+  (uuid 7b9a8e2d-8f7a-4a2c-bc3a-0c38a0b4d001)
+  (paper "A4")
+  (title_block
+    (title "PB-3 Replacement")
+    (company "AIWA HS-PC202MII")
+    (rev "V0.1")
+    (comment 1 "1S LiFePO4 + boost + USB-C charge"))
+  (text "Host deck: HS-PC202MII. Wall wart + OEM pack missing. Dimensions from measurement photos + Stereo2Go thread."
+    (at 30 40 0)
+    (effects (font (size 2 2))))
+)

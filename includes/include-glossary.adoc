@@ -1,0 +1,23 @@
+= PB-3 Project Glossary
+
+PB-3:: Original Aiwa sealed lead-acid (SLA) pack that powered slim cassette decks such as the HS-PC202MII. All dimensions referenced here derive from `measurements/IMG_9373.jpeg`–`IMG_9385.jpeg` and the Stereo2Go teardown thread archived under `research/`.
+PB-4 / PB-4S:: Later PB-series packs that add top contact pads; our design keeps those pads alive for backward compatibility.
+PB-S5:: Thin Aiwa pack that shares the modern USB-C clone PCB shown in the Stereo2Go photos; feedback resistor swaps change the regulated voltage.
+HS-PC202MII:: Primary test deck for this project. Its wall wart is missing and the factory PB-3 it shipped with is dead, so every new pack revision must satisfy this unit first.
+SLA (Sealed Lead Acid):: Chemistry used in the factory PB-3. Nominal 2 V per cell, soft voltage sag that Walkman decks were tuned for.
+LiPo (Lithium Polymer):: Chemistry used in the Chinese clone packs (≈500 mAh). Images show a flat pouch bonded to the PCB and hard-wired to converter pins.
+LiFePO4 (Lithium Iron Phosphate):: Replacement chemistry we target: safer, flatter discharge curve, 3.2 V nominal.
+NMC / NCA:: Common Li-ion chemistries considered for alternate designs; both require strict CC/CV charging.
+BMS (Battery Management System):: Protection circuitry (OV/UV/current/short) placed at the cell level. Candidates include DW01-F class ICs or TI `BQ29702`.
+NTC (Negative Temperature Coefficient thermistor):: Sensor lead that original decks read for pack temperature; must be preserved in the new build.
+Boost Converter:: DC-DC stage that raises LiFePO4 voltage to a steady 4.0 V rail. Potential parts: `TPS61023`, `MP3428`.
+Crowbar / Clamp:: Secondary protection that forces the output low if the boost MOSFET fails high, preventing raw cell voltage from hitting the deck.
+FR-4:: 0.8 mm fiberglass substrate specified for the new PCB to maximize internal volume.
+PB-3 Blade Connector:: Two-pin keyed output interface molded into the pack nose; measurements come from caliper photos and the Stereo2Go gallery.
+PB-4 Top Pads:: Additional contacts visible in the forum photos that allow PB-4 compatibility; our PCB footprint keeps them plated.
+Fuse + Ballast Resistor:: Components spotted on the tiny OEM PCB island in `IMG_9378.jpeg` and the Stereo2Go teardown close-ups; part of the host charge path and safety stack.
+3D-Printed Shell:: Visible in the clone pack imagery; screw bosses strip quickly and connector windows flex, motivating a reinforced replacement.
+LiPo Pouch Cell:: Flat cell glued into the clone case (≈52 mm × 15 mm × 6 mm) shown in `IMG_9381.jpeg`, setting the maximum cavity volume for any chemistry.
+Embossed Gauge Block:: `mechanical/pb3-pack.scad` solid used for quick printer fit checks; surface text "v0.1" tells which measurement set was used.
+KiCad V0.1 Project:: `kicad/pb3-replacement.kicad_pro` plus its schematic/PCB files. Holds the living electrical design that mirrors the mechanical gauges.
+Stereo2Go Thread:: "Rechargeable battery replacement for AIWA PB-3 / PB-4" (Rossoe et al., 2023–2025). Source for clone pricing, PCB layout insights, and component part numbers.

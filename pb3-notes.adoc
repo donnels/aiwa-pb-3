@@ -1,0 +1,137 @@
+= PB-3 Reverse-Engineering Notebook
+:toc: right
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+
+== Objective
+Build a present-day PB-3 pack that wakes an AIWA HS-PC202MII. That deck is the primary test bed and end user. The wall wart is missing, the stock SLA is dead, and donor packs only exist as forum photos, so every measurement and assumption comes from images plus clone teardowns.
+
+== What is Known Today
+[cols="2,4,4"]
+|===
+|Topic | Details | Confidence
+
+|Mechanical envelope
+|Caliper photos show 68 mm × 17.8 mm × 8 mm overall and a 52 mm × 15 mm × 6 mm cell bay. Thin plastic shell, PCB island at the connector end with fuse and ballast resistor.footnote:meas[In-house photo set `measurements/IMG_9373.jpeg`–`IMG_9385.jpeg`.]
+|High. Need one more sample to average tolerance.
+
+|Electrical interface
+|Two-pin keyed blade plus PB-4 top pads. Clone pack shows 3.67 V LiPo feeding a converter that outputs 2.41 V on the blades; wiring solders directly to the IC pins.footnote:s2g[] HS-PC202MII schematic is unavailable, so reverse engineering relies on photos and continuity tests once the clone arrives.
+|Low. Need deck-side schematic to confirm charge routine and pinout.
+
+|Chemistry and capacity
+|Original PB-3 spec sheet rated 470 mAh SLA. Community teardowns hint at 700–800 mAh service packs, but clones today ship 500 mAh LiPo with boost down to 2.4 V.footnote:s2g[]
+|Medium. Need an unopened OEM cell for proof.
+
+|Community precedents
+|Baidu and Stereo2Go builds use 3D-printed shells plus Li-ion or LiFePO₄ stages, usually without fault clamps or plated blades.footnote:s2g[]
+|High. Reuse photos only with permission.
+|===
+
+== Research Findings
+
+=== Stereo2Go thread highlights
+* AliExpress PB-3/PB-4 USB-C pack runs £14, lists 900 mAh, hides 500 mAh LiPo, spits 3.67 V raw and 2.41 V at the blades.footnote:s2g[Rossoe et al., "Rechargeable battery replacement for AIWA PB-3 / PB-4," Stereo2Go forums, Sep 2023–Apr 2025. Offline copy: `research/Rechargeable battery replacement for AIWA PB-3 _ PB-4 _ Stereo2Go forums.html`. Original URL: https://stereo2go.com/forums/threads/rechargeable-battery-replacement-for-aiwa-pb-3-pb-4.9025/]
+* Shell size is 68 mm × 17.8 mm × 8 mm. Battery cavity maxes at 52 mm × 15 mm × 6 mm, so 500 mAh is the ceiling until cells improve.footnote:s2g[]
+* 3D printed case flexes, screw bosses die fast, only top contacts get plating.footnote:s2g[]
+* Pack leads land right on converter pins. Bare copper hovers over inductors. No strain relief.footnote:s2g[]
+* If the boost MOSFET shorts, the deck eats the full 3.7 V. Need a clamp or crowbar that kills the fault.footnote:s2g[]
+* PB-S5 board is the same. Swap the marked 100 kΩ resistor for 120 kΩ to hit 2.1 V. 0603 footprint.footnote:s2g[]
+* Search phrase "500mAh lipo battery 6mm" finds cells that fit; nothing larger ships yet.footnote:s2g[]
+* Wickedkraft sells a pricier variant on eBay. No autopsy yet but likely the same guts.footnote:s2g[]
+
+=== Derived Requirements
+* USB-C charging. Retire the fragile Aiwa wall wart.footnote:s2g[]
+* Runtime must beat the 470 mAh SLA. Target >1.2 Ah effective with LiFePO₄ plus an honest boost.footnote:s2g[]
+* Respect 68 mm × 17.8 mm × 8 mm overall and 52 mm × 15 mm × 6 mm cell cavity. Keep PB-4 top contacts alive.footnote:s2g[]
+* Plate every blade. Reinforce the connector window so owners stop snapping plastic.footnote:s2g[]
+* Terminate the cell on pads with relief. No bare wires surfing active parts.footnote:s2g[]
+* Add a fault clamp so output never drifts past 2.4 V even if the boost dies high. Make PB-S5 vs PB-3 voltage a resistor change.footnote:s2g[]
+
+== Host Deck Reality
+* Runner: AIWA HS-PC202MII. This deck will see every prototype first and is the reason the project exists.
+* Constraints: OEM wall wart is missing, OEM PB-3 pack is dead, and donor geometry comes only from shared photos and bought clone packs. Reverse engineering starts with images, not physical SLA references.
+* Implication: Every measurement logged here is provisional until a physical PB-3 carcass arrives. Keep CAD parametric and expect rework once real hardware hits the bench.
+
+== Research To-Do List
+. **Imagery**: pull clean teardown photos from Baidu Tieba (`随身听 PB-3`) and Japanese blogs. Capture rulers or redraw.
+. **Connector survey**: borrow a PB-3 pack or host deck. Log pitch, depth, retention, plating.
+. **Power sweep**: record float voltage, discharge curve, deck charge current while the donor SLA still lives.
+. **Archive**: dump every measurement, photo, and trace into this repo before CAD starts.
+
+== Proposed Replacement Strategy
+SLA is dead weight. Two chemistries remain.
+
+*LiFePO₄ single cell (3.2 V nominal)*::
++ Pros: Voltage range rides close to SLA. Chemistry is forgiving. Simple BMS.
++ Cons: Needs a low-drop boost to reach 4 V. Slight efficiency hit.
+
+*Li-ion 1S (NMC/NCA) + buck*::
++ Pros: Easy to source, high density.
++ Cons: Demands strict CC/CV charging and tighter protection. More parts.
+
+Baseline design: **1S LiFePO₄ plus a synchronous boost regulated at 4.0 V** so the deck always sees the SLA-era rail.
+
+== Electrical Block Requirements
+* Cell: ~1500 mAh LiFePO₄ pouch, ~6 mm thick, 30 C headroom for tape motor spikes.
+* BMS: DW01-F class or `BQ29702` tuned for 3.9 V OV and 2.0 V UV. Dual MOSFET stack.
+* Boost: TPS61023, MP3428, or similar. Configure for 4.05 V @ 1 A continuous with low ripple.
+* NTC: 10 kΩ part near the pouch to spoof the old SLA thermal tap.
+* Charge path: bring in USB-C 5 V through the BMS. Allow bench pads that bypass the boost during charge-only work.
+
+== Mechanical Considerations
+* Stay inside the original outline so the bay latch still works. 0.8 mm FR-4 maximizes cell room.
+* Scan or caliper a donor shell. Build a STEP model for interference checks.
+* Reuse the original keyed blade if possible. If not, design a flex tail or custom edge connector footprint.
+* Rough CAD now lives in `mechanical/pb3-pack.scad` (OpenSCAD). Dimensions trace back to `measurements/IMG_9373.jpeg`–`IMG_9385.jpeg` plus the Stereo2Go thread captured in `research/`.
+
+.First Solid CAD Model
+[source,scad]
+----
+include::mechanical/pb3-pack.scad[]
+----
+
+.output image
+image::mechanical/pb3-pack.png[]
+
+== Living CAD + Automation
+* `mechanical/pb3-pack.scad` is the print gauge. Version 0.1 is embossed on the block so prints always tell you which assumption set they follow.
+* `kicad/pb3-replacement.kicad_pro` (plus `.kicad_sch`/`.kicad_pcb`) tracks the electrical build. It is tagged V0.1 in the title blocks so KiCad exports line up with the physical gauges.
+* `.github/workflows/cad-build.yml` is the single entry workflow. Jobs run in order: `entry_openscad_render` (SCAD), `cad_kicad_export` (KiCad), then `cad_publish_results` which copies artifacts into `docs/generated/` and commits.
+
+== Reverse-Engineering Workflow
+. De-pot a PB-3 with heat and patience. Photograph each layer.
+. Trace the PCB. Mark every component, resistor, and fuse.
+. Recreate the old schematic in KiCad. Understand what the deck expects before changing it.
+. Map new requirements against the host behavior.
+. Draft hierarchical KiCad sheets: Cell+BMS, Boost, Connector/NTC. Assign refs early.
+
+== Future KiCad Artifacts
+* `kicad/pb3-replacement.kicad_pro` — full project.
+* `mechanical/pb3-shell.step` — shell model for fit checks.
+* `library/connector_aiwa_pb3.kicad_mod` — blade footprint.
+
+== Validation & Test Plan
+*Functional*
+* Charge through the deck for 12 hours. Log voltage and NTC curves.
+* Run a hungry deck like HS-PX505. Verify the boost holds ≥3.9 V during FF/REW punches.
+
+*Safety*
+* Bake at 40 °C ambient. Keep silicon <85 °C.
+* Trip short-circuit protection under 20 ms.
+
+*Documentation*
+* Export schematic PDFs and BOM straight from KiCad.
+* Keep PlantUML diagrams in `images/` so architecture matches the board.
+
+== Open Questions
+* Do any decks sniff a third pin? Need proof before adding logic.
+* Does the host trickle charge while on AC? Impacts boost topology.
+* Did Aiwa rely on SLA resistance rise for end-of-life? Might need a small gauge IC to mimic it.
+
+== Next Immediate Steps
+. Source a PB-3 donor for teardown.
+. Measure connector plating and friction.
+. Spin initial KiCad sheets with placeholders.
+. Prototype the boost on eval hardware and log noise against the audio path.

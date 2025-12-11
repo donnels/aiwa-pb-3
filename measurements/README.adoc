@@ -1,0 +1,47 @@
+= Measuring the PB-3 and context
+:toc: right
+:sectnums:
+:sectnumlevels: 5
+
+This directory holds every measurement photo, caliper log, and derived dimension used to build the PB-3 models.
+
+== Measurement Photos
+
+.Width calipered underside
+image::IMG_9373.jpeg[]
+
+.Width calipered top
+image::IMG_9374.jpeg[]
+
+.Height calipered side
+image::IMG_9375.jpeg[]
+
+.Depth calipered top
+image::IMG_9376.jpeg[]
+
+.depth calipered top
+image::IMG_9377.jpeg[]
+
+.height calipered side
+image::IMG_9378.jpeg[]
+
+.battery holder Depth
+image::IMG_9379.jpeg[]
+
+.battery holder Width
+image::IMG_9380.jpeg[]
+
+.battery holder Height
+image::IMG_9381.jpeg[]
+
+.battery holder inside view
+image::IMG_9382.jpeg[]
+
+.battery holder inside view
+image::IMG_9383.jpeg[]
+
+.battery holder inside view
+image::IMG_9384.jpeg[]
+
+.battery holder inside view
+image::IMG_9385.jpeg[]

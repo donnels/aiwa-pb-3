@@ -1,0 +1,14 @@
+(kicad_pro
+  (version 1)
+  (generator "GitHub Copilot")
+  (project
+    (title_block
+      (title "PB-3 Replacement")
+      (company "AIWA HS-PC202MII retrofit")
+      (comment 1 "Revision V0.1"))
+    (property "source_measurements" "measurements/IMG_9373.jpeg-IMG_9385.jpeg")
+    (property "source_forum" "research/Rechargeable battery replacement for AIWA PB-3 _ PB-4 _ Stereo2Go forums.html")
+  )
+  (sheet_instances
+    (path "/" (page "A4")))
+)
