@@ -1,0 +1,55 @@
+@startyaml
+<style>
+yamlDiagram {
+  BackgroundColor #fff/aaf
+  shadowing true
+}
+</style>
+name: Build
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.scad'
+      - '**/*.plantuml'
+      - '**/*.puml'
+      - '**/*.asciidoc'
+      - '**/*.adoc'
+      - .github/workflows/build.yml
+  workflow_dispatch: null
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+env:
+  DEBUG: true
+  IMG_SCAD: ghcr.io/donnels/openscad:main
+  IMG_PUML: ghcr.io/donnels/plantuml:main
+  IMG_ADOC: ghcr.io/donnels/asciidoc:main
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Render OpenSCAD
+      - name: Render PlantUML
+      - name: Build AsciiDoc
+      - name: Commit all outputs
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+  deploy:
+    runs-on: ubuntu-latest
+    needs: render
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+@endyaml

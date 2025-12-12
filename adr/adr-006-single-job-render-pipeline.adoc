@@ -1,0 +1,91 @@
+= ADR-006: Single Job Render Pipeline
+
+Date: 2025-12-12 +
+Status: Accepted +
+Supersedes: ADR-003
+
+== Context
+
+Initial CI used separate jobs for OpenSCAD, PlantUML, AsciiDoc (ADR-003). Each job committed separately. Parallel execution caused git push race conditions. Pull/rebase before each push worked but created noisy history: three bot commits per design change.
+
+AsciiDoc embeds outputs from OpenSCAD and PlantUML. Files must exist before `asciidoctor` runs. Separate jobs required artifact upload/download. Slow. Complex.
+
+== Decision
+
+Single `render` job, sequential steps, one commit.
+
+[source,yaml]
+----
+jobs:
+  render:
+    steps:
+      - Render OpenSCAD → *.stl, *.png
+      - Render PlantUML → *.svg, *.png
+      - Render KiCad → *.pdf, *.svg
+      - Build AsciiDoc → docs/*.{html,pdf}
+      - Commit all outputs
+----
+
+== Alternatives
+
+*Parallel jobs with artifacts*::
++ Faster (concurrent renders)
+- Upload/download overhead (30s)
+- Three commits per change
+- Race conditions on push
+- Complex artifact handling
+
+*Sequential jobs*::
++ Clear dependencies
++ No artifacts needed
+- Slower (no parallelism)
+- Still three commits
+
+*Local Makefile*::
++ Fast iteration
+- ADR-003 rejected this (stale outputs)
+
+== Implications
+
+*Positive:*
+
++ One commit: `ci: render all outputs [skip ci]`
++ No race conditions
++ Shared filesystem (no artifacts)
++ AsciiDoc sees all PNGs/SVGs immediately
++ Simple: pipeline reads top-to-bottom
++ Fast: no artifact marshaling
+
+*Negative:*
+
+- Sequential (no parallel speedup)
+- Single failure blocks all downstream
+
+*Mitigations:*
+
+- Renders are fast (<2min total)
+- Debug mode shows which step failed
+- Continue-on-error for non-critical steps
+
+== Why Not Jobs
+
+Jobs = parallelism or isolation. This is a **pipeline**: OpenSCAD → PlantUML → KiCad → AsciiDoc. Dependencies are linear. Output files feed next step. One job, shared filesystem, done.
+
+== Pattern
+
+[source,yaml]
+----
+- name: Render Tool
+  run: |
+    [[ "$DEBUG" == "true" ]] && echo "=== Finding files ==="
+    for f in $(find . -name "*.ext"); do
+      docker run --rm -v "$PWD":/w $IMG tool -o output $f
+    done
+----
+
+All tools follow same structure:
+1. Find source files
+2. Render with Docker container
+3. Output next to source
+
+Final step adds all outputs, commits once.

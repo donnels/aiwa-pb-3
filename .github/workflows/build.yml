@@ -94,7 +94,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: asciidoc
+    needs: render
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
