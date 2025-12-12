@@ -1,0 +1,51 @@
+= Architecture Decision Records
+:toc:
+
+== What
+
+ADRs document *why* we chose this over that.
+
+Each record:
+
+* States the decision
+* Lists alternatives considered
+* Explains consequences
+
+== Why
+
+Memory fades. Context dies. ADRs preserve intent.
+
+When someone asks "why this way?", point to the ADR.
+
+== Format
+
+```
+= ADR-NNN: Title
+
+Date: YYYY-MM-DD
+Status: Accepted | Deprecated | Superseded
+
+== Context
+Problem statement. One paragraph.
+
+== Decision
+What we chose. One sentence.
+
+== Alternatives
+- Option A: why rejected
+- Option B: why rejected
+
+== Implications
++ Good consequence
++ Good consequence
+- Bad consequence
+- Mitigation for bad consequence
+```
+
+== Index
+
+include::adr-001-commit-generated-artifacts.adoc[leveloffset=+2]
+
+include::adr-002-text-based-cad-formats.adoc[leveloffset=+2]
+
+include::adr-003-github-actions-build-automation.adoc[leveloffset=+2]

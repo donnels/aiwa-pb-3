@@ -1,0 +1,76 @@
+= ADR-001: Commit Generated Artifacts Next to Source
+
+Date: 2025-12-12 +
+Status: Accepted
+
+== Context
+
+This repo is a reverse engineering workbook. PlantUML diagrams, OpenSCAD models, KiCad schematics are both source *and* documentation. End users clone the repo to read design history, not to rebuild artifacts.
+
+Generated outputs (PNG, STL, PDF) answer: "What does this look like?" Keeping them divorced from source breaks context. Viewing design requires tools. History loses meaning without rendered outputs.
+
+== Decision
+
+Commit generated artifacts next to their source files.
+
+== Alternatives
+
+*Separate `docs/generated/` directory*::
++ Clean source tree
++ CI manages all outputs
+- Divorces outputs from source context
+- Requires CI to view design
+- Clone without CI = incomplete artifact
+- AsciiDoc references break (`image::openscad/foo.png` fails if PNG lives in `docs/`)
+
+*Ignore all generated files*::
++ Smallest repo
++ No merge conflicts on binaries
+- Useless offline
+- GitHub PR can't show visual diffs
+- Design evolution invisible in history
+
+*Submodule for outputs*::
++ Separates binary history
+- Overcomplicated for solo project
+- Two clones to see one design
+
+== Implications
+
+*Positive:*
+
++ `openscad/pb3-pack.png` lives next to `openscad/pb3-pack.scad`
++ AsciiDoc `image::` paths match file tree
++ Offline clone shows design without rebuilding
++ GitHub renders PNGs inline in PRs
++ History shows design evolution (old PNG = old intent)
++ No CI dependency for documentation
+
+*Negative:*
+
+- Repo size grows with each design iteration
+- Merge conflicts possible on binary files (rare for solo)
+- CI must commit and push outputs
+
+*Mitigations:*
+
+- Keep STL/PNG <5MB each (current sizes: <500KB)
+- Use `git lfs` if files exceed 10MB
+- CI commits with `[skip ci]` to avoid recursion
+- For huge experimental outputs, use scratch `build/` dirs (gitignored)
+
+== Files Affected
+
+Source directories commit their outputs:
+
+- `openscad/*.{stl,png}` — rendered models
+- `images/*.{png,svg}` — diagram exports  
+- `kicad/*.{pdf,svg}` — schematic/board renders
+
+CI workflow updated to:
+
+1. Generate artifacts into source directories
+2. Commit outputs back to repo
+3. Push to main branch
+
+Scratch builds (local experiments) use `*/build/` and remain gitignored.

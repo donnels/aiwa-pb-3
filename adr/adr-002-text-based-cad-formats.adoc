@@ -1,0 +1,112 @@
+= ADR-002: Use Text-Based CAD and Documentation Formats
+
+Date: 2025-12-12 +
+Status: Accepted
+
+== Context
+
+Reverse engineering requires clear, searchable, versionable documentation. Design intent must survive iteration. Ambiguity kills projects. Binary formats (PNG, SVG, proprietary CAD) hide structure, resist search, and depend on artistic interpretation.
+
+Need tools that:
+
+* Version cleanly in git
+* Search with grep
+* Feed to LLMs without image parsing
+* Embed measurements explicitly
+* Avoid subjective interpretation
+
+== Decision
+
+Use text-based formats for all CAD and documentation:
+
+* *AsciiDoc* for all docs
+* *PlantUML* for block diagrams
+* *OpenSCAD* for mechanical models
+* *KiCad* for PCB (S-expression text format)
+
+== Alternatives
+
+*Binary formats (Visio, Fusion 360, PNG diagrams)*::
++ Industry standard tools
++ Rich GUI workflows
+- Not searchable (grep useless)
+- Binary diffs meaningless
+- LLM can't parse structure
+- Locked to specific tools
+- Measurements hidden in pixels
+- Interpretation varies by viewer
+
+*Markdown + hand-drawn SVG*::
++ Simple, portable
+- SVG is XML (verbose, hard to write)
+- Hand-drawn = ambiguous dimensions
+- No parametric models
+- Design intent lost in pixels
+
+*Wiki or Google Docs*::
++ Collaborative
++ Rich media
+- Not in git (history scattered)
+- Export fragile
+- Offline broken
+- Search locked to platform
+
+== Implications
+
+*Positive:*
+
++ `grep "68.*17.8.*8" openscad/` finds all references to pack dimensions
++ `git diff` shows exact measurement changes: `outer_len = 67` → `outer_len = 68`
++ LLM can ingest `.puml` and suggest corrections: "2.4V output conflicts with 2.0V spec"
++ PlantUML connections are explicit: `CELL --> BUCK : 3.0-4.2V` (no guessing from arrows)
++ OpenSCAD embeds tolerances: `wiggle=.01` (visible in source, not CAD property panel)
++ KiCad `.kicad_sch` is S-expression: searchable for part numbers, net names
++ Docs live next to code: `openscad/pb3-pack.scad` + README.asciidoc in same commit
++ Dead docs impossible: if code changes, doc changes (same file or adjacent)
++ No priest needed: `outer_len = 68` means 68mm, not "roughly this wide"
+
+*Negative:*
+
+- Steeper learning curve (PlantUML syntax, OpenSCAD code)
+- No WYSIWYG (must render to see)
+- Collaboration requires text-editing skill
+- Binary export still needed for viewing (PNG, STL)
+
+*Mitigations:*
+
+- CI auto-generates viewable outputs (PNG, STL, PDF) from text sources
+- Commit both source and renders (ADR-001)
+- Include examples in repo (`images/pb3-architecture.plantuml` as template)
+- LLMs can write PlantUML/OpenSCAD from specs (reverse engineering ally)
+
+== Examples
+
+*Searchable dimensions:*
+```scad
+outer_len = 68;    // grep finds this
+outer_width = 17.8;
+```
+
+*Explicit connections:*
+```plantuml
+CELL --> BUCK : 3.0-4.2V  // no guessing voltage
+BUCK --> OUT : 2.0V       // explicit output
+```
+
+*Versionable structure:*
+```diff
+- BUCK --> OUT : 2.4V
++ BUCK --> OUT : 2.0V  // git diff shows intent change
+```
+
+*LLM-friendly input:*
+"Here's the PlantUML. Does the 2.0V output match the schematic's buck feedback resistor?"
+
+== Tools Used
+
+* AsciiDoc: prose, specs, workbook
+* PlantUML: block diagrams, architecture
+* OpenSCAD: mechanical models, fit tests
+* KiCad: schematic + PCB (text-based S-expression format)
+
+All text. All searchable. All versionable. All LLM-ingestible.

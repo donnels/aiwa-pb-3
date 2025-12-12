@@ -1,0 +1,153 @@
+= ADR-003: Use GitHub Actions for All Build Automation
+
+Date: 2025-12-12 +
+Status: Accepted
+
+== Context
+
+Generated artifacts (PNG, STL, PDF) must stay synchronized with source files. Manual builds fail. Developers forget to regenerate. Wrong versions ship. "It works on my machine" breaks collaboration.
+
+Need automation that:
+
+* Runs on every commit
+* Links builds to exact source version
+* Prevents stale outputs
+* Documents build process explicitly
+* Survives author memory loss
+
+== Decision
+
+Use GitHub Actions for all CAD rendering and artifact generation.
+
+No local build scripts as primary workflow.
+
+== Alternatives
+
+*Local build scripts only*::
++ Fast iteration
++ No network dependency
+- Forget to run = stale outputs committed
+- "Works on my machine" inconsistencies
+- Process lives in author's head
+- New contributor: "How do I build?"
+- No proof outputs match sources
+
+*Manual screenshot/export workflow*::
++ Simple tools
++ No scripting
+- Wrong version screenshots plague repos
+- No traceability (which source made this PNG?)
+- Forgot to save = weeks hunting mismatch
+- Undocumented steps = tribal knowledge
+
+*Pre-commit hooks*::
++ Automatic on commit
+- Slow local commits (blocks developer)
+- Hard to debug when broken
+- Environmental differences break hooks
+- Still local = "works on my machine"
+
+*Makefile + CI*::
++ Standard Unix pattern
++ Local + remote builds
+- Two build paths = drift risk
+- Makefile syntax arcane
+- Windows developers struggle
+- Process still partly hidden
+
+== Implications
+
+*Positive:*
+
++ *Sync guaranteed*: outputs regenerated every push, impossible to commit stale PNG
++ *Traceable*: Actions log links to exact commit that built artifact
++ *Documented workflow*: `.github/workflows/cad-build.yml` IS the build documentation
++ *Preview while editing*: PlantUML/OpenSCAD extensions show live preview in VS Code, no surprise when CI builds
++ *Repeatable*: same Docker images, same results, always
++ *Inspectable*: workflow file shows thought process: "first OpenSCAD, then PlantUML, then publish"
++ *No magic*: workflow is code, not author's mental model requiring MRI to extract
++ *Works-on-merge*: GitHub Actions runs on forks, contributors see build before PR
++ *Blame trail*: git log shows when output changed and why (CI commit message references source change)
+
+*Negative:*
+
+- Network required to see final outputs (mitigated: local preview extensions)
+- Slower feedback than local build (mitigated: preview extensions, small changes iterate locally)
+- CI quota consumption (mitigated: build only on source file changes)
+- Initial setup cost (one-time, then keeps working)
+
+*Mitigations:*
+
+- VS Code extensions preview PlantUML/OpenSCAD during editing (instant feedback)
+- Actions trigger only on paths: `openscad/**`, `images/**`, `kicad/**` (skip unrelated commits)
+- Local Docker containers available for manual iteration (same images CI uses)
+- Workflow continues on job failure: `continue-on-error: true` (partial build better than none)
+
+== Why Not Magic
+
+Actions EXPOSE process:
+
+```yaml
+# This is the build documentation. No hidden steps.
+- name: Render
+  run: |
+    docker run ... openscad -o /w/build/openscad/$s.stl /w/$f
+```
+
+Compare to undocumented mental model:
+- Author: "I open OpenSCAD, export STL, save PNG, commit both"
+- New contributor: "Which settings? What colorscheme? Why this size?"
+- Six months later: "How did I make this?"
+
+Actions preserve intent. Author leaves. Process survives.
+
+== Workflow Structure
+
+`cad-build.yml`:
+
+1. *openscad job*: render STL + PNG for all `.scad` files
+2. *plantuml job*: render SVG for all `.puml` files  
+3. *kicad job*: render PDF + SVG via KiBot
+4. *publish job*: commit outputs back to repo (ADR-001)
+
+Each job:
+- Runs in isolation
+- Uses pinned Docker image (versioned, reproducible)
+- Continues on error (partial build survives)
+- Logs exact commands (auditable)
+
+== Traceability Example
+
+Commit: `fix: correct outer_len to 68mm`
+
+Actions runs → generates new STL → commits:
+```
+ci: refresh outputs
+
+Generated from:
+- openscad/pb3-pack.scad (abc1234)
+```
+
+Git blame on `pb3-pack.stl` → points to CI commit → references source commit → full trace.
+
+No "oops wrong image" mystery.
+
+== Living Documentation
+
+Workflow file = build manual.
+
+New contributor clones repo, reads `.github/workflows/cad-build.yml`, understands:
+- Which Docker images
+- Which commands
+- Which outputs
+- Which paths trigger
+
+No MRI. No author interview. Just code.
+
+== Tools vs Process
+
+*Local preview*: VS Code extensions (instant feedback while editing)
+
+*Canonical build*: GitHub Actions (guarantees sync, documents process)
+
+Both. Not either/or.
