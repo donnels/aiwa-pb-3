@@ -8,6 +8,7 @@ endif::[]
 
 == pb3-pack
 
+.`pb3-pack`
 image::pb3-pack.png[]
 
 link:pb3-pack.stl[Download STL]
