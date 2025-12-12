@@ -8,6 +8,7 @@ on:
       - "**/*.plantuml"
       - "**/*.puml"
       - "**/*.asciidoc"
+      - "**/*.adoc"
       - ".github/workflows/build.yml"
   workflow_dispatch:
 
@@ -17,6 +18,7 @@ permissions:
   id-token: write
 
 env:
+  DEBUG: true
   IMG_SCAD: ghcr.io/donnels/openscad:main
   IMG_PUML: ghcr.io/donnels/plantuml:main
   IMG_ADOC: ghcr.io/donnels/asciidoc:main
@@ -28,9 +30,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Render OpenSCAD
         run: |
+          [[ "$DEBUG" == "true" ]] && echo "=== Finding .scad files ==="
+          [[ "$DEBUG" == "true" ]] && find . -name "*.scad" ! -name "include-*.scad"
           for f in $(find . -name "*.scad" ! -name "include-*.scad"); do
             dir=$(dirname "$f")
             base=$(basename "$f" .scad)
+            [[ "$DEBUG" == "true" ]] && echo "Rendering: $f -> ${dir}/${base}.{stl,png}"
             docker run --rm -v "$PWD":/w "$IMG_SCAD" \
               openscad -o "/w/${dir}/${base}.stl" "/w/$f" &
             docker run --rm -v "$PWD":/w "$IMG_SCAD" \
@@ -38,11 +43,16 @@ jobs:
               -o "/w/${dir}/${base}.png" "/w/$f" &
             wait
           done
+          [[ "$DEBUG" == "true" ]] && echo "=== Generated files ==="
+          [[ "$DEBUG" == "true" ]] && find . -name "*.stl" -o -name "*.png" | grep -E '\.(stl|png)$'
       - name: Commit outputs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A "**/*.{stl,png}"
+          [[ "$DEBUG" == "true" ]] && echo "=== Adding files to git ==="
+          find . -name "*.stl" -o -name "*.png" | xargs -r git add
+          [[ "$DEBUG" == "true" ]] && echo "=== Git status ==="
+          [[ "$DEBUG" == "true" ]] && git status
           git diff --cached --quiet || git commit -m "ci: openscad renders [skip ci]" && git push
 
   plantuml:
@@ -51,18 +61,26 @@ jobs:
       - uses: actions/checkout@v4
       - name: Render PlantUML
         run: |
+          [[ "$DEBUG" == "true" ]] && echo "=== Finding .plantuml/.puml files ==="
+          [[ "$DEBUG" == "true" ]] && find . -name "*.plantuml" -o -name "*.puml"
           for f in $(find . -name "*.plantuml" -o -name "*.puml"); do
             dir=$(dirname "$f")
+            [[ "$DEBUG" == "true" ]] && echo "Rendering: $f -> ${dir}/{svg,png}"
             docker run --rm -v "$PWD":/w "$IMG_PUML" \
               plantuml -tsvg -o "/w/${dir}" "/w/$f"
             docker run --rm -v "$PWD":/w "$IMG_PUML" \
               plantuml -tpng -o "/w/${dir}" "/w/$f"
           done
+          [[ "$DEBUG" == "true" ]] && echo "=== Generated files ==="
+          [[ "$DEBUG" == "true" ]] && find . \( -name "*.svg" -o -name "*.png" \) ! -path "./docs/*"
       - name: Commit outputs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A "**/*.{svg,png}"
+          [[ "$DEBUG" == "true" ]] && echo "=== Adding files to git ==="
+          find . \( -name "*.svg" -o -name "*.png" \) ! -path "./docs/*" | xargs -r git add
+          [[ "$DEBUG" == "true" ]] && echo "=== Git status ==="
+          [[ "$DEBUG" == "true" ]] && git status
           git diff --cached --quiet || git commit -m "ci: plantuml renders [skip ci]" && git push
 
   asciidoc:
@@ -73,22 +91,34 @@ jobs:
         with:
           fetch-depth: 0
       - name: Pull latest
-        run: git pull --rebase
+        run: |
+          [[ "$DEBUG" == "true" ]] && echo "=== Pulling latest changes ==="
+          git pull --rebase
+          [[ "$DEBUG" == "true" ]] && echo "=== Current branch status ==="
+          [[ "$DEBUG" == "true" ]] && git log --oneline -3
       - name: Build AsciiDoc
         run: |
           mkdir -p docs
+          [[ "$DEBUG" == "true" ]] && echo "=== Finding .asciidoc files ==="
+          [[ "$DEBUG" == "true" ]] && find . -name '*.asciidoc'
           for f in $(find . -name '*.asciidoc'); do
             base=$(basename "$f" .asciidoc)
+            [[ "$DEBUG" == "true" ]] && echo "Building: $f -> docs/${base}.{html,pdf}"
             docker run --rm -v "$PWD":/w "$IMG_ADOC" \
               asciidoctor -r asciidoctor-diagram -o "/w/docs/${base}.html" "/w/$f"
             docker run --rm -v "$PWD":/w "$IMG_ADOC" \
               asciidoctor-pdf -r asciidoctor-diagram -o "/w/docs/${base}.pdf" "/w/$f"
           done
+          [[ "$DEBUG" == "true" ]] && echo "=== Generated docs ==="
+          [[ "$DEBUG" == "true" ]] && ls -lh docs/
       - name: Commit docs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          [[ "$DEBUG" == "true" ]] && echo "=== Adding docs to git ==="
           git add docs/
+          [[ "$DEBUG" == "true" ]] && echo "=== Git status ==="
+          [[ "$DEBUG" == "true" ]] && git status
           git diff --cached --quiet || git commit -m "ci: build docs [skip ci]" && git push
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
