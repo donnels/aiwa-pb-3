@@ -16,3 +16,4 @@ module pb3_pack_fitting_test() {
 }
 
 pb3_pack_fitting_test();
+// To test fitting, run OpenSCAD and export to STL. Then 3D print a test block to verify fit in the PB-3 housing.

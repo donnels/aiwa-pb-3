@@ -21,4 +21,5 @@ note right of CHG : Rprog sets Ichg
 note right of BUCK : Rfb: 100k=2.4V\n120k=2.1V\n(mod for 2.0V)
 note bottom of CELL : BMS on cell flex PCB\n(under kapton)
 note right of OUT : 900mAh @ 2V\n(energy conserved)
+
 @enduml
