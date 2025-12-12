@@ -30,7 +30,7 @@ Build a present-day PB-3 pack that wakes an AIWA HS-PC202MII. That deck is the p
 |Medium. Need an unopened OEM cell for proof.
 
 |Community precedents
-|Baidu and Stereo2Go builds use 3D-printed shells plus Li-ion or LiFePO₄ stages, usually without fault clamps or plated blades.footnote:s2g[]
+|Baidu and Stereo2Go builds use 3D-printed shells plus Li-ion or LiPo stages, usually without fault clamps or plated blades.footnote:s2g[]
 |High. Reuse photos only with permission.
 |===
 
@@ -41,7 +41,7 @@ Build a present-day PB-3 pack that wakes an AIWA HS-PC202MII. That deck is the p
 * Shell size is 68 mm × 17.8 mm × 8 mm. Battery cavity maxes at 52 mm × 15 mm × 6 mm, so 500 mAh is the ceiling until cells improve.footnote:s2g[]
 * 3D printed case flexes, screw bosses die fast, only top contacts get plating.footnote:s2g[]
 * Pack leads land right on converter pins. Bare copper hovers over inductors. No strain relief.footnote:s2g[]
-* If the boost MOSFET shorts, the deck eats the full 3.7 V. Need a clamp or crowbar that kills the fault.footnote:s2g[]
+* If the buck converter fails, the deck eats the full 3.7 V. Need a clamp or crowbar that kills the fault.footnote:s2g[]
 * PB-S5 board is the same. Swap the marked 100 kΩ resistor for 120 kΩ to hit 2.1 V. 0603 footprint.footnote:s2g[]
 * Search phrase "500mAh lipo battery 6mm" finds cells that fit; nothing larger ships yet.footnote:s2g[]
 * Wickedkraft sells a pricier variant on eBay. No autopsy yet but likely the same guts.footnote:s2g[]
@@ -56,13 +56,13 @@ Build a present-day PB-3 pack that wakes an AIWA HS-PC202MII. That deck is the p
 
 == Host Deck Reality
 * Runner: AIWA HS-PC202MII. This deck will see every prototype first and is the reason the project exists.
-* Constraints: OEM wall wart is missing, OEM PB-3 pack is dead, and donor geometry comes only from shared photos of clone packs. Reverse engineering starts with images, not physical SLA references.
-* Implication: Every measurement logged here is provisional until a physical PB-3 carcass arrives. Keep CAD parametric and expect rework once real hardware hits the bench.
+* Constraints: OEM wall wart is missing, OEM PB-3 pack is dead, and voltage measurements of it are not relevant (0v). Reverse engineering starts with images of clone PCBs.
+
 
 == Research To-Do List
 . **Imagery**: pull clean teardown photos from Baidu Tieba (`随身听 PB-3`) and Japanese blogs. Capture rulers or redraw.
 . **Connector survey**: borrow a PB-3 pack or host deck. Log pitch, depth, retention, plating.
-. **Power sweep**: record float voltage, discharge curve, deck charge current while the donor SLA still lives.
+. **Power sweep**: record float voltage, discharge curve, deck charge current while the donor SLA still lives (if there is one which there isn't).
 . **Archive**: dump every measurement, photo, and trace into this repo before CAD starts.
 
 == Proposed Replacement Strategy
@@ -71,7 +71,7 @@ SLA is dead weight. Teardown of Aliexpress clone confirms the working approach.
 *LiPo 1S (3.7V nominal) + buck to 2.0V*::
 + Matches existing clone design (LAOWANG_DIY board)
 + 500mAh cell → 900mAh effective at 2V output
-+ Simpler than boost topology
++ Buck topology (step-down) matches 3.7V→2.0V requirement
 + BMS often on cell flex PCB
 
 Baseline design: **1S LiPo 500mAh + buck converter regulated at 2.0V** matching the original PB-3 output.
@@ -109,7 +109,7 @@ image::openscad/pb3-pack.png[]
 . Trace the PCB. Mark every component, resistor, and fuse.
 . Recreate the old schematic in KiCad. Understand what the deck expects before changing it.
 . Map new requirements against the host behavior.
-. Draft hierarchical KiCad sheets: Cell+BMS, Boost, Connector/NTC. Assign refs early.
+. Draft hierarchical KiCad sheets: Cell+BMS, Buck, Connector/NTC. Assign refs early.
 
 == Future KiCad Artifacts
 * `kicad/pb3-replacement.kicad_pro` — full project.

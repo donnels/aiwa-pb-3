@@ -95,6 +95,10 @@ jobs:
           {
             echo "= OpenSCAD Renders"
             cat includes/include-toc-standalone.adoc
+            echo "ifdef::flag-book[]"
+            echo ":imagesdir-save: {imagesdir}"
+            echo ":imagesdir: openscad"
+            echo "endif::[]"
             echo ""
             for f in openscad/*.png; do
               [ -f "$f" ] || continue
@@ -106,12 +110,20 @@ jobs:
               echo ""
               [ -f "openscad/$base.stl" ] && echo "link:$base.stl[Download STL]" && echo ""
             done
+            echo ""
+            echo "ifdef::flag-book[]"
+            echo ":imagesdir: {imagesdir-save}"
+            echo "endif::[]"
           } > openscad/README.adoc
           
           # Images directory
           {
             echo "= PlantUML Diagrams"
             cat includes/include-toc-standalone.adoc
+            echo "ifdef::flag-book[]"
+            echo ":imagesdir-save: {imagesdir}"
+            echo ":imagesdir: images"
+            echo "endif::[]"
             echo ""
             for f in images/*.svg; do
               [ -f "$f" ] || continue
@@ -130,6 +142,10 @@ jobs:
               [ -f "images/$base.png" ] && echo "link:$base.png[PNG]" || true
               echo ""
             done
+            echo ""
+            echo "ifdef::flag-book[]"
+            echo ":imagesdir: {imagesdir-save}"
+            echo "endif::[]"
           } > images/README.adoc
       - name: Commit
         run: |

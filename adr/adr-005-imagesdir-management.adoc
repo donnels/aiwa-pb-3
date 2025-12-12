@@ -1,0 +1,174 @@
+= ADR-005: Conditional imagesdir Management for Book Assembly
+
+Date: 2025-12-12 +
+Status: Accepted
+
+== Context
+
+README.asciidoc assembles multiple `.adoc` fragments that contain images. Each fragment must work both:
+
+1. **Standalone**: rendered directly (GitHub, local preview)
+2. **Included**: assembled into main book
+
+Problem: image paths break when included.
+
+Example:
+- `images/README.adoc` contains `image::diagram.png[]`
+- Standalone: works (PNG is local)
+- Included in root README: fails (looks for `diagram.png` in root, not `images/`)
+
+Need: conditional `:imagesdir:` that adapts to context without breaking either mode.
+
+== Decision
+
+Use `:flag-book:` to conditionally manage `:imagesdir:`.
+
+**Main document (README.asciidoc):**
+
+.Set book mode flag
+[source,asciidoc]
+----
+//:flag-book: true
+----
+
+**Each included fragment:**
+
+.Save, override, restore imagesdir
+[source,asciidoc]
+----
+//ifdef::flag-book[]
+//:imagesdir-save: {imagesdir}
+//:imagesdir: <subdirectory>
+//endif::[]
+//
+//... content with images ...
+//
+//ifdef::flag-book[]
+//:imagesdir: {imagesdir-save}
+//endif::[]
+----
+
+== Alternatives
+
+*Absolute paths in image macros*::
++ Works both standalone and included
+- Fragile (breaks on repo rename)
+- Verbose: `image::images/diagram.png[]` everywhere
+- Not idiomatic AsciiDoc
+
+*Duplicate files*::
++ Clean separation
+- Maintenance nightmare
+- Violates DRY
+- Drift guaranteed
+
+*Separate standalone vs include versions*::
++ Each optimized for context
+- Double maintenance
+- Violates single source of truth
+
+*Always use subdirectory paths*::
++ Simple
+- Breaks standalone rendering
+- GitHub can't preview
+
+== Implications
+
+*Positive:*
+
++ Single source: one `.adoc` file, two render contexts
++ Standalone works: `images/README.adoc` previews correctly on GitHub
++ Book works: `README.asciidoc` assembles all fragments with correct image paths
++ No path duplication: `image::foo.png[]` not `image::images/foo.png[]`
++ Graceful fallback: if `:flag-book:` not set, standalone mode assumed
++ Restores state: `:imagesdir-save:` preserves any parent setting
+
+*Negative:*
+
+- Boilerplate: every fragment needs ifdef blocks
+- Non-obvious: requires ADR to explain
+- Fragile: forget closing block = broken subsequent includes
+
+*Mitigations:*
+
+- Document pattern in ADR (this file)
+- CI-generated READMEs include pattern automatically
+- Template in `includes/include-toc-standalone.adoc` for manual fragments
+- Lint rule: fail if `:imagesdir:` changed without restore
+
+== Pattern
+
+**Step 1: Main doc sets flag**
+
+.Main document
+[source,asciidoc]
+----
+//= Main Document
+//:flag-book: true
+//
+//include::subdoc/README.adoc[]
+----
+
+**Step 2: Subdoc saves and overrides**
+
+.Subdocument with conditional path
+[source,asciidoc]
+----
+//= Subdoc
+//ifdef::flag-book[]
+//:imagesdir-save: {imagesdir}
+//:imagesdir: subdoc
+//endif::[]
+//
+//image::photo.png[]  // standalone: subdoc/photo.png, book: subdoc/photo.png
+----
+
+**Step 3: Subdoc restores at end**
+
+.Restore parent context
+[source,asciidoc]
+----
+//... last image ...
+//
+//ifdef::flag-book[]
+//:imagesdir: {imagesdir-save}
+//endif::[]
+----
+
+== Files Using Pattern
+
+*Manual:*
+- `measurements/README.adoc`
+
+*CI-generated:*
+- `images/README.adoc`
+- `openscad/README.adoc`
+
+*Template:*
+- `includes/include-toc-standalone.adoc` (provides ifdef block)
+
+== Why Save/Restore
+
+Simple reset (`:imagesdir:`) loses parent context:
+
+.Wrong: loses parent setting
+[source,asciidoc]
+----
+//:imagesdir: assets         // parent sets this
+//
+//include::sub/doc.adoc[]    // sub sets :imagesdir: sub, then resets to empty
+//                           // WRONG: parent's "assets" is lost
+----
+
+Save/restore preserves nesting:
+
+.Correct: preserves parent setting
+[source,asciidoc]
+----
+//:imagesdir: assets
+//
+//include::sub/doc.adoc[]    // saves "assets", sets "sub", restores "assets"
+//                           // CORRECT: parent context preserved
+----
+
+Enables arbitrary nesting depth without coordination.

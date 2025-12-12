@@ -26,7 +26,9 @@ USB-C rechargeable LiPo replacement for the AIWA PB-3/PB-4 battery pack.
 
 == Reverse Engineering Notes
 
-include::pb3-notes.asciidoc[leveloffset=+2]
+include::pb3-notes.adoc[leveloffset=+2]
+
+include::measurements/README.adoc[leveloffset=+2]
 
 == Architecture Decisions
 

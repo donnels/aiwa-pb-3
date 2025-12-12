@@ -5,28 +5,38 @@ ifndef::flag-book[]
 :sectnums:
 :sectnumlevels: 5
 endif::[]
+ifdef::flag-book[]
+:imagesdir-save: {imagesdir}
+:imagesdir: measurements
+endif::[]
 
 This directory holds every measurement photo, caliper log, and derived dimension used to build the PB-3 models.
 
 == Measurement Photos
 
-.Width calipered underside
+=== Original PB-3 SLA pack
+==== Width [67.73, 67.75]
+.Width calipered underside (67.73mm)
 image::IMG_9373.jpeg[]
 
-.Width calipered top
+.Width calipered top (67.75mm)
 image::IMG_9374.jpeg[]
 
-.Height calipered side
+==== Height [8.19, 8.12]
+.Height calipered side (8.19mm)
 image::IMG_9375.jpeg[]
 
-.Depth calipered top
+.Height calipered side (8.12mm)
+image::IMG_9378.jpeg[]
+
+==== Depth [17.65, 17.55]
+.Depth calipered top (17.65mm)
 image::IMG_9376.jpeg[]
 
-.depth calipered top
+.Depth calipered top (17.55mm)
 image::IMG_9377.jpeg[]
 
-.height calipered side
-image::IMG_9378.jpeg[]
+=== Battery holder
 
 .battery holder Depth
 image::IMG_9379.jpeg[]
@@ -48,3 +58,8 @@ image::IMG_9384.jpeg[]
 
 .battery holder inside view
 image::IMG_9385.jpeg[]
+
+//END OF DOC
+ifdef::flag-book[]
+:imagesdir: {imagesdir-save}
+endif::[]

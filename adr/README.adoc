@@ -5,6 +5,24 @@ ifndef::flag-book[]
 :sectnums:
 :sectnumlevels: 5
 endif::[]
+ifdef::flag-book[]
+:imagesdir-save: {imagesdir}
+:imagesdir: subdoc
+endif::[]
+
+== Philosophy
+
+Hemingway::
+Short sentences. No fluff. Say it once.
+
+DRY (Don't Repeat Yourself)::
+Write once. Reference everywhere. No copy-paste.
+
+KISS (Keep It Simple, Stupid)::
+Simple beats clever. If you need comments, simplify.
+
+NO MAGIC::
+Explicit over implicit. No hidden behavior. No surprises.
 
 == What
 
@@ -24,7 +42,9 @@ When someone asks "why this way?", point to the ADR.
 
 == Format
 
-```
+.ADR template
+[source,asciidoc]
+----
 = ADR-NNN: Title
 
 Date: YYYY-MM-DD
@@ -45,7 +65,7 @@ What we chose. One sentence.
 + Good consequence
 - Bad consequence
 - Mitigation for bad consequence
-```
+----
 
 == Index
 
@@ -56,3 +76,10 @@ include::adr-002-text-based-cad-formats.adoc[leveloffset=+2]
 include::adr-003-github-actions-build-automation.adoc[leveloffset=+2]
 
 include::adr-004-file-extension-conventions.adoc[leveloffset=+2]
+
+include::adr-005-imagesdir-management.adoc[leveloffset=+2]
+
+//END OF DOC
+ifdef::flag-book[]
+:imagesdir: {imagesdir-save}
+endif::[]
