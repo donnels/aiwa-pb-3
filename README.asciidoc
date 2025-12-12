@@ -1,7 +1,9 @@
 = aiwa pb-3 battery replacement
 :toc: right
+:toclevels: 5
 :sectnums:
 :sectnumlevels: 5
+:flag-book: true
 
 USB-C rechargeable LiPo replacement for the AIWA PB-3/PB-4 battery pack.
 
@@ -22,14 +24,13 @@ USB-C rechargeable LiPo replacement for the AIWA PB-3/PB-4 battery pack.
 * **OVP (Zener/TVS)** clamps output <3V if buck fails
 * DW01A+FS8205A BMS: OV/UV/OC protection
 
-== Repository contents
+== Reverse Engineering Notes
 
-- `pb3-notes.adoc` — reverse engineering notes
-- `images/*.plantuml` — block diagrams
-- `research/` — Stereo2Go forum teardown
-- `openscad/` — enclosure model (68×17.8×8mm)
-- `kicad/` — schematic + PCB + KiBot config
-- `.github/workflows/cad-build.yml` — CI renders all CAD
+include::pb3-notes.asciidoc[leveloffset=+2]
+
+== Architecture Decisions
+
+include::adr/README.adoc[leveloffset=+2]
 
 == Credits
 
@@ -38,6 +39,3 @@ USB-C rechargeable LiPo replacement for the AIWA PB-3/PB-4 battery pack.
 * PlantUML: https://github.com/donnels/plantuml[ghcr.io/donnels/plantuml:main]
 * KiBot: https://github.com/INTI-CMNB/KiBot[INTI-CMNB/KiBot@v2_dk8]
 
-== License
-
-CC BY-SA 4.0

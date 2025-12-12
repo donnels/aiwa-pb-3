@@ -15,7 +15,7 @@
 5. Parallel when possible.
 
 ## Project
-- LiFePO₄ battery replacement for AIWA PB-3
+- LiPo battery replacement for AIWA PB-3
 - Target: 68×17.8×8mm
 - Stack: KiCad, OpenSCAD, PlantUML
 - CI: GitHub Actions + KiBot

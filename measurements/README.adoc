@@ -1,7 +1,10 @@
 = Measuring the PB-3 and context
+ifndef::flag-book[]
 :toc: right
+:toclevels: 5
 :sectnums:
 :sectnumlevels: 5
+endif::[]
 
 This directory holds every measurement photo, caliper log, and derived dimension used to build the PB-3 models.
 

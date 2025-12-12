@@ -27,6 +27,7 @@ jobs:
           mkdir -p build/openscad
           for f in openscad/*.scad openscad/**/*.scad; do
             [ -f "$f" ] || continue
+            [[ "$(basename "$f")" =~ ^include- ]] && continue
             s=$(basename "$f" .scad)
             docker run --rm -v "$PWD":/w "$IMG_SCAD" openscad -o "/w/build/openscad/$s.stl" "/w/$f" &
             docker run --rm -v "$PWD":/w "$IMG_SCAD" openscad --imgsize 1600,1200 --colorscheme Tomorrow -o "/w/build/openscad/$s.png" "/w/$f" &
@@ -93,12 +94,14 @@ jobs:
           # OpenSCAD directory
           {
             echo "= OpenSCAD Renders"
+            cat includes/include-toc-standalone.adoc
             echo ""
             for f in openscad/*.png; do
               [ -f "$f" ] || continue
               base=$(basename "$f" .png)
               echo "== $base"
               echo ""
+              echo ".\`$base\`"
               echo "image::$base.png[]"
               echo ""
               [ -f "openscad/$base.stl" ] && echo "link:$base.stl[Download STL]" && echo ""
@@ -108,12 +111,14 @@ jobs:
           # Images directory
           {
             echo "= PlantUML Diagrams"
+            cat includes/include-toc-standalone.adoc
             echo ""
             for f in images/*.svg; do
               [ -f "$f" ] || continue
               base=$(basename "$f" .svg)
               echo "== $base"
               echo ""
+              echo ".\`$base\`"
               # Prefer PNG for display, link to SVG
               if [ -f "images/$base.png" ]; then
                 echo "image::$base.png[]"

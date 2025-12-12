@@ -1,8 +1,13 @@
 = PB-3 Reverse-Engineering Notebook
+// PB-3 Reverse-Engineering Notebook
+// Included in README.asciidoc
+// Do not render standalone
+ifndef::flag-book[]
 :toc: right
 :toclevels: 5
 :sectnums:
 :sectnumlevels: 5
+endif::[]
 
 == Objective
 Build a present-day PB-3 pack that wakes an AIWA HS-PC202MII. That deck is the primary test bed and end user. The wall wart is missing, the stock SLA is dead, and donor packs only exist as forum photos, so every measurement and assumption comes from images plus clone teardowns.

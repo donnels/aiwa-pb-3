@@ -1,0 +1,124 @@
+= ADR-004: File Extension Conventions for Main vs Include Files
+
+Date: 2025-12-12 +
+Status: Accepted
+
+== Context
+
+Repos accumulate many AsciiDoc and PlantUML files. Finding the main entry point becomes hard. Need convention to distinguish "main documentation" from "included fragments" and "build sources" from "style imports".
+
+Without convention:
+- Which `.adoc` is the root doc?
+- Which `.puml` gets rendered?
+- Grep returns too many false positives
+
+== Decision
+
+Use extension suffixes to signal file role:
+
+*AsciiDoc:*
+- `.asciidoc` = main documentation (entry points)
+- `.adoc` = include fragments (not standalone)
+- `includes/*.adoc` = shared fragments (glossary, copyright, formatting macros)
+
+*PlantUML:*
+- `.plantuml` = diagrams to render
+- `.puml` = style/config imports (not rendered)
+
+*OpenSCAD:*
+- `.scad` = models to render
+- `include-*.scad` = libraries (modules/functions only, skip rendering)
+
+*Build outputs:*
+- Always adjacent to source (ADR-001)
+- `docs/` = rendered AsciiDoc HTML only
+- `.png`, `.stl`, `.svg` live next to `.scad`/`.plantuml`
+
+== Alternatives
+
+*All use same extension*::
++ Simpler
+- No way to find main docs fast
+- Glob `*.adoc` catches 47 files
+- New contributor: "Which one do I read?"
+
+*Separate directories*::
++ Clear grouping: `main/`, `includes/`
+- Breaks locality (main doc far from includes)
+- Path references fragile
+
+*Metadata in filename*::
++ Example: `README.main.adoc`
+- Ugly
+- Sorting broken
+
+== Implications
+
+*Positive:*
+
++ `find . -name "*.asciidoc"` → main docs only
++ `find . -name "*.plantuml"` → diagrams to render
++ CI glob: `images/*.plantuml` (ignores `common.puml` style)
++ New contributor sees `README.asciidoc` and knows: "Start here"
++ Include detection: `grep "^include::" *.adoc` finds fragments
++ Clear intent: `.asciidoc` = public, `.adoc` = internal
+
+*Negative:*
+
+- Convention not obvious without docs
+- Mix of extensions in directory listings
+
+*Mitigations:*
+
+- Document in ADR (this file)
+- Enforce in CI: fail if `.asciidoc` includes another `.asciidoc`
+- README mentions convention
+
+== Examples
+
+```
+README.asciidoc                      ← main doc (read this first)
+pb3-notes.asciidoc                   ← main workbook
+adr/README.adoc                      ← include fragment (embedded in parent)
+adr/adr-001-foo.adoc                 ← include fragment
+includes/include-glossary.adoc       ← shared fragment (glossary)
+includes/include-copyright.adoc      ← shared fragment (license boilerplate)
+
+images/pb3-architecture.plantuml  ← render this
+images/common.puml                ← style import (not rendered)
+
+openscad/pb3-pack.scad            ← render this
+openscad/include-utils.scad       ← library (skip rendering)
+openscad/pb3-pack.png             ← output (adjacent)
+openscad/pb3-pack.stl             ← output (adjacent)
+```
+
+== Directory Structure
+
+```
+docs/                    ← HTML output from asciidoc rendering only
+includes/                ← Shared AsciiDoc fragments (glossary, copyright, macros)
+openscad/*.{png,stl}     ← CAD outputs (adjacent to .scad)
+images/*.{png,svg}       ← diagram outputs (adjacent to .plantuml)
+kicad/*.{pdf,svg}        ← schematic/PCB outputs (adjacent to .kicad_*)
+```
+
+No generated artifacts in `docs/generated/`. That pattern is deprecated (ADR-001).
+
+== CI Impact
+
+Workflows use extension filters:
+
+```yaml
+for f in images/*.plantuml; do  # not *.puml
+  plantuml "$f"
+done
+
+for f in openscad/*.scad; do
+  [[ "$(basename "$f")" =~ ^include- ]] && continue  # skip libraries
+  openscad -o "${f%.scad}.stl" "$f"
+  openscad -o "${f%.scad}.png" "$f"
+done
+```
+
+AsciiDoc rendering looks for `*.asciidoc` only.

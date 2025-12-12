@@ -1,5 +1,10 @@
 = Architecture Decision Records
-:toc:
+ifndef::flag-book[]
+:toc: right
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+endif::[]
 
 == What
 
@@ -49,3 +54,5 @@ include::adr-001-commit-generated-artifacts.adoc[leveloffset=+2]
 include::adr-002-text-based-cad-formats.adoc[leveloffset=+2]
 
 include::adr-003-github-actions-build-automation.adoc[leveloffset=+2]
+
+include::adr-004-file-extension-conventions.adoc[leveloffset=+2]

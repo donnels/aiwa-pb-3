@@ -1,4 +1,10 @@
 = OpenSCAD Renders
+ifndef::flag-book[]
+:toc: right
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+endif::[]
 
 == pb3-pack
 
