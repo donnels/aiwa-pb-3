@@ -10,6 +10,14 @@ ifdef::flag-book[]
 :imagesdir: images
 endif::[]
 
+== PB3Architecture
+
+.`PB3Architecture`
+image::PB3Architecture.png[]
+
+link:PB3Architecture.svg[SVG] 
+link:PB3Architecture.png[PNG]
+
 
 ifdef::flag-book[]
 :imagesdir: {imagesdir-save}
