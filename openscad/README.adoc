@@ -7,16 +7,17 @@ ifndef::flag-book[]
 endif::[]
 ifdef::flag-book[]
 :imagesdir-save: {imagesdir}
-:imagesdir: measurements
+:imagesdir: openscad
 endif::[]
 
 == pb3-pack
 
+.`pb3-pack`
 image::pb3-pack.png[]
 
 link:pb3-pack.stl[Download STL]
 
-//END OF DOC
+
 ifdef::flag-book[]
 :imagesdir: {imagesdir-save}
 endif::[]
