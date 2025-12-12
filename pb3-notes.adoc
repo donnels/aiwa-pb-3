@@ -8,6 +8,11 @@ ifndef::flag-book[]
 :sectnums:
 :sectnumlevels: 5
 endif::[]
+ifdef::flag-book[]
+:imagesdir-save: {imagesdir}
+//set to the directory that contains the images for this subdocument
+:imagesdir: subdoc
+endif::[]
 
 == Objective
 Build a present-day PB-3 pack that wakes an AIWA HS-PC202MII. That deck is the primary test bed and end user. The wall wart is missing, the stock SLA is dead, and donor packs only exist as forum photos, so every measurement and assumption comes from images plus clone teardowns.
@@ -140,3 +145,9 @@ image::openscad/pb3-pack.png[]
 . Measure connector plating and friction.
 . Spin initial KiCad sheets with placeholders.
 . Prototype the buck on eval hardware and log noise against the audio path.
+
+//END OF DOC
+
+ifdef::flag-book[]
+:imagesdir: {imagesdir-save}
+endif::[]
