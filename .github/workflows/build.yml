@@ -9,6 +9,10 @@ on:
       - "**/*.puml"
       - "**/*.asciidoc"
       - "**/*.adoc"
+      - "**/*.kicad_pcb"
+      - "**/*.kicad_sch"
+      - "**/*.kicad_pro"
+      - "**/kibot.yaml"
       - ".github/workflows/build.yml"
   workflow_dispatch:
 
@@ -22,6 +26,7 @@ env:
   IMG_SCAD: ghcr.io/donnels/openscad:main
   IMG_PUML: ghcr.io/donnels/plantuml:main
   IMG_ADOC: ghcr.io/donnels/asciidoc:main
+  IMG_KICAD: ghcr.io/inti-cmnb/kicad_auto:ki8
 
 jobs:
   render:
@@ -61,6 +66,18 @@ jobs:
           done
           [[ "$DEBUG" == "true" ]] && echo "=== Generated PlantUML files ==="
           [[ "$DEBUG" == "true" ]] && find . \( -name "*.svg" -o -name "*.png" \) ! -path "./docs/*"
+      - name: Render KiCad
+        run: |
+          [[ "$DEBUG" == "true" ]] && echo "=== Finding KiCad projects with kibot.yaml ==="
+          [[ "$DEBUG" == "true" ]] && find . -name "kibot.yaml"
+          for cfg in $(find . -name "kibot.yaml"); do
+            dir=$(dirname "$cfg")
+            [[ "$DEBUG" == "true" ]] && echo "Rendering KiCad project in: $dir"
+            docker run --rm -v "$PWD":/w -w "/w/$dir" "$IMG_KICAD" \
+              kibot -c kibot.yaml
+          done
+          [[ "$DEBUG" == "true" ]] && echo "=== Generated KiCad outputs ==="
+          [[ "$DEBUG" == "true" ]] && find . -name "kibot_errors.filter" -o -name "*.pdf" -o -name "*.svg" | grep -v docs/
       - name: Build AsciiDoc
         run: |
           mkdir -p docs
@@ -83,6 +100,7 @@ jobs:
           [[ "$DEBUG" == "true" ]] && echo "=== Adding all generated files ==="
           find . \( -name "*.stl" -o -name "*.png" \) ! -path "./docs/*" | xargs -r git add
           find . \( -name "*.svg" \) ! -path "./docs/*" | xargs -r git add
+          find kicad-hello-world -name "*.pdf" -o -name "*.svg" -o -name "*.txt" -o -name "*.pos" | xargs -r git add
           git add docs/
           [[ "$DEBUG" == "true" ]] && echo "=== Git status ==="
           [[ "$DEBUG" == "true" ]] && git status

@@ -7,6 +7,12 @@
 
 USB-C rechargeable LiPo replacement for the AIWA PB-3/PB-4 battery pack.
 
+[NOTE]
+====
+This is a personal project, not affiliated with or endorsed by AIWA.
+This is my first outing with KICAD and PCB design; forgive stupidity and ignorance.
+====
+
 == Specs
 
 |===

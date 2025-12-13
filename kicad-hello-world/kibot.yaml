@@ -1,0 +1,65 @@
+kibot:
+  version: 1
+
+preflight:
+  run_erc: true
+  run_drc: true
+  check_zone_fills: true
+  ignore_unconnected: false
+
+outputs:
+  - name: schematic_pdf
+    comment: Schematic PDF
+    type: pdf_sch_print
+    dir: .
+    options:
+      output: '%f-schematic.%x'
+
+  - name: schematic_svg
+    comment: Schematic SVG
+    type: svg_sch_print
+    dir: .
+    options:
+      output: '%f-schematic.%x'
+
+  - name: pcb_top_svg
+    comment: PCB Top View SVG
+    type: svg_pcb_print
+    dir: .
+    options:
+      output: '%f-pcb-top.%x'
+      layers:
+        - layer: F.Cu
+        - layer: F.SilkS
+        - layer: Edge.Cuts
+
+  - name: pcb_bottom_svg
+    comment: PCB Bottom View SVG
+    type: svg_pcb_print
+    dir: .
+    options:
+      output: '%f-pcb-bottom.%x'
+      layers:
+        - layer: B.Cu
+        - layer: B.SilkS
+        - layer: Edge.Cuts
+
+  - name: gerbers
+    comment: Gerber files
+    type: gerber
+    dir: gerbers
+    layers:
+      - copper
+      - Edge.Cuts
+
+  - name: drill
+    comment: Drill files
+    type: excellon
+    dir: gerbers
+
+  - name: position
+    comment: Pick and place
+    type: position
+    dir: gerbers
+    options:
+      format: CSV
