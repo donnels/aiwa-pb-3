@@ -74,7 +74,7 @@ jobs:
             dir=$(dirname "$cfg")
             [[ "$DEBUG" == "true" ]] && echo "Rendering KiCad project in: $dir"
             docker run --rm -v "$PWD":/w -w "/w/$dir" "$IMG_KICAD" \
-              kibot -c kibot.yaml
+              kibot -c kibot.yaml -s all
           done
           [[ "$DEBUG" == "true" ]] && echo "=== Generated KiCad outputs ==="
           [[ "$DEBUG" == "true" ]] && find . -name "kibot_errors.filter" -o -name "*.pdf" -o -name "*.svg" | grep -v docs/
