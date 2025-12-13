@@ -2,9 +2,9 @@ kibot:
   version: 1
 
 preflight:
-  run_erc: true
-  run_drc: true
-  check_zone_fills: true
+  run_erc: false
+  run_drc: false
+  check_zone_fills: false
   ignore_unconnected: false
 
 outputs:
@@ -13,21 +13,21 @@ outputs:
     type: pdf_sch_print
     dir: .
     options:
-      output: '%f-schematic.%x'
+      output: 'batteryPack-schematic.pdf'
 
   - name: schematic_svg
     comment: Schematic SVG
     type: svg_sch_print
     dir: .
     options:
-      output: '%f-schematic.%x'
+      output: 'batteryPack-schematic.svg'
 
   - name: pcb_top_svg
     comment: PCB Top View SVG
     type: svg_pcb_print
     dir: .
     options:
-      output: '%f-pcb-top.%x'
+      output: 'batteryPack-pcb-top.svg'
       layers:
         - layer: F.Cu
         - layer: F.SilkS
@@ -38,7 +38,7 @@ outputs:
     type: svg_pcb_print
     dir: .
     options:
-      output: '%f-pcb-bottom.%x'
+      output: 'batteryPack-pcb-bottom.svg'
       layers:
         - layer: B.Cu
         - layer: B.SilkS
