@@ -19,12 +19,17 @@ Single `render` job, sequential steps, one commit.
 jobs:
   render:
     steps:
+      - Render KiCad → *.pdf, *.svg, *.step, *.glb, *-render-*.png
+      - Convert board GLB → *.stl (for the OpenSCAD fit-check)
       - Render OpenSCAD → *.stl, *.png
       - Render PlantUML → *.svg, *.png
-      - Render KiCad → *.pdf, *.svg
       - Build AsciiDoc → docs/*.{html,pdf}
       - Commit all outputs
 ----
+
+KiCad now runs first: `openscad/pb3-fit-check.scad` imports a board STL
+converted from the KiCad STEP/GLB export, so that conversion must exist
+before the OpenSCAD step runs.
 
 == Alternatives
 
@@ -69,7 +74,7 @@ jobs:
 
 == Why Not Jobs
 
-Jobs = parallelism or isolation. This is a **pipeline**: OpenSCAD → PlantUML → KiCad → AsciiDoc. Dependencies are linear. Output files feed next step. One job, shared filesystem, done.
+Jobs = parallelism or isolation. This is a **pipeline**: KiCad → OpenSCAD → PlantUML → AsciiDoc. Dependencies are linear. Output files feed next step. One job, shared filesystem, done.
 
 == Pattern
 

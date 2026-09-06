@@ -1,0 +1,111 @@
+= Circuit Design & Emulation
+ifndef::flag-book[]
+:toc: right
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+endif::[]
+ifdef::flag-book[]
+:imagesdir-save: {imagesdir}
+:imagesdir: kicad
+endif::[]
+
+`pb3-replacement.kicad_pro` (with its `.kicad_sch`/`.kicad_pcb`) is the
+living electrical design for the replacement pack: a 68×17.8×8mm board that
+takes USB-C 5V in and delivers a regulated 2.0-2.4V deck rail from a 1S
+LiPo cell.
+
+== Component Selection
+
+Each part below was picked from the candidates surveyed in
+`research/README.adoc`, chosen for SOT-23-6 footprints (small enough for
+the enclosure) and for matching the behavior already proven on the clone
+teardown boards.
+
+CN3058E (charger)::
+Linear Li-ion/LiPo charge management IC. Takes the USB-C 5V rail, applies
+CC/CV charging to the cell, and needs only a handful of external passives
+— important with almost no board area to spare.
+
+DW01A + FS8205A (protection)::
+Discrete battery management system on the cell tabs. DW01A senses cell
+voltage and current; FS8205A is the dual N-MOSFET it drives to cut the
+path on overvoltage, undervoltage, or overcurrent/short. Chosen instead of
+trusting the charger or buck stage alone, so a fault anywhere downstream
+still leaves the cell protected.
+
+Buck regulator (TPS61023-class)::
+Steps the ~3.7V cell rail down to the 2.0-2.4V the deck expects. The
+feedback resistor sets the output: 100kΩ gives the PB-S5 clone's default
+2.4V; the forum's 120kΩ swap gives 2.1V. Extrapolating those two points
+puts 2.0V at roughly 130kΩ — an unverified estimate, not a datasheet
+value. `pb3-replacement.cir` models 2.0V directly; confirm the real
+resistor against the vendor datasheet and bench measurement before
+fabrication.
+
+OVP clamp (Zener/TVS)::
+Added on top of what the clone boards do: clamps the output below 3V if
+the buck stage fails, so the deck never sees the raw 3.7V cell rail.
+
+== Circuit Emulation
+
+`pb3-replacement.cir` is a system-level ngspice model of the proposed
+pack. It approximates the CN3058E charger, 1S LiPo, DW01A/FS8205A
+protection, 2.0V buck regulator, 200mA deck load, and output clamp with
+behavioral sources. It is useful for checking operating points and
+assumptions. It does not validate the real IC compensation network,
+stability, thermal behavior, or the unverified AIWA connector pinout.
+
+Run it with ngspice:
+
+[source,bash]
+----
+ngspice -b -o pb3-replacement.log pb3-replacement.cir
+grep -E 'vout_|load_current|vbat' pb3-replacement.log
+----
+
+Expected results: ~1.98V at the deck output, 198mA load current, 3.7V
+at the idealized cell. The model hard-codes a 2.0V buck target — it
+does not use the ~130kΩ feedback-resistor estimate above, which is for
+the real IC's feedback divider, not this behavioral model. Verify with
+vendor SPICE models and bench measurements before connecting an AIWA
+deck. This is the electrical half of the compliance check; the
+mechanical half is the OpenSCAD fit check.
+
+== 3D Exports & Renders
+
+Alongside the fabrication outputs (gerbers, drill, position files),
+`kicad-cli` (KiCad 9, `pcb export`/`pcb render`) produces:
+
+* `pb3-replacement.step` — STEP solid model, for any MCAD tool.
+* `pb3-replacement.glb` — binary glTF, converted to
+  `results/cad/pb3-replacement-board.stl` by the `containers/trimesh`
+  container (rescale, re-axis, re-origin — see its README).
+* `pb3-replacement-render-top.png` / `-render-iso.png` — photorealistic
+  raytraced renders of the finished board.
+
+.Isometric render of the replacement board
+image::pb3-replacement-render-iso.png[]
+
+The STL feeds `openscad/pb3-fit-check.scad` — see "Mechanical Design
+(OpenSCAD)" for the fit-check render.
+
+== Free Training & Docs
+
+* https://github.com/KiCad/kicad-source-mirror[KiCad source (GitHub mirror)] —
+  official KiCad source code; the repository README links to the free
+  documentation site.
+* https://github.com/joanbono/awesome-kicad[awesome-kicad] — curated list
+  of free KiCad tutorials, plugins, and libraries.
+* https://github.com/ngspice/ngspice[ngspice] — official circuit
+  simulator source and documentation used by "Circuit Emulation" above.
+* https://github.com/kitspace/awesome-electronics[awesome-electronics] —
+  curated list of free datasheets, application notes, and component
+  selection references, useful background for "Component Selection".
+* https://github.com/KhronosGroup/glTF[glTF specification] — the format
+  behind the `.glb` export used for the mechanical fit-check.
+
+//END OF DOC
+ifdef::flag-book[]
+:imagesdir: {imagesdir-save}
+endif::[]

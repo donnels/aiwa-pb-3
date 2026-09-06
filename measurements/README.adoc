@@ -59,6 +59,13 @@ image::IMG_9384.jpeg[]
 .battery holder inside view
 image::IMG_9385.jpeg[]
 
+== Free Training & Docs
+
+* https://github.com/ad-si/awesome-3d-printing[awesome-3d-printing] —
+  curated list of free 3D-printing tools and guides, including the print
+  tolerance/calibration references used to trust these caliper
+  measurements against a printed test fit.
+
 //END OF DOC
 ifdef::flag-book[]
 :imagesdir: {imagesdir-save}

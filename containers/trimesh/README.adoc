@@ -1,0 +1,26 @@
+= trimesh Container
+
+`python:3.12-slim` + `trimesh` + `numpy`. Converts the KiCad board GLB
+export to an OpenSCAD-ready STL, for the mechanical fit-check described
+in `openscad/README.adoc`.
+
+== Why
+
+glTF is meters, Y-up. OpenSCAD is millimetres, Z-up. `convert-glb-to-stl.py`
+rescales, rotates, and re-origins the board so it drops into an
+OpenSCAD `import()` at `[0,0,0]` matching the real board footprint.
+
+== Build & Run
+
+[source,bash]
+----
+docker build -t aiwa-pb3-trimesh containers/trimesh
+docker run --rm -v "$PWD":/w -w /w aiwa-pb3-trimesh \
+  /w/containers/trimesh/convert-glb-to-stl.py \
+  /w/results/kicad/pb3-replacement.glb /w/results/cad/pb3-replacement-board.stl
+----
+
+== Files
+
+* `Dockerfile` — the image.
+* `convert-glb-to-stl.py` — the conversion script, run as the container's entrypoint target.

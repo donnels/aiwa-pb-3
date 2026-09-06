@@ -17,6 +17,46 @@ image::pb3-pack.png[]
 
 link:pb3-pack.stl[Download STL]
 
+This is the print-fit gauge: a solid block matching the measured
+68×17.8×8mm envelope, embossed with a version marker. 3D print it and try
+it in the original PB-3 housing before trusting any of the OpenSCAD or
+KiCad dimensions further downstream.
+
+== pb3-fit-check
+
+.`pb3-fit-check`
+image::pb3-fit-check.png[]
+
+link:pb3-fit-check.stl[Download STL]
+
+This is the digital half of the same fit check. The measured envelope
+(`include-pb3-envelope.scad`, shared with `pb3-pack`) renders transparent
+around the real PB-3 board, imported from the KiCad STEP/GLB export
+converted by `containers/trimesh` (see "Circuit Design & Emulation"). A
+board that pokes through the envelope walls means the PCB outline needs
+to shrink; a board that sits fully inside confirms the electrical design
+fits the envelope `pb3-pack` proved.
+
+Full physical-compliance chain, measure to board:
+
+. Measure the original pack (`measurements/README.adoc`).
+. Model the envelope in OpenSCAD (`pb3-pack`, above).
+. Print `pb3-pack.stl` and test it in the real PB-3 housing.
+. Lay out the PCB in KiCad to the same envelope.
+. Import the KiCad board STL into `pb3-fit-check` and confirm it still
+  fits, catching any drift before ordering boards.
+
+`include-pb3-envelope.scad` holds the shared envelope dimensions/module.
+Per link:../adr/adr-004-file-extension-conventions.adoc[ADR-004],
+`include-*.scad` files are libraries, skipped by the CI render loop.
+
+== Free Training & Docs
+
+* https://github.com/openscad/openscad[OpenSCAD source & manual links (GitHub)] —
+  official project repository; the README links to the full language
+  reference.
+* https://github.com/dahoo/awesome-openscad[awesome-openscad] — curated
+  list of free OpenSCAD tutorials, libraries, and example models.
 
 ifdef::flag-book[]
 :imagesdir: {imagesdir-save}

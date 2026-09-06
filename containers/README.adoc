@@ -1,0 +1,13 @@
+= Containers
+
+Every render/build step in the `Build` workflow runs in a container. No
+step installs tools directly on the runner. This keeps builds
+reproducible and the runner disposable.
+
+* `ngspice/` — circuit simulator, built locally by the workflow.
+* `trimesh/` — GLB→STL board conversion, built locally by the workflow.
+
+KiCad, OpenSCAD, PlantUML, and AsciiDoc use prebuilt images
+(`ghcr.io/inti-cmnb/kicad_auto`, `ghcr.io/donnels/openscad`,
+`ghcr.io/donnels/plantuml`, `ghcr.io/donnels/asciidoc`) instead of local
+Dockerfiles — no project-specific tooling needed on top of them.
