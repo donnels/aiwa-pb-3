@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>Circuit emulation</title>
+<title>aiwa pb-3 battery replacement</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -436,20 +436,1534 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
 </head>
-<body class="article">
+<body class="article toc2 toc-right">
 <div id="header">
+<h1>aiwa pb-3 battery replacement</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_specs">1. Specs</a></li>
+<li><a href="#_safety">2. Safety</a></li>
+<li><a href="#_how_this_book_is_built">3. How This Book Is Built</a></li>
+<li><a href="#_step_1_research">4. Step 1: Research</a>
+<ul class="sectlevel2">
+<li><a href="#_research">4.1. Research</a>
+<ul class="sectlevel3">
+<li><a href="#_primary_source">4.1.1. Primary Source</a></li>
+<li><a href="#_original_pb_3_pack">4.1.2. Original PB-3 Pack</a></li>
+<li><a href="#_pb_s5_clone_board_laowang_diy">4.1.3. PB-S5 Clone Board (LAOWANG_DIY)</a></li>
+<li><a href="#_component_datasheets">4.1.4. Component Datasheets</a></li>
+<li><a href="#_what_this_enabled">4.1.5. What This Enabled</a></li>
+<li><a href="#_free_training_docs">4.1.6. Free Training &amp; Docs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_step_2_measurements">5. Step 2: Measurements</a>
+<ul class="sectlevel2">
+<li><a href="#_measuring_the_pb_3_and_context">5.1. Measuring the PB-3 and context</a>
+<ul class="sectlevel3">
+<li><a href="#_measurement_photos">5.1.1. Measurement Photos</a>
+<ul class="sectlevel4">
+<li><a href="#_original_pb_3_sla_pack">5.1.1.1. Original PB-3 SLA pack</a>
+<ul class="sectlevel5">
+<li><a href="#_width_67_73_67_75">5.1.1.1.1. Width [67.73, 67.75]</a></li>
+<li><a href="#_height_8_19_8_12">5.1.1.1.2. Height [8.19, 8.12]</a></li>
+<li><a href="#_depth_17_65_17_55">5.1.1.1.3. Depth [17.65, 17.55]</a></li>
+</ul>
+</li>
+<li><a href="#_battery_holder">5.1.1.2. Battery holder</a></li>
+</ul>
+</li>
+<li><a href="#_free_training_docs_2">5.1.2. Free Training &amp; Docs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_step_3_design_notebook">6. Step 3: Design Notebook</a>
+<ul class="sectlevel2">
+<li><a href="#_pb_3_reverse_engineering_notebook">6.1. PB-3 Reverse-Engineering Notebook</a>
+<ul class="sectlevel3">
+<li><a href="#_objective">6.1.1. Objective</a></li>
+<li><a href="#_what_is_known_today">6.1.2. What is Known Today</a></li>
+<li><a href="#_research_findings">6.1.3. Research Findings</a>
+<ul class="sectlevel4">
+<li><a href="#_stereo2go_thread_highlights">6.1.3.1. Stereo2Go thread highlights</a></li>
+<li><a href="#_derived_requirements">6.1.3.2. Derived Requirements</a></li>
+</ul>
+</li>
+<li><a href="#_host_deck_reality">6.1.4. Host Deck Reality</a></li>
+<li><a href="#_research_to_do_list">6.1.5. Research To-Do List</a></li>
+<li><a href="#_proposed_replacement_strategy">6.1.6. Proposed Replacement Strategy</a></li>
+<li><a href="#_electrical_block_requirements">6.1.7. Electrical Block Requirements</a></li>
+<li><a href="#_mechanical_considerations">6.1.8. Mechanical Considerations</a></li>
+<li><a href="#_living_cad_automation">6.1.9. Living CAD + Automation</a></li>
+<li><a href="#_reverse_engineering_workflow">6.1.10. Reverse-Engineering Workflow</a></li>
+<li><a href="#_future_kicad_artifacts">6.1.11. Future KiCad Artifacts</a></li>
+<li><a href="#_validation_test_plan">6.1.12. Validation &amp; Test Plan</a></li>
+<li><a href="#_open_questions">6.1.13. Open Questions</a></li>
+<li><a href="#_next_immediate_steps">6.1.14. Next Immediate Steps</a></li>
+<li><a href="#_free_training_docs_3">6.1.15. Free Training &amp; Docs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_step_4_kicad_hello_world">7. Step 4: KiCad Hello World</a>
+<ul class="sectlevel2">
+<li><a href="#_battery_pack_kicad_hello_world">7.1. Battery Pack - KiCad Hello World</a>
+<ul class="sectlevel3">
+<li><a href="#_attribution">7.1.1. Attribution</a></li>
+<li><a href="#_circuit">7.1.2. Circuit</a></li>
+<li><a href="#_getting_started_noobsme">7.1.3. Getting Started (Noobs/me)</a>
+<ul class="sectlevel4">
+<li><a href="#_install_kicad_on_steam_deck">7.1.3.1. Install KiCad on Steam Deck</a></li>
+<li><a href="#_opening_this_project">7.1.3.2. Opening This Project</a></li>
+<li><a href="#_what_to_look_out_for">7.1.3.3. What to Look Out For</a></li>
+<li><a href="#_learning_resources">7.1.3.4. Learning Resources</a></li>
+</ul>
+</li>
+<li><a href="#_pcb">7.1.4. PCB</a></li>
+<li><a href="#_outputs">7.1.5. Outputs</a>
+<ul class="sectlevel4">
+<li><a href="#_schematic">7.1.5.1. Schematic</a></li>
+<li><a href="#_pcb_top_view">7.1.5.2. PCB Top View</a></li>
+<li><a href="#_pcb_bottom_view">7.1.5.3. PCB Bottom View</a></li>
+</ul>
+</li>
+<li><a href="#_shit_happens_troubleshooting_cicd_setup">7.1.6. Shit Happens: Troubleshooting CI/CD Setup</a>
+<ul class="sectlevel4">
+<li><a href="#_github_raw_urls_returning_404">7.1.6.1. GitHub raw URLs returning 404</a></li>
+<li><a href="#_github_pages_deployment_404">7.1.6.2. GitHub Pages deployment 404</a></li>
+<li><a href="#_kibot_not_generating_gerbersdrillposition_files">7.1.6.3. KiBot not generating gerbers/drill/position files</a></li>
+</ul>
+</li>
+<li><a href="#_references">7.1.7. References</a>
+<ul class="sectlevel4">
+<li><a href="#_minimal_examples">7.1.7.1. Minimal Examples</a></li>
+<li><a href="#_tutorials">7.1.7.2. Tutorials</a></li>
+</ul>
+</li>
+<li><a href="#_free_training_docs_4">7.1.8. Free Training &amp; Docs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_step_5_mechanical_design_openscad">8. Step 5: Mechanical Design (OpenSCAD)</a>
+<ul class="sectlevel2">
+<li><a href="#_openscad_renders">8.1. OpenSCAD Renders</a>
+<ul class="sectlevel3">
+<li><a href="#_pb3_pack">8.1.1. pb3-pack</a></li>
+<li><a href="#_pb3_fit_check">8.1.2. pb3-fit-check</a></li>
+<li><a href="#_free_training_docs_5">8.1.3. Free Training &amp; Docs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_step_6_circuit_design_emulation_kicad">9. Step 6: Circuit Design &amp; Emulation (KiCad)</a>
+<ul class="sectlevel2">
+<li><a href="#_circuit_design_emulation">9.1. Circuit Design &amp; Emulation</a>
+<ul class="sectlevel3">
+<li><a href="#_component_selection">9.1.1. Component Selection</a></li>
+<li><a href="#_circuit_emulation">9.1.2. Circuit Emulation</a></li>
+<li><a href="#_3d_exports_renders">9.1.3. 3D Exports &amp; Renders</a></li>
+<li><a href="#_free_training_docs_6">9.1.4. Free Training &amp; Docs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_step_7_architecture_diagrams">10. Step 7: Architecture Diagrams</a>
+<ul class="sectlevel2">
+<li><a href="#_plantuml_diagrams">10.1. PlantUML Diagrams</a>
+<ul class="sectlevel3">
+<li><a href="#_pb3architecture">10.1.1. PB3Architecture</a></li>
+<li><a href="#_free_training_docs_7">10.1.2. Free Training &amp; Docs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_step_8_results_compliance">11. Step 8: Results &amp; Compliance</a>
+<ul class="sectlevel2">
+<li><a href="#_results_compliance">11.1. Results &amp; Compliance</a>
+<ul class="sectlevel3">
+<li><a href="#_physical_compliance">11.1.1. Physical Compliance</a></li>
+<li><a href="#_electrical_compliance">11.1.2. Electrical Compliance</a></li>
+<li><a href="#_toolchain_proof">11.1.3. Toolchain Proof</a></li>
+<li><a href="#_free_training_docs_8">11.1.4. Free Training &amp; Docs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_architecture_decisions">12. Architecture Decisions</a>
+<ul class="sectlevel2">
+<li><a href="#_architecture_decision_records">12.1. Architecture Decision Records</a>
+<ul class="sectlevel3">
+<li><a href="#_philosophy">12.1.1. Philosophy</a></li>
+<li><a href="#_what">12.1.2. What</a></li>
+<li><a href="#_why">12.1.3. Why</a></li>
+<li><a href="#_format">12.1.4. Format</a></li>
+<li><a href="#_index">12.1.5. Index</a>
+<ul class="sectlevel4">
+<li><a href="#_adr_001_commit_generated_artifacts_next_to_source">12.1.5.1. ADR-001: Commit Generated Artifacts Next to Source</a>
+<ul class="sectlevel5">
+<li><a href="#_context">12.1.5.1.1. Context</a></li>
+<li><a href="#_decision">12.1.5.1.2. Decision</a></li>
+<li><a href="#_alternatives">12.1.5.1.3. Alternatives</a></li>
+<li><a href="#_implications">12.1.5.1.4. Implications</a></li>
+<li><a href="#_files_affected">12.1.5.1.5. Files Affected</a></li>
+</ul>
+</li>
+<li><a href="#_adr_002_use_text_based_cad_and_documentation_formats">12.1.5.2. ADR-002: Use Text-Based CAD and Documentation Formats</a>
+<ul class="sectlevel5">
+<li><a href="#_context_2">12.1.5.2.1. Context</a></li>
+<li><a href="#_decision_2">12.1.5.2.2. Decision</a></li>
+<li><a href="#_alternatives_2">12.1.5.2.3. Alternatives</a></li>
+<li><a href="#_implications_2">12.1.5.2.4. Implications</a></li>
+<li><a href="#_examples">12.1.5.2.5. Examples</a></li>
+<li><a href="#_tools_used">12.1.5.2.6. Tools Used</a></li>
+</ul>
+</li>
+<li><a href="#_adr_003_use_github_actions_for_all_build_automation">12.1.5.3. ADR-003: Use GitHub Actions for All Build Automation</a>
+<ul class="sectlevel5">
+<li><a href="#_context_3">12.1.5.3.1. Context</a></li>
+<li><a href="#_decision_3">12.1.5.3.2. Decision</a></li>
+<li><a href="#_alternatives_3">12.1.5.3.3. Alternatives</a></li>
+<li><a href="#_implications_3">12.1.5.3.4. Implications</a></li>
+<li><a href="#_why_not_magic">12.1.5.3.5. Why Not Magic</a></li>
+<li><a href="#_workflow_structure">12.1.5.3.6. Workflow Structure</a></li>
+<li><a href="#_traceability_example">12.1.5.3.7. Traceability Example</a></li>
+<li><a href="#_living_documentation">12.1.5.3.8. Living Documentation</a></li>
+<li><a href="#_tools_vs_process">12.1.5.3.9. Tools vs Process</a></li>
+</ul>
+</li>
+<li><a href="#_adr_004_file_extension_conventions_for_main_vs_include_files">12.1.5.4. ADR-004: File Extension Conventions for Main vs Include Files</a>
+<ul class="sectlevel5">
+<li><a href="#_context_4">12.1.5.4.1. Context</a></li>
+<li><a href="#_decision_4">12.1.5.4.2. Decision</a></li>
+<li><a href="#_alternatives_4">12.1.5.4.3. Alternatives</a></li>
+<li><a href="#_implications_4">12.1.5.4.4. Implications</a></li>
+<li><a href="#_examples_2">12.1.5.4.5. Examples</a></li>
+<li><a href="#_directory_structure">12.1.5.4.6. Directory Structure</a></li>
+<li><a href="#_ci_impact">12.1.5.4.7. CI Impact</a></li>
+</ul>
+</li>
+<li><a href="#_adr_005_conditional_imagesdir_management_for_book_assembly">12.1.5.5. ADR-005: Conditional imagesdir Management for Book Assembly</a>
+<ul class="sectlevel5">
+<li><a href="#_context_5">12.1.5.5.1. Context</a></li>
+<li><a href="#_decision_5">12.1.5.5.2. Decision</a></li>
+<li><a href="#_alternatives_5">12.1.5.5.3. Alternatives</a></li>
+<li><a href="#_implications_5">12.1.5.5.4. Implications</a></li>
+<li><a href="#_pattern">12.1.5.5.5. Pattern</a></li>
+<li><a href="#_files_using_pattern">12.1.5.5.6. Files Using Pattern</a></li>
+<li><a href="#_why_saverestore">12.1.5.5.7. Why Save/Restore</a></li>
+</ul>
+</li>
+<li><a href="#_adr_006_single_job_render_pipeline">12.1.5.6. ADR-006: Single Job Render Pipeline</a>
+<ul class="sectlevel5">
+<li><a href="#_context_6">12.1.5.6.1. Context</a></li>
+<li><a href="#_decision_6">12.1.5.6.2. Decision</a></li>
+<li><a href="#_alternatives_6">12.1.5.6.3. Alternatives</a></li>
+<li><a href="#_implications_6">12.1.5.6.4. Implications</a></li>
+<li><a href="#_why_not_jobs">12.1.5.6.5. Why Not Jobs</a></li>
+<li><a href="#_pattern_2">12.1.5.6.6. Pattern</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_free_training_docs_9">12.1.6. Free Training &amp; Docs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_credits">13. Credits</a></li>
+<li><a href="#_containerized_builds">14. Containerized builds</a></li>
+</ul>
+</div>
 </div>
 <div id="content">
-<div class="sect1">
-<h2 id="_circuit_emulation">Circuit emulation</h2>
+<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><code>pb3-replacement.cir</code> is a system-level ngspice model of the proposed pack.
-It approximates the TP4056 charger, 1S LiPo, DW01A/FS8205A protection,
-2.0 V buck regulator, 200 mA deck load, and output clamp with behavioral
-sources. It is useful for checking operating points and assumptions. It does
-not validate the real IC compensation network, stability, thermal behavior,
-or the unverified AIWA connector pinout.</p>
+<p>USB-C rechargeable LiPo replacement for the AIWA PB-3/PB-4 battery pack.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This is a personal project, not affiliated with or endorsed by AIWA.
+This is my first outing with KICAD and PCB design; forgive stupidity and ignorance.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_specs">1. Specs</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parameter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Original PB-3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This Design</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Chemistry</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lead-acid</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LiPo</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cell voltage</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2V</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3.7V nominal</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Output voltage</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2V</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2.0V (adjustable 2.0-2.4V)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Capacity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">470mAh</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">500-1500mAh</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Charging</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Proprietary</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">USB-C 5V</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_safety">2. Safety</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Buck DC-DC steps 3.7V → 2.4V</p>
+</li>
+<li>
+<p><strong>OVP (Zener/TVS)</strong> clamps output &lt;3V if buck fails</p>
+</li>
+<li>
+<p>DW01A+FS8205A BMS: OV/UV/OC protection</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_how_this_book_is_built">3. How This Book Is Built</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This README is a step-by-step training example: it walks from raw
+research to a working, physically- and electrically-compliant battery
+pack, including the toolchain checks done along the way. Every step below
+is its own <code>README.adoc</code> in its own directory, assembled here with
+<code>include::</code> and <code>leveloffset</code> — nothing is a link, so the whole story
+reads top to bottom in one document.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Research</strong> — collect teardown photos, forum knowledge, and IC datasheets.</p>
+</li>
+<li>
+<p><strong>Measurements</strong> — caliper the original pack and derive the mechanical envelope.</p>
+</li>
+<li>
+<p><strong>Design Notebook</strong> — turn research and measurements into requirements.</p>
+</li>
+<li>
+<p><strong>KiCad Hello World</strong> — prove the KiCad → KiBot → CI toolchain on a known-good project.</p>
+</li>
+<li>
+<p><strong>Mechanical Design</strong> — OpenSCAD fit-check model of the envelope.</p>
+</li>
+<li>
+<p><strong>Circuit Design &amp; Emulation</strong> — KiCad schematic, component selection, ngspice model.</p>
+</li>
+<li>
+<p><strong>Architecture Diagrams</strong> — PlantUML system diagrams.</p>
+</li>
+<li>
+<p><strong>Results &amp; Compliance</strong> — generated evidence that the design fits and works.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_1_research">4. Step 1: Research</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_research">4.1. Research</h3>
+<div class="paragraph">
+<p>Before any CAD or schematic work started, this project collected evidence:
+teardown photos of the original PB-3, teardown photos of a working
+Aliexpress clone, a forum thread archive, and the datasheets for the
+candidate ICs. Everything downstream — measurements, mechanical envelope,
+component selection, circuit emulation — traces back to a file in this
+directory.</p>
+</div>
+<div class="sect3">
+<h4 id="_primary_source">4.1.1. Primary Source</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>link:Rechargeable battery replacement for AIWA PB-3 _ PB-4 _ Stereo2Go forums.html[Stereo2Go forum thread]
+(offline archive) — "Rechargeable battery replacement for AIWA PB-3 / PB-4"
+(Rossoe et al., 2023-2025). Original:
+<a href="https://stereo2go.com/forums/threads/rechargeable-battery-replacement-for-aiwa-pb-3-pb-4.9025/" class="bare">https://stereo2go.com/forums/threads/rechargeable-battery-replacement-for-aiwa-pb-3-pb-4.9025/</a>.
+Source for the clone teardown photos, the LAOWANG_DIY PCB reference, the
+100kΩ→120kΩ resistor mod for voltage selection, and community pricing/part
+numbers.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_original_pb_3_pack">4.1.2. Original PB-3 Pack</h4>
+<div class="imageblock">
+<div class="content">
+<img src="research/PB-3a.jpg" alt="PB 3a">
+</div>
+<div class="title">Figure 1. PB-3 label: DC 2V, 900mAh, Li-Polymer, rechargeable, two-pin blade</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="research/PB-3g.jpg" alt="PB 3g">
+</div>
+<div class="title">Figure 2. PB-3 case detail: USB-C port molded into a 3D-printed shell</div>
+</div>
+<div class="paragraph">
+<p>The original pack&#8217;s own label already reveals the mismatch this project
+resolves: it is printed "2V 900mAh Li-Polymer" although the AIWA-branded
+factory part is a 2V sealed lead-acid (SLA) cell. The label documents the
+<strong>replacement&#8217;s</strong> chemistry and rating, not the OEM part. Additional
+angles and connector close-ups are archived as <code>PB-3b.jpg</code>–<code>PB-3e.jpg</code> and
+<code>PB3-f.jpg</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_pb_s5_clone_board_laowang_diy">4.1.3. PB-S5 Clone Board (LAOWANG_DIY)</h4>
+<div class="imageblock">
+<div class="content">
+<img src="research/PB-S5a.jpg" alt="PB S5a">
+</div>
+<div class="title">Figure 3. LAOWANG_DIY PCB with LiPo pouch cell attached, marked C7/C4 pads</div>
+</div>
+<div class="paragraph">
+<p>The PB-S5 shares its PCB with the PB-3 clone. Teardown photos
+(<code>PB-S5b.jpg</code>–<code>PB-S5k.jpg</code>) show the flat LiPo pouch bonded directly to the
+board, the charger/protection/buck ICs in SOT-23-6 packages, and the
+feedback resistor referenced in the forum thread&#8217;s voltage-selection mod.
+<code>upload_2023-10-1_13-9-23.jpeg</code> is an additional forum upload showing the
+assembled clone pack next to a host deck.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_component_datasheets">4.1.4. Component Datasheets</h4>
+<div class="paragraph">
+<p>Three IC families recur across the clone teardowns and this project&#8217;s own
+design in <code>kicad/README.adoc</code>. Each datasheet is archived here so the
+component choice can be checked against real electrical limits instead of
+guesswork.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">CN3058E — LiPo linear charger</dt>
+<dd>
+<p><code>1811141710_Consonance-Elec-CN3058E_C83278.pdf</code>. Single-cell Li-ion/LiPo
+linear charge management IC, SOT-23-6. Takes 5V USB-C input, delivers
+CC/CV charging to the cell, and is the kind of part visible on the clone
+PCB feeding the pouch cell in <code>PB-S5a.jpg</code>. Selected for its small
+footprint and simple external component count (a handful of passives),
+matching the tight 68×17.8×8mm enclosure.</p>
+</dd>
+<dt class="hdlist1">DW01x — battery protection IC</dt>
+<dd>
+<p><code>DW01x-DS-17_EN.pdf</code>. Pairs with a dual N-MOSFET (e.g. FS8205A) to form a
+discrete battery management system: overvoltage, undervoltage, and
+overcurrent/short-circuit cutoff on the cell tabs. Chosen over relying on
+the charger IC alone, so the pack still fails safe if the charger or buck
+stage misbehaves.</p>
+</dd>
+<dt class="hdlist1">TPS61023 — DC-DC regulator</dt>
+<dd>
+<p><code>tps61023.pdf</code>. SOT-23-6 DC-DC IC used to regulate the raw ~3.7V cell rail
+down to the 2.0–2.4V the deck expects, with the feedback resistor pair
+setting the output voltage — a higher resistor lowers the output. The
+forum thread&#8217;s own swap goes 100kΩ (PB-S5 clone&#8217;s 2.4V default) to 120kΩ
+(2.1V); reaching this project&#8217;s 2.0V target extrapolates to a resistor
+above 120kΩ. Its behavioral model stands in for the buck stage in
+<code>kicad/pb3-replacement.cir</code>, described in the circuit design and
+emulation step.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_what_this_enabled">4.1.5. What This Enabled</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>measurements/README.adoc</code> — caliper measurements of the original pack
+and the clone&#8217;s cavity, confirming the 68×17.8×8mm envelope.</p>
+</li>
+<li>
+<p><code>pb3-notes.adoc</code> — the reverse-engineering notebook that turns the above
+into derived requirements (chemistry, capacity target, connector
+compatibility, fault protection).</p>
+</li>
+<li>
+<p><code>kicad/README.adoc</code> — schematic component selection and circuit
+emulation built on the ICs identified here.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_free_training_docs">4.1.6. Free Training &amp; Docs</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://stereo2go.com/forums/threads/rechargeable-battery-replacement-for-aiwa-pb-3-pb-4.9025/">Stereo2Go forum thread</a> —
+the original community teardown and battery-replacement research this
+project builds on.</p>
+</li>
+<li>
+<p><a href="https://github.com/kitspace/awesome-electronics">awesome-electronics</a> —
+curated list of free datasheets, application notes, and component
+references for reading the ICs cited above.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_2_measurements">5. Step 2: Measurements</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_measuring_the_pb_3_and_context">5.1. Measuring the PB-3 and context</h3>
+<div class="paragraph">
+<p>This directory holds every measurement photo, caliper log, and derived dimension used to build the PB-3 models.</p>
+</div>
+<div class="sect3">
+<h4 id="_measurement_photos">5.1.1. Measurement Photos</h4>
+<div class="sect4">
+<h5 id="_original_pb_3_sla_pack">5.1.1.1. Original PB-3 SLA pack</h5>
+<div class="sect5">
+<h6 id="_width_67_73_67_75">5.1.1.1.1. Width [67.73, 67.75]</h6>
+<div class="imageblock">
+<div class="content">
+<img src="measurements/IMG_9373.jpeg" alt="IMG 9373">
+</div>
+<div class="title">Figure 4. Width calipered underside (67.73mm)</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="measurements/IMG_9374.jpeg" alt="IMG 9374">
+</div>
+<div class="title">Figure 5. Width calipered top (67.75mm)</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_height_8_19_8_12">5.1.1.1.2. Height [8.19, 8.12]</h6>
+<div class="imageblock">
+<div class="content">
+<img src="measurements/IMG_9375.jpeg" alt="IMG 9375">
+</div>
+<div class="title">Figure 6. Height calipered side (8.19mm)</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="measurements/IMG_9378.jpeg" alt="IMG 9378">
+</div>
+<div class="title">Figure 7. Height calipered side (8.12mm)</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_depth_17_65_17_55">5.1.1.1.3. Depth [17.65, 17.55]</h6>
+<div class="imageblock">
+<div class="content">
+<img src="measurements/IMG_9376.jpeg" alt="IMG 9376">
+</div>
+<div class="title">Figure 8. Depth calipered top (17.65mm)</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="measurements/IMG_9377.jpeg" alt="IMG 9377">
+</div>
+<div class="title">Figure 9. Depth calipered top (17.55mm)</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_battery_holder">5.1.1.2. Battery holder</h5>
+<div class="imageblock">
+<div class="content">
+<img src="measurements/IMG_9379.jpeg" alt="IMG 9379">
+</div>
+<div class="title">Figure 10. battery holder Depth</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="measurements/IMG_9380.jpeg" alt="IMG 9380">
+</div>
+<div class="title">Figure 11. battery holder Width</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="measurements/IMG_9381.jpeg" alt="IMG 9381">
+</div>
+<div class="title">Figure 12. battery holder Height</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="measurements/IMG_9382.jpeg" alt="IMG 9382">
+</div>
+<div class="title">Figure 13. battery holder inside view</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="measurements/IMG_9383.jpeg" alt="IMG 9383">
+</div>
+<div class="title">Figure 14. battery holder inside view</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="measurements/IMG_9384.jpeg" alt="IMG 9384">
+</div>
+<div class="title">Figure 15. battery holder inside view</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="measurements/IMG_9385.jpeg" alt="IMG 9385">
+</div>
+<div class="title">Figure 16. battery holder inside view</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_free_training_docs_2">5.1.2. Free Training &amp; Docs</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/ad-si/awesome-3d-printing">awesome-3d-printing</a> —
+curated list of free 3D-printing tools and guides, including the print
+tolerance/calibration references used to trust these caliper
+measurements against a printed test fit.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_3_design_notebook">6. Step 3: Design Notebook</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_pb_3_reverse_engineering_notebook">6.1. PB-3 Reverse-Engineering Notebook</h3>
+<div class="sect3">
+<h4 id="_objective">6.1.1. Objective</h4>
+<div class="paragraph">
+<p>Build a present-day PB-3 pack that wakes an AIWA HS-PC202MII. That deck is the primary test bed and end user. The wall wart is missing, the stock SLA is dead, and donor packs only exist as forum photos, so every measurement and assumption comes from images plus clone teardowns.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_what_is_known_today">6.1.2. What is Known Today</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Topic</th>
+<th class="tableblock halign-left valign-top">Details</th>
+<th class="tableblock halign-left valign-top">Confidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mechanical envelope</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Caliper photos show 68 mm × 17.8 mm × 8 mm overall and a 52 mm × 15 mm × 6 mm cell bay. Thin plastic shell, PCB island at the connector end with fuse and ballast resistor.<sup class="footnote" id="_footnote_meas">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High. Need one more sample to average tolerance.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Electrical interface</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Two-pin keyed blade plus PB-4 top pads. Clone pack shows 3.67 V LiPo feeding a converter that outputs 2.41 V on the blades; wiring solders directly to the IC pins.<sup class="footnoteref red" title="Unresolved footnote reference.">[s2g]</sup> HS-PC202MII schematic is unavailable, so reverse engineering relies on photos and continuity tests once the clone arrives.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Low. Need deck-side schematic to confirm charge routine and pinout.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Chemistry and capacity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Original PB-3 spec sheet rated 470 mAh SLA. Community teardowns hint at 700–800 mAh service packs, but clones today ship 500 mAh LiPo with buck down to 2.4 V.<sup class="footnoteref red" title="Unresolved footnote reference.">[s2g]</sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium. Need an unopened OEM cell for proof.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Community precedents</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Baidu and Stereo2Go builds use 3D-printed shells plus Li-ion or LiPo stages, usually without fault clamps or plated blades.<sup class="footnoteref red" title="Unresolved footnote reference.">[s2g]</sup></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High. Reuse photos only with permission.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_research_findings">6.1.3. Research Findings</h4>
+<div class="sect4">
+<h5 id="_stereo2go_thread_highlights">6.1.3.1. Stereo2Go thread highlights</h5>
+<div class="ulist">
+<ul>
+<li>
+<p>AliExpress PB-3/PB-4 USB-C pack runs £14, lists 900 mAh, hides 500 mAh LiPo, spits 3.67 V raw and 2.41 V at the blades.<sup class="footnote" id="_footnote_s2g">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+</li>
+<li>
+<p>Shell size is 68 mm × 17.8 mm × 8 mm. Battery cavity maxes at 52 mm × 15 mm × 6 mm, so 500 mAh is the ceiling until cells improve.<sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+</li>
+<li>
+<p>3D printed case flexes, screw bosses die fast, only top contacts get plating.<sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+</li>
+<li>
+<p>Pack leads land right on converter pins. Bare copper hovers over inductors. No strain relief.<sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+</li>
+<li>
+<p>If the buck converter fails, the deck eats the full 3.7 V. Need a clamp or crowbar that kills the fault.<sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+</li>
+<li>
+<p>PB-S5 board is the same. Swap the marked 100 kΩ resistor for 120 kΩ to hit 2.1 V. 0603 footprint.<sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+</li>
+<li>
+<p>Search phrase "500mAh lipo battery 6mm" finds cells that fit; nothing larger ships yet.<sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+</li>
+<li>
+<p>Wickedkraft sells a pricier variant on eBay. No autopsy yet but likely the same guts.<sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_derived_requirements">6.1.3.2. Derived Requirements</h5>
+<div class="ulist">
+<ul>
+<li>
+<p>USB-C charging. Retire the fragile Aiwa wall wart.<sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+</li>
+<li>
+<p>Runtime must beat the 470 mAh SLA. Target &gt;900 mAh effective at 2V output.<sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+</li>
+<li>
+<p>Respect 68 mm × 17.8 mm × 8 mm overall and 52 mm × 15 mm × 6 mm cell cavity. Keep PB-4 top contacts alive.<sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+</li>
+<li>
+<p>Plate every blade. Reinforce the connector window so owners stop snapping plastic.<sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+</li>
+<li>
+<p>Terminate the cell on pads with relief. No bare wires surfing active parts.<sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+</li>
+<li>
+<p>Add a fault clamp so output never drifts past 2.4 V even if the buck fails. Make PB-S5 vs PB-3 voltage a resistor change.<sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_host_deck_reality">6.1.4. Host Deck Reality</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Runner: AIWA HS-PC202MII. This deck will see every prototype first and is the reason the project exists.</p>
+</li>
+<li>
+<p>Constraints: OEM wall wart is missing, OEM PB-3 pack is dead, and voltage measurements of it are not relevant (0v). Reverse engineering starts with images of clone PCBs.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_research_to_do_list">6.1.5. Research To-Do List</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Imagery</strong>: pull clean teardown photos from Baidu Tieba (<code>随身听 PB-3</code>) and Japanese blogs. Capture rulers or redraw.</p>
+</li>
+<li>
+<p><strong>Connector survey</strong>: borrow a PB-3 pack or host deck. Log pitch, depth, retention, plating.</p>
+</li>
+<li>
+<p><strong>Power sweep</strong>: record float voltage, discharge curve, deck charge current while the donor SLA still lives (if there is one which there isn&#8217;t).</p>
+</li>
+<li>
+<p><strong>Archive</strong>: dump every measurement, photo, and trace into this repo before CAD starts.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_proposed_replacement_strategy">6.1.6. Proposed Replacement Strategy</h4>
+<div class="paragraph">
+<p>SLA is dead weight. Teardown of Aliexpress clone confirms the working approach.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>LiPo 1S (3.7V nominal) + buck to 2.0V</strong></dt>
+<dd>
+<p>+ Matches existing clone design (LAOWANG_DIY board)
++ 500mAh cell → 900mAh effective at 2V output
++ Buck topology (step-down) matches 3.7V→2.0V requirement
++ BMS often on cell flex PCB</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Baseline design: <strong>1S LiPo 500mAh + buck converter regulated at 2.0V</strong> matching the original PB-3 output.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_electrical_block_requirements">6.1.7. Electrical Block Requirements</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Cell: 500mAh LiPo pouch, ~6mm thick, matches 52×15×6mm cavity</p>
+</li>
+<li>
+<p>BMS: On cell flex PCB (clone) or discrete DW01A+FS8205 (our design)</p>
+</li>
+<li>
+<p>Buck: SOT-23-6 IC, 2.2µH inductor, configured for 2.0V output</p>
+</li>
+<li>
+<p>Rfb: 100k = 2.4V, 120k = 2.1V (per Stereo2Go mod). Adjust for 2.0V target.</p>
+</li>
+<li>
+<p>Charge path: USB-C 5V → charger IC (SOT-23-6) → CC/CV 4.2V to cell</p>
+</li>
+<li>
+<p>OVP: Zener/TVS clamp &lt;3V to protect deck if buck fails (improvement over clone)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_mechanical_considerations">6.1.8. Mechanical Considerations</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Stay inside the original outline so the bay latch still works. 0.8 mm FR-4 maximizes cell room.</p>
+</li>
+<li>
+<p>Scan or caliper a donor shell. Build a STEP model for interference checks.</p>
+</li>
+<li>
+<p>Reuse the original keyed blade if possible. If not, design a flex tail or custom edge connector footprint.</p>
+</li>
+<li>
+<p>Rough CAD now lives in <code>openscad/pb3-pack.scad</code> (OpenSCAD). Dimensions trace back to <code>measurements/IMG_9373.jpeg</code>–<code>IMG_9385.jpeg</code> plus the Stereo2Go thread captured in <code>research/</code>.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">First Solid CAD Model</div>
+<div class="content">
+<pre class="highlight"><code class="language-scad" data-lang="scad">// PB-3 battery pack simplification: single solid block matching the outer
+// envelope, embossed with a version marker. See include-pb3-envelope.scad
+// for the shared dimensions (also used by pb3-fit-check.scad).
+include &lt;include-pb3-envelope.scad&gt;
+
+pb3_envelope(emboss_version=true);
+// To test fitting, run OpenSCAD and export to STL. Then 3D print a test block to verify fit in the PB-3 housing.</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="{imagesdir}/openscad/pb3-pack.png" alt="pb3 pack">
+</div>
+<div class="title">Figure 17. output image</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_living_cad_automation">6.1.9. Living CAD + Automation</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>openscad/pb3-pack.scad</code> is the print gauge. Version is embossed on the block so prints always tell you which assumption set they follow.</p>
+</li>
+<li>
+<p><code>kicad/pb3-replacement.kicad_pro</code> (plus <code>.kicad_sch</code>/<code>.kicad_pcb</code>) tracks the electrical build. It is tagged V0.1 in the title blocks so KiCad exports line up with the physical gauges.</p>
+</li>
+<li>
+<p><code>.github/workflows/cad-build.yml</code> is the single entry workflow. Jobs: <code>openscad</code>, <code>plantuml</code>, <code>kicad</code> → <code>publish</code> which copies artifacts into <code>docs/generated/</code> and commits.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reverse_engineering_workflow">6.1.10. Reverse-Engineering Workflow</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>De-pot a PB-3 with heat and patience. Photograph each layer.</p>
+</li>
+<li>
+<p>Trace the PCB. Mark every component, resistor, and fuse.</p>
+</li>
+<li>
+<p>Recreate the old schematic in KiCad. Understand what the deck expects before changing it.</p>
+</li>
+<li>
+<p>Map new requirements against the host behavior.</p>
+</li>
+<li>
+<p>Draft hierarchical KiCad sheets: Cell+BMS, Buck, Connector/NTC. Assign refs early.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_future_kicad_artifacts">6.1.11. Future KiCad Artifacts</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>kicad/pb3-replacement.kicad_pro</code> — full project.</p>
+</li>
+<li>
+<p><code>mechanical/pb3-shell.step</code> — shell model for fit checks.</p>
+</li>
+<li>
+<p><code>library/connector_aiwa_pb3.kicad_mod</code> — blade footprint.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_validation_test_plan">6.1.12. Validation &amp; Test Plan</h4>
+<div class="paragraph">
+<p><strong>Functional</strong>
+* Charge through USB-C. Log voltage and current curves.
+* Run a hungry deck like HS-PX505. Verify buck holds 2.0V ±0.1V during FF/REW.
+* Measure output with multimeter: target 2.0V (orig PB-3) or 2.4V (clone default).</p>
+</div>
+<div class="paragraph">
+<p><strong>Safety</strong>
+* Bake at 40 °C ambient. Keep silicon &lt;85 °C.
+* Trip short-circuit protection under 20 ms.</p>
+</div>
+<div class="paragraph">
+<p><strong>Documentation</strong>
+* Export schematic PDFs and BOM straight from KiCad.
+* Keep PlantUML diagrams in <code>images/</code> so architecture matches the board.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_open_questions">6.1.13. Open Questions</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Do any decks sniff a third pin? Need proof before adding logic.</p>
+</li>
+<li>
+<p>Does the host trickle charge while on AC? Impacts design.</p>
+</li>
+<li>
+<p>Did Aiwa rely on SLA resistance rise for end-of-life? Might need a small gauge IC to mimic it.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_next_immediate_steps">6.1.14. Next Immediate Steps</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Source a PB-3 donor for teardown.</p>
+</li>
+<li>
+<p>Measure connector plating and friction.</p>
+</li>
+<li>
+<p>Spin initial KiCad sheets with placeholders.</p>
+</li>
+<li>
+<p>Prototype the buck on eval hardware and log noise against the audio path.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_free_training_docs_3">6.1.15. Free Training &amp; Docs</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/adr/madr">MADR — Markdown Architectural Decision
+Records</a> — the format this notebook&#8217;s decisions loosely follow, free
+and GitHub-hosted.</p>
+</li>
+<li>
+<p><a href="https://github.com/kitspace/awesome-electronics">awesome-electronics</a> —
+same curated datasheet/reference list cited from the Research step,
+useful when re-checking an open question against a component datasheet.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_4_kicad_hello_world">7. Step 4: KiCad Hello World</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_battery_pack_kicad_hello_world">7.1. Battery Pack - KiCad Hello World</h3>
+<div class="paragraph">
+<p>Sean Donnellan
+:description: Complete battery circuit example for CI/CD pipeline testing
+:data-uri:</p>
+</div>
+<div class="paragraph">
+<p>This is the toolchain&#8217;s "hello world": before designing the real PB-3
+replacement, this project first proved KiCad + KiBot + CI could take a
+schematic to gerbers automatically, using a known-good sample project
+instead of an unfinished design. It uses the batteryPack example from
+<a href="https://github.com/INTI-CMNB/KiBot">KiBot&#8217;s test suite</a>.
+It&#8217;s a complete, tested project that demonstrates KiBot automation with a real battery charging circuit.</p>
+</div>
+<div class="sect3">
+<h4 id="_attribution">7.1.1. Attribution</h4>
+<div class="paragraph">
+<p>Based on <code>batteryPack</code> example from <a href="https://github.com/INTI-CMNB/KiBot/tree/main/tests/board_samples/kicad_8">KiBot test samples</a>.</p>
+</div>
+<div class="paragraph">
+<p>Copyright (c) 2020-2024 Salvador E. Tropea<br>
+Copyright (c) 2020-2024 Instituto Nacional de Tecnología Industrial<br>
+License: AGPL-3.0</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_circuit">7.1.2. Circuit</h4>
+<div class="paragraph">
+<p>Battery management system with:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Battery connector</p>
+</li>
+<li>
+<p>Charging circuit</p>
+</li>
+<li>
+<p>Power management components</p>
+</li>
+<li>
+<p>Protection circuitry</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_getting_started_noobsme">7.1.3. Getting Started (Noobs/me)</h4>
+<div class="sect4">
+<h5 id="_install_kicad_on_steam_deck">7.1.3.1. Install KiCad on Steam Deck</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">flatpak install flathub org.kicad.KiCad</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Launch: Application Menu → Science&amp;Math → KiCad</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_opening_this_project">7.1.3.2. Opening This Project</h5>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Launch KiCad</p>
+</li>
+<li>
+<p>File → Open Project</p>
+</li>
+<li>
+<p>Navigate to: <code>~/Documents/Github/donnels/aiwa-pb-3/kicad-hello-world/</code></p>
+</li>
+<li>
+<p>Select: <code>batteryPack.kicad_pro</code></p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_what_to_look_out_for">7.1.3.3. What to Look Out For</h5>
+<div class="ulist">
+<div class="title">Steam Deck quirks (what I&#8217;m testing this on):</div>
+<ul>
+<li>
+<p>Small screen</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Use <code>Ctrl +</code> / <code>Ctrl -</code> to zoom schematic/PCB</p>
+</li>
+<li>
+<p>OR use external monitor</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Save often</p>
+<div class="ulist">
+<ul>
+<li>
+<p>KiCad doesn&#8217;t auto-save. <code>Ctrl+S</code> is your friend.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>File paths</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Flatpak sandboxes to <code>~/Documents</code>. Keep projects there.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Performance</p>
+<div class="ulist">
+<ul>
+<li>
+<p>PCB editor sluggish? Close other apps. Deck has 16GB RAM but KiCad uses chunks.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_learning_resources">7.1.3.4. Learning Resources</h5>
+<div class="ulist">
+<div class="title">Video tutorials (watch before editing):</div>
+<ul>
+<li>
+<p><a href="https://www.youtube.com/watch?v=vaCVh2SAZY4">Getting Started with KiCad 8 - DigiKey</a> (30min) - Start here</p>
+</li>
+<li>
+<p><a href="https://www.youtube.com/watch?v=5fvdxd0QhTw">KiCad 6 STM32 Beginner Tutorial</a> - Component placement, routing basics</p>
+</li>
+<li>
+<p><a href="https://www.contextualelectronics.com/courses/shine-on-you-crazy-kicad/">Shine On You Crazy KiCad</a> - Chris Gammell&#8217;s free course (in-depth)</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Official docs:</div>
+<ul>
+<li>
+<p><a href="https://docs.kicad.org/8.0/en/getting_started_in_kicad/getting_started_in_kicad.html">KiCad Getting Started Guide</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Quick tips:</div>
+<ul>
+<li>
+<p>Schematic</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Press <code>A</code> to add component, <code>W</code> to wire, <code>M</code> to move</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>PCB</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Press <code>X</code> to route track, <code>V</code> to add via, <code>D</code> to drag</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Hotkeys</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Tools → Edit Hotkeys - memorize these or you&#8217;ll hate life</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_pcb">7.1.4. PCB</h4>
+<div class="paragraph">
+<p>Multi-layer board with battery charging components.</p>
+</div>
+<div class="paragraph">
+<p>See the KiCad files for full details.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_outputs">7.1.5. Outputs</h4>
+<div class="ulist">
+<div class="title">Expected to be generated by KiBot:</div>
+<ul>
+<li>
+<p><code>batteryPack-schematic.pdf</code> - Schematic</p>
+</li>
+<li>
+<p><code>batteryPack-schematic.svg</code> - Schematic (SVG)</p>
+</li>
+<li>
+<p><code>batteryPack-pcb-top.svg</code> - PCB top view</p>
+</li>
+<li>
+<p><code>batteryPack-pcb-bottom.svg</code> - PCB bottom view</p>
+</li>
+<li>
+<p><code>gerbers/</code> - Manufacturing files</p>
+</li>
+</ul>
+</div>
+<div class="sect4">
+<h5 id="_schematic">7.1.5.1. Schematic</h5>
+<div class="imageblock">
+<div class="content">
+<img src="kicad-hello-world/batteryPack-schematic.svg" alt="Schematic">
+</div>
+<div class="title">Figure 18. Schematic (IF generated by KiBot)</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_pcb_top_view">7.1.5.2. PCB Top View</h5>
+<div class="imageblock">
+<div class="content">
+<img src="kicad-hello-world/batteryPack-pcb-top.svg" alt="PCB Top">
+</div>
+<div class="title">Figure 19. PCB Top View (IF generated by KiBot)</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_pcb_bottom_view">7.1.5.3. PCB Bottom View</h5>
+<div class="imageblock">
+<div class="content">
+<img src="kicad-hello-world/batteryPack-pcb-bottom.svg" alt="PCB Bottom">
+</div>
+<div class="title">Figure 20. PCB Bottom View (IF generated by KiBot)</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_shit_happens_troubleshooting_cicd_setup">7.1.6. Shit Happens: Troubleshooting CI/CD Setup</h4>
+<div class="sect4">
+<h5 id="_github_raw_urls_returning_404">7.1.6.1. GitHub raw URLs returning 404</h5>
+<div class="paragraph">
+<p><strong>Problem</strong>: Tried downloading KiBot test samples via <code>curl</code> from <code>raw.githubusercontent.com</code> - all returned 14-byte "404: Not Found" HTML pages instead of actual KiCad files.</p>
+</div>
+<div class="paragraph">
+<p>decided to dodge the bullet and just git clone the repo.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">cd /tmp
+git clone --depth 1 --filter=blob:none --sparse https://github.com/INTI-CMNB/KiBot.git
+cd KiBot
+git sparse-checkout set tests/board_samples/kicad_8
+cp tests/board_samples/kicad_8/batteryPack.kicad_* /path/to/project/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This worked. Got real files.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_github_pages_deployment_404">7.1.6.2. GitHub Pages deployment 404</h5>
+<div class="paragraph">
+<p><strong>Problem</strong>: <code>actions/deploy-pages@v4</code> failed with 404:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Error: Creating Pages deployment failed
+Error: HttpError: Not Found</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Root cause</strong>: GitHub Pages not enabled for repo.</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:
+1. Go to <a href="https://github.com/donnels/aiwa-pb-3/settings/pages" class="bare">https://github.com/donnels/aiwa-pb-3/settings/pages</a>
+2. <strong>Source</strong>: GitHub Actions (NOT "Deploy from a branch")
+3. Save</p>
+</div>
+<div class="paragraph">
+<p>The workflow uses <code>actions/upload-pages-artifact@v3</code> + <code>actions/deploy-pages@v4</code> which deploy artifacts, not branches.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_kibot_not_generating_gerbersdrillposition_files">7.1.6.3. KiBot not generating gerbers/drill/position files</h5>
+<div class="paragraph">
+<p><strong>Problem</strong>: <code>kibot.yaml</code> defines gerber, excellon, and position outputs but KiBot only generated first 5 outputs (schematic PDF/SVG, PCB top/bottom SVG). No gerbers, drill files, or position files in output.</p>
+</div>
+<div class="paragraph">
+<p><strong>Investigation</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">find . -name "*.gbr" -o -name "*.drl" -o -name "*.pos"
+# Returns nothing</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Root cause</strong>: KiBot command didn&#8217;t explicitly request all outputs. May have stopped after warnings or first batch.</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>: Add <code>-s all</code> flag to <code>build.yml</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">docker run --rm -v "$PWD":/w -w "/w/$dir" "$IMG_KICAD" \
+  kibot -c kibot.yaml -s all</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This explicitly requests all defined outputs instead of default subset.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_references">7.1.7. References</h4>
+<div class="sect4">
+<h5 id="_minimal_examples">7.1.7.1. Minimal Examples</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/INTI-CMNB/KiBot/tree/main/docs/samples/Consolidate_PCBs">KiBot batteryPack Example</a> - Complete battery circuit with charger, tested with KiBot automation</p>
+</li>
+<li>
+<p><a href="https://github.com/INTI-CMNB/KiBot/tree/main/tests/board_samples">KiBot Test Samples</a> - Collection of minimal boards for KiBot testing</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_tutorials">7.1.7.2. Tutorials</h5>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://www.youtube.com/watch?v=BVhWh3AsXQs">DigiKey: Getting Started with KiCad 8</a> (30 min)</p>
+</li>
+<li>
+<p><a href="https://www.youtube.com/playlist?list=PLy2022BX6Eso532xqrUxDT1u2p4VVsg-q">KiCad 6 STM32 Beginner Tutorial Series</a></p>
+</li>
+<li>
+<p><a href="https://contextualelectronics.com/courses/shine-on-you-crazy-kicad/">Contextual Electronics: Shine On You Crazy KiCad</a> (paid course)</p>
+</li>
+<li>
+<p><a href="https://docs.kicad.org/">Official KiCad Documentation</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_free_training_docs_4">7.1.8. Free Training &amp; Docs</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/KiCad/kicad-source-mirror">KiCad source (GitHub mirror)</a> —
+official source, linking to the free documentation site above.</p>
+</li>
+<li>
+<p><a href="https://github.com/joanbono/awesome-kicad">awesome-kicad</a> — curated list
+of free KiCad tutorials, plugins, and libraries.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_5_mechanical_design_openscad">8. Step 5: Mechanical Design (OpenSCAD)</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_openscad_renders">8.1. OpenSCAD Renders</h3>
+<div class="sect3">
+<h4 id="_pb3_pack">8.1.1. pb3-pack</h4>
+<div class="imageblock">
+<div class="content">
+<img src="openscad/pb3-pack.png" alt="pb3 pack">
+</div>
+<div class="title">Figure 21. <code>pb3-pack</code></div>
+</div>
+<div class="paragraph">
+<p><a href="pb3-pack.stl">Download STL</a></p>
+</div>
+<div class="paragraph">
+<p>This is the print-fit gauge: a solid block matching the measured
+68×17.8×8mm envelope, embossed with a version marker. 3D print it and try
+it in the original PB-3 housing before trusting any of the OpenSCAD or
+KiCad dimensions further downstream.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_pb3_fit_check">8.1.2. pb3-fit-check</h4>
+<div class="imageblock">
+<div class="content">
+<img src="openscad/pb3-fit-check.png" alt="pb3 fit check">
+</div>
+<div class="title">Figure 22. <code>pb3-fit-check</code></div>
+</div>
+<div class="paragraph">
+<p><a href="pb3-fit-check.stl">Download STL</a></p>
+</div>
+<div class="paragraph">
+<p>This is the digital half of the same fit check. The measured envelope
+(<code>include-pb3-envelope.scad</code>, shared with <code>pb3-pack</code>) renders transparent
+around the real PB-3 board, imported from the KiCad STEP/GLB export
+converted by <code>containers/trimesh</code> (see "Circuit Design &amp; Emulation"). A
+board that pokes through the envelope walls means the PCB outline needs
+to shrink; a board that sits fully inside confirms the electrical design
+fits the envelope <code>pb3-pack</code> proved.</p>
+</div>
+<div class="paragraph">
+<p>Full physical-compliance chain, measure to board:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Measure the original pack (<code>measurements/README.adoc</code>).</p>
+</li>
+<li>
+<p>Model the envelope in OpenSCAD (<code>pb3-pack</code>, above).</p>
+</li>
+<li>
+<p>Print <code>pb3-pack.stl</code> and test it in the real PB-3 housing.</p>
+</li>
+<li>
+<p>Lay out the PCB in KiCad to the same envelope.</p>
+</li>
+<li>
+<p>Import the KiCad board STL into <code>pb3-fit-check</code> and confirm it still
+fits, catching any drift before ordering boards.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><code>include-pb3-envelope.scad</code> holds the shared envelope dimensions/module.
+Per <a href="../adr/adr-004-file-extension-conventions.adoc">ADR-004</a>,
+<code>include-*.scad</code> files are libraries, skipped by the CI render loop.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_free_training_docs_5">8.1.3. Free Training &amp; Docs</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/openscad/openscad">OpenSCAD source &amp; manual links (GitHub)</a> —
+official project repository; the README links to the full language
+reference.</p>
+</li>
+<li>
+<p><a href="https://github.com/dahoo/awesome-openscad">awesome-openscad</a> — curated
+list of free OpenSCAD tutorials, libraries, and example models.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_6_circuit_design_emulation_kicad">9. Step 6: Circuit Design &amp; Emulation (KiCad)</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_circuit_design_emulation">9.1. Circuit Design &amp; Emulation</h3>
+<div class="paragraph">
+<p><code>pb3-replacement.kicad_pro</code> (with its <code>.kicad_sch</code>/<code>.kicad_pcb</code>) is the
+living electrical design for the replacement pack: a 68×17.8×8mm board that
+takes USB-C 5V in and delivers a regulated 2.0-2.4V deck rail from a 1S
+LiPo cell.</p>
+</div>
+<div class="sect3">
+<h4 id="_component_selection">9.1.1. Component Selection</h4>
+<div class="paragraph">
+<p>Each part below was picked from the candidates surveyed in
+<code>research/README.adoc</code>, chosen for SOT-23-6 footprints (small enough for
+the enclosure) and for matching the behavior already proven on the clone
+teardown boards.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">CN3058E (charger)</dt>
+<dd>
+<p>Linear Li-ion/LiPo charge management IC. Takes the USB-C 5V rail, applies
+CC/CV charging to the cell, and needs only a handful of external passives
+— important with almost no board area to spare.</p>
+</dd>
+<dt class="hdlist1">DW01A + FS8205A (protection)</dt>
+<dd>
+<p>Discrete battery management system on the cell tabs. DW01A senses cell
+voltage and current; FS8205A is the dual N-MOSFET it drives to cut the
+path on overvoltage, undervoltage, or overcurrent/short. Chosen instead of
+trusting the charger or buck stage alone, so a fault anywhere downstream
+still leaves the cell protected.</p>
+</dd>
+<dt class="hdlist1">Buck regulator (TPS61023-class)</dt>
+<dd>
+<p>Steps the ~3.7V cell rail down to the 2.0-2.4V the deck expects. The
+feedback resistor sets the output: 100kΩ gives the PB-S5 clone&#8217;s default
+2.4V; the forum&#8217;s 120kΩ swap gives 2.1V. Extrapolating those two points
+puts 2.0V at roughly 130kΩ — an unverified estimate, not a datasheet
+value. <code>pb3-replacement.cir</code> models 2.0V directly; confirm the real
+resistor against the vendor datasheet and bench measurement before
+fabrication.</p>
+</dd>
+<dt class="hdlist1">OVP clamp (Zener/TVS)</dt>
+<dd>
+<p>Added on top of what the clone boards do: clamps the output below 3V if
+the buck stage fails, so the deck never sees the raw 3.7V cell rail.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_circuit_emulation">9.1.2. Circuit Emulation</h4>
+<div class="paragraph">
+<p><code>pb3-replacement.cir</code> is a system-level ngspice model of the proposed
+pack. It approximates the CN3058E charger, 1S LiPo, DW01A/FS8205A
+protection, 2.0V buck regulator, 200mA deck load, and output clamp with
+behavioral sources. It is useful for checking operating points and
+assumptions. It does not validate the real IC compensation network,
+stability, thermal behavior, or the unverified AIWA connector pinout.</p>
 </div>
 <div class="paragraph">
 <p>Run it with ngspice:</p>
@@ -461,16 +1975,1722 @@ grep -E 'vout_|load_current|vbat' pb3-replacement.log</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Expected nominal results are approximately 1.98 V at the deck output, 198 mA
-load current, and 3.7 V at the idealized cell. Verify the real circuit with
-vendor SPICE models and bench measurements before connecting an AIWA deck.</p>
+<p>Expected results: ~1.98V at the deck output, 198mA load current, 3.7V
+at the idealized cell. The model hard-codes a 2.0V buck target — it
+does not use the ~130kΩ feedback-resistor estimate above, which is for
+the real IC&#8217;s feedback divider, not this behavioral model. Verify with
+vendor SPICE models and bench measurements before connecting an AIWA
+deck. This is the electrical half of the compliance check; the
+mechanical half is the OpenSCAD fit check.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_3d_exports_renders">9.1.3. 3D Exports &amp; Renders</h4>
+<div class="paragraph">
+<p>Alongside the fabrication outputs (gerbers, drill, position files),
+<code>kicad-cli</code> (KiCad 9, <code>pcb export</code>/<code>pcb render</code>) produces:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>pb3-replacement.step</code> — STEP solid model, for any MCAD tool.</p>
+</li>
+<li>
+<p><code>pb3-replacement.glb</code> — binary glTF, converted to
+<code>results/cad/pb3-replacement-board.stl</code> by the <code>containers/trimesh</code>
+container (rescale, re-axis, re-origin — see its README).</p>
+</li>
+<li>
+<p><code>pb3-replacement-render-top.png</code> / <code>-render-iso.png</code> — photorealistic
+raytraced renders of the finished board.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="kicad/pb3-replacement-render-iso.png" alt="pb3 replacement render iso">
+</div>
+<div class="title">Figure 23. Isometric render of the replacement board</div>
+</div>
+<div class="paragraph">
+<p>The STL feeds <code>openscad/pb3-fit-check.scad</code> — see "Mechanical Design
+(OpenSCAD)" for the fit-check render.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_free_training_docs_6">9.1.4. Free Training &amp; Docs</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/KiCad/kicad-source-mirror">KiCad source (GitHub mirror)</a> —
+official KiCad source code; the repository README links to the free
+documentation site.</p>
+</li>
+<li>
+<p><a href="https://github.com/joanbono/awesome-kicad">awesome-kicad</a> — curated list
+of free KiCad tutorials, plugins, and libraries.</p>
+</li>
+<li>
+<p><a href="https://github.com/ngspice/ngspice">ngspice</a> — official circuit
+simulator source and documentation used by "Circuit Emulation" above.</p>
+</li>
+<li>
+<p><a href="https://github.com/kitspace/awesome-electronics">awesome-electronics</a> —
+curated list of free datasheets, application notes, and component
+selection references, useful background for "Component Selection".</p>
+</li>
+<li>
+<p><a href="https://github.com/KhronosGroup/glTF">glTF specification</a> — the format
+behind the <code>.glb</code> export used for the mechanical fit-check.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_7_architecture_diagrams">10. Step 7: Architecture Diagrams</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_plantuml_diagrams">10.1. PlantUML Diagrams</h3>
+<div class="sect3">
+<h4 id="_pb3architecture">10.1.1. PB3Architecture</h4>
+<div class="imageblock">
+<div class="content">
+<img src="images/PB3Architecture.png" alt="PB3Architecture">
+</div>
+<div class="title">Figure 24. <code>PB3Architecture</code></div>
+</div>
+<div class="paragraph">
+<p><a href="PB3Architecture.svg">SVG</a>
+<a href="PB3Architecture.png">PNG</a></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_free_training_docs_7">10.1.2. Free Training &amp; Docs</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/plantuml/plantuml">PlantUML</a> — official project
+repository and documentation for the diagram-as-code syntax used here.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step_8_results_compliance">11. Step 8: Results &amp; Compliance</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_results_compliance">11.1. Results &amp; Compliance</h3>
+<div class="paragraph">
+<p>This directory contains outputs generated by the containerized CAD and
+simulation workflow. Do not edit these files by hand — they are evidence
+that the design in <code>openscad/</code>, <code>kicad/</code>, and <code>images/</code> meets the two
+targets set in the research and reverse-engineering steps: fitting the
+original 68×17.8×8mm envelope, and delivering a safe, regulated 2.0V rail.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cad/</code> — OpenSCAD renders.</p>
+</li>
+<li>
+<p><code>diagrams/</code> — PlantUML circuit and architecture diagrams.</p>
+</li>
+<li>
+<p><code>kicad/</code> — KiCad board previews, schematic exports, and fabrication files.</p>
+</li>
+<li>
+<p><code>circuit/</code> — ngspice logs and measurements.</p>
+</li>
+<li>
+<p><code>docs/</code> — assembled HTML and PDF documentation (this book).</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Rebuild everything with the <code>Build</code> GitHub Actions workflow, or run the
+container commands in <code>.github/workflows/build.yml</code> locally.</p>
+</div>
+<div class="sect3">
+<h4 id="_physical_compliance">11.1.1. Physical Compliance</h4>
+<div class="imageblock">
+<div class="content">
+<img src="results/cad/pb3-pack.png" alt="pb3 pack">
+</div>
+<div class="title">Figure 25. <code>pb3-pack</code> fit-check render</div>
+</div>
+<div class="paragraph">
+<p><code>cad/pb3-pack.stl</code> is the printable gauge block for the 68×17.8×8mm
+outline and 52×15×6mm cell cavity measured in <code>measurements/README.adoc</code>.
+A print that fits the original PB-3 bay confirms the mechanical envelope
+before any PCB is fabricated. <code>kicad/pb3-replacement-board.svg</code> and the
+<code>kicad/fabrication/</code> gerbers/drill/position files are what a fabricator
+needs to build the board that has to fit inside that same envelope.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="results/cad/pb3-fit-check.png" alt="pb3 fit check">
+</div>
+<div class="title">Figure 26. <code>pb3-fit-check</code> render: real board (green) inside the measured envelope (transparent)</div>
+</div>
+<div class="paragraph">
+<p><code>cad/pb3-fit-check.stl</code> is the digital counterpart to the <code>pb3-pack</code>
+print test: <code>cad/pb3-replacement-board.stl</code> (converted from
+<code>kicad/pb3-replacement.glb</code>, see "Circuit Design &amp; Emulation") is
+imported into the same envelope model. The board fitting entirely
+inside the transparent walls confirms the KiCad layout matches the
+physically-verified envelope.</p>
+</div>
+<div class="paragraph">
+<p><code>kicad/pb3-replacement.step</code> and <code>.glb</code> are the raw 3D exports of the
+board, usable in any MCAD/3D tool. <code>kicad/pb3-replacement-render-top.png</code>
+and <code>-render-iso.png</code> are photorealistic renders of the finished board.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_electrical_compliance">11.1.2. Electrical Compliance</h4>
+<div class="paragraph">
+<p><code>circuit/pb3-replacement.log</code> is the ngspice run of the circuit emulation
+described in the "Circuit Design &amp; Emulation" step — see that step for
+the expected pass values. <code>kicad/pb3-replacement-schematic.pdf</code> and
+<code>-schematic.svg</code> are the schematic exports of the same design.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_toolchain_proof">11.1.3. Toolchain Proof</h4>
+<div class="paragraph">
+<p><code>kicad/batteryPack-schematic.pdf</code>, <code>batteryPack-pcb-top.svg</code>, and
+<code>batteryPack-pcb-bottom.svg</code> are the outputs of the "KiCad Hello World"
+toolchain check: the same KiCad → KiBot → CI pipeline used above, proven
+on a known-good sample project first.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_free_training_docs_8">11.1.4. Free Training &amp; Docs</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://docs.github.com/en/actions">GitHub Actions documentation</a> — the
+workflow that renders and commits everything in this directory.</p>
+</li>
+<li>
+<p><a href="https://github.com/sdras/awesome-actions">awesome-actions</a> — curated
+list of free GitHub Actions building blocks, for anyone adapting this
+container-based render pipeline.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_architecture_decisions">12. Architecture Decisions</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_architecture_decision_records">12.1. Architecture Decision Records</h3>
+<div class="sect3">
+<h4 id="_philosophy">12.1.1. Philosophy</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Hemingway</dt>
+<dd>
+<p>Short sentences. No fluff. Say it once.</p>
+</dd>
+<dt class="hdlist1">DRY (Don&#8217;t Repeat Yourself)</dt>
+<dd>
+<p>Write once. Reference everywhere. No copy-paste.</p>
+</dd>
+<dt class="hdlist1">KISS (Keep It Simple, Stupid)</dt>
+<dd>
+<p>Simple beats clever. If you need comments, simplify.</p>
+</dd>
+<dt class="hdlist1">NO MAGIC</dt>
+<dd>
+<p>Explicit over implicit. No hidden behavior. No surprises.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_what">12.1.2. What</h4>
+<div class="paragraph">
+<p>ADRs document <strong>why</strong> we chose this over that.</p>
+</div>
+<div class="paragraph">
+<p>Each record:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>States the decision</p>
+</li>
+<li>
+<p>Lists alternatives considered</p>
+</li>
+<li>
+<p>Explains consequences</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_why">12.1.3. Why</h4>
+<div class="paragraph">
+<p>Memory fades. Context dies. ADRs preserve intent.</p>
+</div>
+<div class="paragraph">
+<p>When someone asks "why this way?", point to the ADR.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_format">12.1.4. Format</h4>
+<div class="listingblock">
+<div class="title">ADR template</div>
+<div class="content">
+<pre class="highlight"><code class="language-asciidoc" data-lang="asciidoc">= ADR-NNN: Title
+
+Date: YYYY-MM-DD
+Status: Accepted | Deprecated | Superseded
+
+== Context
+Problem statement. One paragraph.
+
+== Decision
+What we chose. One sentence.
+
+== Alternatives
+- Option A: why rejected
+- Option B: why rejected
+
+== Implications
++ Good consequence
++ Good consequence
+- Bad consequence
+- Mitigation for bad consequence</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_index">12.1.5. Index</h4>
+<div class="sect4">
+<h5 id="_adr_001_commit_generated_artifacts_next_to_source">12.1.5.1. ADR-001: Commit Generated Artifacts Next to Source</h5>
+<div class="paragraph">
+<p>Date: 2025-12-12<br>
+Status: Accepted</p>
+</div>
+<div class="sect5">
+<h6 id="_context">12.1.5.1.1. Context</h6>
+<div class="paragraph">
+<p>This repo is a reverse engineering workbook. PlantUML diagrams, OpenSCAD models, KiCad schematics are both source <strong>and</strong> documentation. End users clone the repo to read design history, not to rebuild artifacts.</p>
+</div>
+<div class="paragraph">
+<p>Generated outputs (PNG, STL, PDF) answer: "What does this look like?" Keeping them divorced from source breaks context. Viewing design requires tools. History loses meaning without rendered outputs.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_decision">12.1.5.1.2. Decision</h6>
+<div class="paragraph">
+<p>Commit generated artifacts next to their source files.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_alternatives">12.1.5.1.3. Alternatives</h6>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Separate <code>docs/generated/</code> directory</strong></dt>
+<dd>
+<p>+ Clean source tree
++ CI manages all outputs</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Divorces outputs from source context</p>
+</li>
+<li>
+<p>Requires CI to view design</p>
+</li>
+<li>
+<p>Clone without CI = incomplete artifact</p>
+</li>
+<li>
+<p>AsciiDoc references break (<code>image::openscad/foo.png</code> fails if PNG lives in <code>docs/</code>)</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Ignore all generated files</strong></dt>
+<dd>
+<p>+ Smallest repo
++ No merge conflicts on binaries</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Useless offline</p>
+</li>
+<li>
+<p>GitHub PR can&#8217;t show visual diffs</p>
+</li>
+<li>
+<p>Design evolution invisible in history</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Submodule for outputs</strong></dt>
+<dd>
+<p>+ Separates binary history</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Overcomplicated for solo project</p>
+</li>
+<li>
+<p>Two clones to see one design</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_implications">12.1.5.1.4. Implications</h6>
+<div class="paragraph">
+<p><strong>Positive:</strong></p>
+</div>
+<div class="paragraph">
+<p>+ <code>openscad/pb3-pack.png</code> lives next to <code>openscad/pb3-pack.scad</code>
++ AsciiDoc <code>image::</code> paths match file tree
++ Offline clone shows design without rebuilding
++ GitHub renders PNGs inline in PRs
++ History shows design evolution (old PNG = old intent)
++ No CI dependency for documentation</p>
+</div>
+<div class="paragraph">
+<p><strong>Negative:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Repo size grows with each design iteration</p>
+</li>
+<li>
+<p>Merge conflicts possible on binary files (rare for solo)</p>
+</li>
+<li>
+<p>CI must commit and push outputs</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Mitigations:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Keep STL/PNG &lt;5MB each (current sizes: &lt;500KB)</p>
+</li>
+<li>
+<p>Use <code>git lfs</code> if files exceed 10MB</p>
+</li>
+<li>
+<p>CI commits with <code>[skip ci]</code> to avoid recursion</p>
+</li>
+<li>
+<p>For huge experimental outputs, use scratch <code>build/</code> dirs (gitignored)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_files_affected">12.1.5.1.5. Files Affected</h6>
+<div class="paragraph">
+<p>Source directories commit their outputs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>openscad/*.{stl,png}</code> — rendered models</p>
+</li>
+<li>
+<p><code>images/*.{png,svg}</code> — diagram exports</p>
+</li>
+<li>
+<p><code>kicad/*.{pdf,svg}</code> — schematic/board renders</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>CI workflow updated to:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Generate artifacts into source directories</p>
+</li>
+<li>
+<p>Commit outputs back to repo</p>
+</li>
+<li>
+<p>Push to main branch</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Scratch builds (local experiments) use <code>*/build/</code> and remain gitignored.</p>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_adr_002_use_text_based_cad_and_documentation_formats">12.1.5.2. ADR-002: Use Text-Based CAD and Documentation Formats</h5>
+<div class="paragraph">
+<p>Date: 2025-12-12<br>
+Status: Accepted</p>
+</div>
+<div class="sect5">
+<h6 id="_context_2">12.1.5.2.1. Context</h6>
+<div class="paragraph">
+<p>Reverse engineering requires clear, searchable, versionable documentation. Design intent must survive iteration. Ambiguity kills projects. Binary formats (PNG, SVG, proprietary CAD) hide structure, resist search, and depend on artistic interpretation.</p>
+</div>
+<div class="paragraph">
+<p>Need tools that:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Version cleanly in git</p>
+</li>
+<li>
+<p>Search with grep</p>
+</li>
+<li>
+<p>Feed to LLMs without image parsing</p>
+</li>
+<li>
+<p>Embed measurements explicitly</p>
+</li>
+<li>
+<p>Avoid subjective interpretation</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_decision_2">12.1.5.2.2. Decision</h6>
+<div class="paragraph">
+<p>Use text-based formats for all CAD and documentation:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>AsciiDoc</strong> for all docs</p>
+</li>
+<li>
+<p><strong>PlantUML</strong> for block diagrams</p>
+</li>
+<li>
+<p><strong>OpenSCAD</strong> for mechanical models</p>
+</li>
+<li>
+<p><strong>KiCad</strong> for PCB (S-expression text format)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_alternatives_2">12.1.5.2.3. Alternatives</h6>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Binary formats (Visio, Fusion 360, PNG diagrams)</strong></dt>
+<dd>
+<p>+ Industry standard tools
++ Rich GUI workflows</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Not searchable (grep useless)</p>
+</li>
+<li>
+<p>Binary diffs meaningless</p>
+</li>
+<li>
+<p>LLM can&#8217;t parse structure</p>
+</li>
+<li>
+<p>Locked to specific tools</p>
+</li>
+<li>
+<p>Measurements hidden in pixels</p>
+</li>
+<li>
+<p>Interpretation varies by viewer</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Markdown + hand-drawn SVG</strong></dt>
+<dd>
+<p>+ Simple, portable</p>
+<div class="ulist">
+<ul>
+<li>
+<p>SVG is XML (verbose, hard to write)</p>
+</li>
+<li>
+<p>Hand-drawn = ambiguous dimensions</p>
+</li>
+<li>
+<p>No parametric models</p>
+</li>
+<li>
+<p>Design intent lost in pixels</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Wiki or Google Docs</strong></dt>
+<dd>
+<p>+ Collaborative
++ Rich media</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Not in git (history scattered)</p>
+</li>
+<li>
+<p>Export fragile</p>
+</li>
+<li>
+<p>Offline broken</p>
+</li>
+<li>
+<p>Search locked to platform</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_implications_2">12.1.5.2.4. Implications</h6>
+<div class="paragraph">
+<p><strong>Positive:</strong></p>
+</div>
+<div class="paragraph">
+<p>+ <code>grep "68.*17.8.*8" openscad/</code> finds all references to pack dimensions
++ <code>git diff</code> shows exact measurement changes: <code>outer_len = 67</code> → <code>outer_len = 68</code>
++ LLM can ingest <code>.puml</code> and suggest corrections: "2.4V output conflicts with 2.0V spec"
++ PlantUML connections are explicit: <code>CELL -&#8594; BUCK : 3.0-4.2V</code> (no guessing from arrows)
++ OpenSCAD embeds tolerances: <code>wiggle=.01</code> (visible in source, not CAD property panel)
++ KiCad <code>.kicad_sch</code> is S-expression: searchable for part numbers, net names
++ Docs live next to code: <code>openscad/pb3-pack.scad</code> + README.asciidoc in same commit
++ Dead docs impossible: if code changes, doc changes (same file or adjacent)
++ No priest needed: <code>outer_len = 68</code> means 68mm, not "roughly this wide"</p>
+</div>
+<div class="paragraph">
+<p><strong>Negative:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Steeper learning curve (PlantUML syntax, OpenSCAD code)</p>
+</li>
+<li>
+<p>No WYSIWYG (must render to see)</p>
+</li>
+<li>
+<p>Collaboration requires text-editing skill</p>
+</li>
+<li>
+<p>Binary export still needed for viewing (PNG, STL)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Mitigations:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>CI auto-generates viewable outputs (PNG, STL, PDF) from text sources</p>
+</li>
+<li>
+<p>Commit both source and renders (ADR-001)</p>
+</li>
+<li>
+<p>Include examples in repo (<code>images/pb3-architecture.plantuml</code> as template)</p>
+</li>
+<li>
+<p>LLMs can write PlantUML/OpenSCAD from specs (reverse engineering ally)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_examples">12.1.5.2.5. Examples</h6>
+<div class="paragraph">
+<p><strong>Searchable dimensions:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-scad" data-lang="scad">outer_len = 68;    // grep finds this
+outer_width = 17.8;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Explicit connections:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-plantuml" data-lang="plantuml">CELL --&gt; BUCK : 3.0-4.2V  // no guessing voltage
+BUCK --&gt; OUT : 2.0V       // explicit output</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Versionable structure:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-diff" data-lang="diff">- BUCK --&gt; OUT : 2.4V
++ BUCK --&gt; OUT : 2.0V  // git diff shows intent change</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>LLM-friendly input:</strong>
+"Here&#8217;s the PlantUML. Does the 2.0V output match the schematic&#8217;s buck feedback resistor?"</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_tools_used">12.1.5.2.6. Tools Used</h6>
+<div class="ulist">
+<ul>
+<li>
+<p>AsciiDoc: prose, specs, workbook</p>
+</li>
+<li>
+<p>PlantUML: block diagrams, architecture</p>
+</li>
+<li>
+<p>OpenSCAD: mechanical models, fit tests</p>
+</li>
+<li>
+<p>KiCad: schematic + PCB (text-based S-expression format)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>All text. All searchable. All versionable. All LLM-ingestible.</p>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_adr_003_use_github_actions_for_all_build_automation">12.1.5.3. ADR-003: Use GitHub Actions for All Build Automation</h5>
+<div class="paragraph">
+<p>Date: 2025-12-12<br>
+Status: Superseded by ADR-006 (single job pipeline)</p>
+</div>
+<div class="sect5">
+<h6 id="_context_3">12.1.5.3.1. Context</h6>
+<div class="paragraph">
+<p>Generated artifacts (PNG, STL, PDF) must stay synchronized with source files. Manual builds fail. Developers forget to regenerate. Wrong versions ship. "It works on my machine" breaks collaboration.</p>
+</div>
+<div class="paragraph">
+<p>Need automation that:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Runs on every commit</p>
+</li>
+<li>
+<p>Links builds to exact source version</p>
+</li>
+<li>
+<p>Prevents stale outputs</p>
+</li>
+<li>
+<p>Documents build process explicitly</p>
+</li>
+<li>
+<p>Survives author memory loss</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_decision_3">12.1.5.3.2. Decision</h6>
+<div class="paragraph">
+<p>Use GitHub Actions for all CAD rendering and artifact generation.</p>
+</div>
+<div class="paragraph">
+<p>No local build scripts as primary workflow.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_alternatives_3">12.1.5.3.3. Alternatives</h6>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Local build scripts only</strong></dt>
+<dd>
+<p>+ Fast iteration
++ No network dependency</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Forget to run = stale outputs committed</p>
+</li>
+<li>
+<p>"Works on my machine" inconsistencies</p>
+</li>
+<li>
+<p>Process lives in author&#8217;s head</p>
+</li>
+<li>
+<p>New contributor: "How do I build?"</p>
+</li>
+<li>
+<p>No proof outputs match sources</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Manual screenshot/export workflow</strong></dt>
+<dd>
+<p>+ Simple tools
++ No scripting</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Wrong version screenshots plague repos</p>
+</li>
+<li>
+<p>No traceability (which source made this PNG?)</p>
+</li>
+<li>
+<p>Forgot to save = weeks hunting mismatch</p>
+</li>
+<li>
+<p>Undocumented steps = tribal knowledge</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Pre-commit hooks</strong></dt>
+<dd>
+<p>+ Automatic on commit</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Slow local commits (blocks developer)</p>
+</li>
+<li>
+<p>Hard to debug when broken</p>
+</li>
+<li>
+<p>Environmental differences break hooks</p>
+</li>
+<li>
+<p>Still local = "works on my machine"</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Makefile + CI</strong></dt>
+<dd>
+<p>+ Standard Unix pattern
++ Local + remote builds</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Two build paths = drift risk</p>
+</li>
+<li>
+<p>Makefile syntax arcane</p>
+</li>
+<li>
+<p>Windows developers struggle</p>
+</li>
+<li>
+<p>Process still partly hidden</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_implications_3">12.1.5.3.4. Implications</h6>
+<div class="paragraph">
+<p><strong>Positive:</strong></p>
+</div>
+<div class="paragraph">
+<p>+ <strong>Sync guaranteed</strong>: outputs regenerated every push, impossible to commit stale PNG
++ <strong>Traceable</strong>: Actions log links to exact commit that built artifact
++ <strong>Documented workflow</strong>: <code>.github/workflows/cad-build.yml</code> IS the build documentation
++ <strong>Preview while editing</strong>: PlantUML/OpenSCAD extensions show live preview in VS Code, no surprise when CI builds
++ <strong>Repeatable</strong>: same Docker images, same results, always
++ <strong>Inspectable</strong>: workflow file shows thought process: "first OpenSCAD, then PlantUML, then publish"
++ <strong>No magic</strong>: workflow is code, not author&#8217;s mental model requiring MRI to extract
++ <strong>Works-on-merge</strong>: GitHub Actions runs on forks, contributors see build before PR
++ <strong>Blame trail</strong>: git log shows when output changed and why (CI commit message references source change)</p>
+</div>
+<div class="paragraph">
+<p><strong>Negative:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Network required to see final outputs (mitigated: local preview extensions)</p>
+</li>
+<li>
+<p>Slower feedback than local build (mitigated: preview extensions, small changes iterate locally)</p>
+</li>
+<li>
+<p>CI quota consumption (mitigated: build only on source file changes)</p>
+</li>
+<li>
+<p>Initial setup cost (one-time, then keeps working)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Mitigations:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>VS Code extensions preview PlantUML/OpenSCAD during editing (instant feedback)</p>
+</li>
+<li>
+<p>Actions trigger only on paths: <code>openscad/<strong></code>, <code>images/</strong></code>, <code>kicad/**</code> (skip unrelated commits)</p>
+</li>
+<li>
+<p>Local Docker containers available for manual iteration (same images CI uses)</p>
+</li>
+<li>
+<p>Workflow continues on job failure: <code>continue-on-error: true</code> (partial build better than none)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_why_not_magic">12.1.5.3.5. Why Not Magic</h6>
+<div class="paragraph">
+<p>Actions EXPOSE process:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml"># This is the build documentation. No hidden steps.
+- name: Render
+  run: |
+    docker run ... openscad -o /w/build/openscad/$s.stl /w/$f</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Compare to undocumented mental model:
+- Author: "I open OpenSCAD, export STL, save PNG, commit both"
+- New contributor: "Which settings? What colorscheme? Why this size?"
+- Six months later: "How did I make this?"</p>
+</div>
+<div class="paragraph">
+<p>Actions preserve intent. Author leaves. Process survives.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_workflow_structure">12.1.5.3.6. Workflow Structure</h6>
+<div class="paragraph">
+<p><code>cad-build.yml</code>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>openscad job</strong>: render STL + PNG for all <code>.scad</code> files</p>
+</li>
+<li>
+<p><strong>plantuml job</strong>: render SVG for all <code>.puml</code> files</p>
+</li>
+<li>
+<p><strong>kicad job</strong>: render PDF + SVG via KiBot</p>
+</li>
+<li>
+<p><strong>publish job</strong>: commit outputs back to repo (ADR-001)</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Each job:
+- Runs in isolation
+- Uses pinned Docker image (versioned, reproducible)
+- Continues on error (partial build survives)
+- Logs exact commands (auditable)</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_traceability_example">12.1.5.3.7. Traceability Example</h6>
+<div class="paragraph">
+<p>Commit: <code>fix: correct outer_len to 68mm</code></p>
+</div>
+<div class="paragraph">
+<p>Actions runs → generates new STL → commits:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>ci: refresh outputs
+
+Generated from:
+- openscad/pb3-pack.scad (abc1234)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Git blame on <code>pb3-pack.stl</code> → points to CI commit → references source commit → full trace.</p>
+</div>
+<div class="paragraph">
+<p>No "oops wrong image" mystery.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_living_documentation">12.1.5.3.8. Living Documentation</h6>
+<div class="paragraph">
+<p>Workflow file = build manual.</p>
+</div>
+<div class="paragraph">
+<p>New contributor clones repo, reads <code>.github/workflows/cad-build.yml</code>, understands:
+- Which Docker images
+- Which commands
+- Which outputs
+- Which paths trigger</p>
+</div>
+<div class="paragraph">
+<p>No MRI. No author interview. Just code.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_tools_vs_process">12.1.5.3.9. Tools vs Process</h6>
+<div class="paragraph">
+<p><strong>Local preview</strong>: VS Code extensions (instant feedback while editing)</p>
+</div>
+<div class="paragraph">
+<p><strong>Canonical build</strong>: GitHub Actions (guarantees sync, documents process)</p>
+</div>
+<div class="paragraph">
+<p>Both. Not either/or.</p>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_adr_004_file_extension_conventions_for_main_vs_include_files">12.1.5.4. ADR-004: File Extension Conventions for Main vs Include Files</h5>
+<div class="paragraph">
+<p>Date: 2025-12-12<br>
+Status: Accepted</p>
+</div>
+<div class="sect5">
+<h6 id="_context_4">12.1.5.4.1. Context</h6>
+<div class="paragraph">
+<p>Repos accumulate many AsciiDoc and PlantUML files. Finding the main entry point becomes hard. Need convention to distinguish "main documentation" from "included fragments" and "build sources" from "style imports".</p>
+</div>
+<div class="paragraph">
+<p>Without convention:
+- Which <code>.adoc</code> is the root doc?
+- Which <code>.puml</code> gets rendered?
+- Grep returns too many false positives</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_decision_4">12.1.5.4.2. Decision</h6>
+<div class="paragraph">
+<p>Use extension suffixes to signal file role:</p>
+</div>
+<div class="paragraph">
+<p><strong>AsciiDoc:</strong>
+- <code>.asciidoc</code> = main documentation (entry points)
+- <code>.adoc</code> = include fragments (not standalone)
+- <code>includes/*.adoc</code> = shared fragments (glossary, copyright, formatting macros)</p>
+</div>
+<div class="paragraph">
+<p><strong>PlantUML:</strong>
+- <code>.plantuml</code> = diagrams to render
+- <code>.puml</code> = style/config imports (not rendered)</p>
+</div>
+<div class="paragraph">
+<p><strong>OpenSCAD:</strong>
+- <code>.scad</code> = models to render
+- <code>include-*.scad</code> = libraries (modules/functions only, skip rendering)</p>
+</div>
+<div class="paragraph">
+<p><strong>Build outputs:</strong>
+- Always adjacent to source (ADR-001)
+- <code>docs/</code> = rendered AsciiDoc HTML only
+- <code>.png</code>, <code>.stl</code>, <code>.svg</code> live next to <code>.scad</code>/<code>.plantuml</code></p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_alternatives_4">12.1.5.4.3. Alternatives</h6>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>All use same extension</strong></dt>
+<dd>
+<p>+ Simpler</p>
+<div class="ulist">
+<ul>
+<li>
+<p>No way to find main docs fast</p>
+</li>
+<li>
+<p>Glob <code>*.adoc</code> catches 47 files</p>
+</li>
+<li>
+<p>New contributor: "Which one do I read?"</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Separate directories</strong></dt>
+<dd>
+<p>+ Clear grouping: <code>main/</code>, <code>includes/</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Breaks locality (main doc far from includes)</p>
+</li>
+<li>
+<p>Path references fragile</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Metadata in filename</strong></dt>
+<dd>
+<p>+ Example: <code>README.main.adoc</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Ugly</p>
+</li>
+<li>
+<p>Sorting broken</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_implications_4">12.1.5.4.4. Implications</h6>
+<div class="paragraph">
+<p><strong>Positive:</strong></p>
+</div>
+<div class="paragraph">
+<p>+ <code>find . -name "<strong>.asciidoc"</code> → main docs only
++ <code>find . -name "</strong>.plantuml"</code> → diagrams to render
++ CI glob: <code>images/*.plantuml</code> (ignores <code>common.puml</code> style)
++ New contributor sees <code>README.asciidoc</code> and knows: "Start here"
++ Include detection: <code>grep "^include::" *.adoc</code> finds fragments
++ Clear intent: <code>.asciidoc</code> = public, <code>.adoc</code> = internal</p>
+</div>
+<div class="paragraph">
+<p><strong>Negative:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Convention not obvious without docs</p>
+</li>
+<li>
+<p>Mix of extensions in directory listings</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Mitigations:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Document in ADR (this file)</p>
+</li>
+<li>
+<p>Enforce in CI: fail if <code>.asciidoc</code> includes another <code>.asciidoc</code></p>
+</li>
+<li>
+<p>README mentions convention</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_examples_2">12.1.5.4.5. Examples</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>README.asciidoc                      ← main doc (read this first)
+pb3-notes.asciidoc                   ← main workbook
+adr/README.adoc                      ← include fragment (embedded in parent)
+adr/adr-001-foo.adoc                 ← include fragment
+includes/include-glossary.adoc       ← shared fragment (glossary)
+includes/include-copyright.adoc      ← shared fragment (license boilerplate)
+
+images/pb3-architecture.plantuml  ← render this
+images/common.puml                ← style import (not rendered)
+
+openscad/pb3-pack.scad            ← render this
+openscad/include-utils.scad       ← library (skip rendering)
+openscad/pb3-pack.png             ← output (adjacent)
+openscad/pb3-pack.stl             ← output (adjacent)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_directory_structure">12.1.5.4.6. Directory Structure</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>docs/                    ← HTML output from asciidoc rendering only
+includes/                ← Shared AsciiDoc fragments (glossary, copyright, macros)
+openscad/*.{png,stl}     ← CAD outputs (adjacent to .scad)
+images/*.{png,svg}       ← diagram outputs (adjacent to .plantuml)
+kicad/*.{pdf,svg}        ← schematic/PCB outputs (adjacent to .kicad_*)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>No generated artifacts in <code>docs/generated/</code>. That pattern is deprecated (ADR-001).</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_ci_impact">12.1.5.4.7. CI Impact</h6>
+<div class="paragraph">
+<p>Workflows use extension filters:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">for f in images/*.plantuml; do  # not *.puml
+  plantuml "$f"
+done
+
+for f in openscad/*.scad; do
+  [[ "$(basename "$f")" =~ ^include- ]] &amp;&amp; continue  # skip libraries
+  openscad -o "${f%.scad}.stl" "$f"
+  openscad -o "${f%.scad}.png" "$f"
+done</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>AsciiDoc rendering looks for <code>*.asciidoc</code> only.</p>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_adr_005_conditional_imagesdir_management_for_book_assembly">12.1.5.5. ADR-005: Conditional imagesdir Management for Book Assembly</h5>
+<div class="paragraph">
+<p>Date: 2025-12-12<br>
+Status: Accepted</p>
+</div>
+<div class="sect5">
+<h6 id="_context_5">12.1.5.5.1. Context</h6>
+<div class="paragraph">
+<p>README.asciidoc assembles multiple <code>.adoc</code> fragments that contain images. Each fragment must work both:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Standalone</strong>: rendered directly (GitHub, local preview)</p>
+</li>
+<li>
+<p><strong>Included</strong>: assembled into main book</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Problem: image paths break when included.</p>
+</div>
+<div class="paragraph">
+<p>Example:
+- <code>images/README.adoc</code> contains <code>image::diagram.png[]</code>
+- Standalone: works (PNG is local)
+- Included in root README: fails (looks for <code>diagram.png</code> in root, not <code>images/</code>)</p>
+</div>
+<div class="paragraph">
+<p>Need: conditional <code>:imagesdir:</code> that adapts to context without breaking either mode.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_decision_5">12.1.5.5.2. Decision</h6>
+<div class="paragraph">
+<p>Use <code>:flag-book:</code> to conditionally manage <code>:imagesdir:</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Main document (README.asciidoc):</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Set book mode flag</div>
+<div class="content">
+<pre class="highlight"><code class="language-asciidoc" data-lang="asciidoc">//:flag-book: true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Each included fragment:</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Save, override, restore imagesdir</div>
+<div class="content">
+<pre class="highlight"><code class="language-asciidoc" data-lang="asciidoc">//ifdef::flag-book[]
+//:imagesdir-save: {imagesdir}
+//:imagesdir: &lt;subdirectory&gt;
+//endif::[]
+//
+//... content with images ...
+//
+//ifdef::flag-book[]
+//:imagesdir: {imagesdir-save}
+//endif::[]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_alternatives_5">12.1.5.5.3. Alternatives</h6>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Absolute paths in image macros</strong></dt>
+<dd>
+<p>+ Works both standalone and included</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Fragile (breaks on repo rename)</p>
+</li>
+<li>
+<p>Verbose: <code>image::images/diagram.png[]</code> everywhere</p>
+</li>
+<li>
+<p>Not idiomatic AsciiDoc</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Duplicate files</strong></dt>
+<dd>
+<p>+ Clean separation</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Maintenance nightmare</p>
+</li>
+<li>
+<p>Violates DRY</p>
+</li>
+<li>
+<p>Drift guaranteed</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Separate standalone vs include versions</strong></dt>
+<dd>
+<p>+ Each optimized for context</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Double maintenance</p>
+</li>
+<li>
+<p>Violates single source of truth</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Always use subdirectory paths</strong></dt>
+<dd>
+<p>+ Simple</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Breaks standalone rendering</p>
+</li>
+<li>
+<p>GitHub can&#8217;t preview</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_implications_5">12.1.5.5.4. Implications</h6>
+<div class="paragraph">
+<p><strong>Positive:</strong></p>
+</div>
+<div class="paragraph">
+<p>+ Single source: one <code>.adoc</code> file, two render contexts
++ Standalone works: <code>images/README.adoc</code> previews correctly on GitHub
++ Book works: <code>README.asciidoc</code> assembles all fragments with correct image paths
++ No path duplication: <code>image::foo.png[]</code> not <code>image::images/foo.png[]</code>
++ Graceful fallback: if <code>:flag-book:</code> not set, standalone mode assumed
++ Restores state: <code>:imagesdir-save:</code> preserves any parent setting</p>
+</div>
+<div class="paragraph">
+<p><strong>Negative:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Boilerplate: every fragment needs ifdef blocks</p>
+</li>
+<li>
+<p>Non-obvious: requires ADR to explain</p>
+</li>
+<li>
+<p>Fragile: forget closing block = broken subsequent includes</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Mitigations:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Document pattern in ADR (this file)</p>
+</li>
+<li>
+<p>CI-generated READMEs include pattern automatically</p>
+</li>
+<li>
+<p>Template in <code>includes/include-toc-standalone.adoc</code> for manual fragments</p>
+</li>
+<li>
+<p>Lint rule: fail if <code>:imagesdir:</code> changed without restore</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_pattern">12.1.5.5.5. Pattern</h6>
+<div class="paragraph">
+<p><strong>Step 1: Main doc sets flag</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Main document</div>
+<div class="content">
+<pre class="highlight"><code class="language-asciidoc" data-lang="asciidoc">//= Main Document
+//:flag-book: true
+//
+//include::subdoc/README.adoc[]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 2: Subdoc saves and overrides</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Subdocument with conditional path</div>
+<div class="content">
+<pre class="highlight"><code class="language-asciidoc" data-lang="asciidoc">//= Subdoc
+//ifdef::flag-book[]
+//:imagesdir-save: {imagesdir}
+//:imagesdir: subdoc
+//endif::[]
+//
+//image::photo.png[]  // standalone: subdoc/photo.png, book: subdoc/photo.png</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 3: Subdoc restores at end</strong></p>
+</div>
+<div class="listingblock">
+<div class="title">Restore parent context</div>
+<div class="content">
+<pre class="highlight"><code class="language-asciidoc" data-lang="asciidoc">//... last image ...
+//
+//ifdef::flag-book[]
+//:imagesdir: {imagesdir-save}
+//endif::[]</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_files_using_pattern">12.1.5.5.6. Files Using Pattern</h6>
+<div class="paragraph">
+<p><strong>Manual:</strong>
+- <code>measurements/README.adoc</code></p>
+</div>
+<div class="paragraph">
+<p><strong>CI-generated:</strong>
+- <code>images/README.adoc</code>
+- <code>openscad/README.adoc</code></p>
+</div>
+<div class="paragraph">
+<p><strong>Template:</strong>
+- <code>includes/include-toc-standalone.adoc</code> (provides ifdef block)</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_why_saverestore">12.1.5.5.7. Why Save/Restore</h6>
+<div class="paragraph">
+<p>Simple reset (<code>:imagesdir:</code>) loses parent context:</p>
+</div>
+<div class="listingblock">
+<div class="title">Wrong: loses parent setting</div>
+<div class="content">
+<pre class="highlight"><code class="language-asciidoc" data-lang="asciidoc">//:imagesdir: assets         // parent sets this
+//
+//include::sub/doc.adoc[]    // sub sets :imagesdir: sub, then resets to empty
+//                           // WRONG: parent's "assets" is lost</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Save/restore preserves nesting:</p>
+</div>
+<div class="listingblock">
+<div class="title">Correct: preserves parent setting</div>
+<div class="content">
+<pre class="highlight"><code class="language-asciidoc" data-lang="asciidoc">//:imagesdir: assets
+//
+//include::sub/doc.adoc[]    // saves "assets", sets "sub", restores "assets"
+//                           // CORRECT: parent context preserved</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Enables arbitrary nesting depth without coordination.</p>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_adr_006_single_job_render_pipeline">12.1.5.6. ADR-006: Single Job Render Pipeline</h5>
+<div class="paragraph">
+<p>Date: 2025-12-12<br>
+Status: Accepted<br>
+Supersedes: ADR-003</p>
+</div>
+<div class="sect5">
+<h6 id="_context_6">12.1.5.6.1. Context</h6>
+<div class="paragraph">
+<p>Initial CI used separate jobs for OpenSCAD, PlantUML, AsciiDoc (ADR-003). Each job committed separately. Parallel execution caused git push race conditions. Pull/rebase before each push worked but created noisy history: three bot commits per design change.</p>
+</div>
+<div class="paragraph">
+<p>AsciiDoc embeds outputs from OpenSCAD and PlantUML. Files must exist before <code>asciidoctor</code> runs. Separate jobs required artifact upload/download. Slow. Complex.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_decision_6">12.1.5.6.2. Decision</h6>
+<div class="paragraph">
+<p>Single <code>render</code> job, sequential steps, one commit.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">jobs:
+  render:
+    steps:
+      - Render KiCad → *.pdf, *.svg, *.step, *.glb, *-render-*.png
+      - Convert board GLB → *.stl (for the OpenSCAD fit-check)
+      - Render OpenSCAD → *.stl, *.png
+      - Render PlantUML → *.svg, *.png
+      - Build AsciiDoc → docs/*.{html,pdf}
+      - Commit all outputs</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>KiCad now runs first: <code>openscad/pb3-fit-check.scad</code> imports a board STL
+converted from the KiCad STEP/GLB export, so that conversion must exist
+before the OpenSCAD step runs.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_alternatives_6">12.1.5.6.3. Alternatives</h6>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Parallel jobs with artifacts</strong></dt>
+<dd>
+<p>+ Faster (concurrent renders)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Upload/download overhead (30s)</p>
+</li>
+<li>
+<p>Three commits per change</p>
+</li>
+<li>
+<p>Race conditions on push</p>
+</li>
+<li>
+<p>Complex artifact handling</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Sequential jobs</strong></dt>
+<dd>
+<p>+ Clear dependencies
++ No artifacts needed</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Slower (no parallelism)</p>
+</li>
+<li>
+<p>Still three commits</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><strong>Local Makefile</strong></dt>
+<dd>
+<p>+ Fast iteration</p>
+<div class="ulist">
+<ul>
+<li>
+<p>ADR-003 rejected this (stale outputs)</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_implications_6">12.1.5.6.4. Implications</h6>
+<div class="paragraph">
+<p><strong>Positive:</strong></p>
+</div>
+<div class="paragraph">
+<p>+ One commit: <code>ci: render all outputs [skip ci]</code>
++ No race conditions
++ Shared filesystem (no artifacts)
++ AsciiDoc sees all PNGs/SVGs immediately
++ Simple: pipeline reads top-to-bottom
++ Fast: no artifact marshaling</p>
+</div>
+<div class="paragraph">
+<p><strong>Negative:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Sequential (no parallel speedup)</p>
+</li>
+<li>
+<p>Single failure blocks all downstream</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Mitigations:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Renders are fast (&lt;2min total)</p>
+</li>
+<li>
+<p>Debug mode shows which step failed</p>
+</li>
+<li>
+<p>Continue-on-error for non-critical steps</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_why_not_jobs">12.1.5.6.5. Why Not Jobs</h6>
+<div class="paragraph">
+<p>Jobs = parallelism or isolation. This is a <strong>pipeline</strong>: KiCad → OpenSCAD → PlantUML → AsciiDoc. Dependencies are linear. Output files feed next step. One job, shared filesystem, done.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_pattern_2">12.1.5.6.6. Pattern</h6>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">- name: Render Tool
+  run: |
+    [[ "$DEBUG" == "true" ]] &amp;&amp; echo "=== Finding files ==="
+    for f in $(find . -name "*.ext"); do
+      docker run --rm -v "$PWD":/w $IMG tool -o output $f
+    done</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All tools follow same structure:
+1. Find source files
+2. Render with Docker container
+3. Output next to source</p>
+</div>
+<div class="paragraph">
+<p>Final step adds all outputs, commits once.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_free_training_docs_9">12.1.6. Free Training &amp; Docs</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/adr/madr">MADR — Markdown Architectural Decision
+Records</a> — the free, GitHub-hosted format this convention is based on.</p>
+</li>
+<li>
+<p><a href="https://github.com/npryce/adr-tools">adr-tools</a> — command-line tools for
+managing ADRs, useful reference for numbering/indexing conventions.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_credits">13. Credits</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://stereo2go.com/forums/threads/rechargeable-battery-replacement-for-aiwa-pb-3-pb-4.9025/">Stereo2Go forum</a> — original research</p>
+</li>
+<li>
+<p>OpenSCAD: <a href="https://github.com/donnels/openscad">ghcr.io/donnels/openscad:main</a></p>
+</li>
+<li>
+<p>PlantUML: <a href="https://github.com/donnels/plantuml">ghcr.io/donnels/plantuml:main</a></p>
+</li>
+<li>
+<p>KiBot: <a href="https://github.com/INTI-CMNB/KiBot">INTI-CMNB/KiBot@v2_dk8</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_containerized_builds">14. Containerized builds</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Every step in the <code>Build</code> workflow runs in a container — OpenSCAD,
+PlantUML, KiCad, AsciiDoc, ngspice, and the GLB→STL board conversion.
+Nothing installs directly on the runner. Generated renders, diagrams,
+fabrication files, simulation logs, and documents are committed under
+<code>results/</code>. Locally-built images (ngspice, trimesh) and their Dockerfiles
+live in <code>containers/</code>, each with its own README.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. In-house photo set <code>measurements/IMG_9373.jpeg</code>–<code>IMG_9385.jpeg</code>.
+</div>
+<div class="footnote" id="_footnotedef_2">
+<a href="#_footnoteref_2">2</a>. Rossoe et al., "Rechargeable battery replacement for AIWA PB-3 / PB-4," Stereo2Go forums, Sep 2023–Apr 2025. Offline copy: <code>research/Rechargeable battery replacement for AIWA PB-3 _ PB-4 _ Stereo2Go forums.html</code>. Original URL: <a href="https://stereo2go.com/forums/threads/rechargeable-battery-replacement-for-aiwa-pb-3-pb-4.9025/" class="bare">https://stereo2go.com/forums/threads/rechargeable-battery-replacement-for-aiwa-pb-3-pb-4.9025/</a>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-06 09:55:32 UTC
+Last updated 2026-09-06 11:37:04 UTC
 </div>
 </div>
 </body>
