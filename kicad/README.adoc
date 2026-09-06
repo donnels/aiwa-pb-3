@@ -35,16 +35,13 @@ trusting the charger or buck stage alone, so a fault anywhere downstream
 still leaves the cell protected.
 
 Buck regulator (TPS61023-class)::
-Steps the raw ~3.7V cell rail down to the 2.0-2.4V the deck expects. The
-feedback resistor pair sets the output voltage, and a higher resistor
-lowers the output — 100kΩ gives the PB-S5 clone's 2.4V default, and the
-forum's own resistor swap to 120kΩ brings that down to 2.1V. Linearly
-extrapolating those two forum data points puts the 2.0V target at
-roughly 127kΩ (nearest standard value 130kΩ); this is an unverified
-estimate from two data points, not a datasheet-derived value.
-`pb3-replacement.cir` models the 2.0V operating point directly and the
-real resistor value must be confirmed against the vendor datasheet and
-bench measurement before fabrication.
+Steps the ~3.7V cell rail down to the 2.0-2.4V the deck expects. The
+feedback resistor sets the output: 100kΩ gives the PB-S5 clone's default
+2.4V; the forum's 120kΩ swap gives 2.1V. Extrapolating those two points
+puts 2.0V at roughly 130kΩ — an unverified estimate, not a datasheet
+value. `pb3-replacement.cir` models 2.0V directly; confirm the real
+resistor against the vendor datasheet and bench measurement before
+fabrication.
 
 OVP clamp (Zener/TVS)::
 Added on top of what the clone boards do: clamps the output below 3V if
@@ -67,40 +64,31 @@ ngspice -b -o pb3-replacement.log pb3-replacement.cir
 grep -E 'vout_|load_current|vbat' pb3-replacement.log
 ----
 
-Expected nominal results are approximately 1.98V at the deck output, 198mA
-load current, and 3.7V at the idealized cell. The model hard-codes a 2.0V
-buck target — it does not use the ~127kΩ feedback-resistor estimate from
-Component Selection above, which is for the real IC's feedback divider,
-not this behavioral model. Verify the real circuit with vendor SPICE
-models and bench measurements before connecting an AIWA deck.
-This is the electrical half of the pack's compliance check; the mechanical
-half is the OpenSCAD fit check.
+Expected results: ~1.98V at the deck output, 198mA load current, 3.7V
+at the idealized cell. The model hard-codes a 2.0V buck target — it
+does not use the ~130kΩ feedback-resistor estimate above, which is for
+the real IC's feedback divider, not this behavioral model. Verify with
+vendor SPICE models and bench measurements before connecting an AIWA
+deck. This is the electrical half of the compliance check; the
+mechanical half is the OpenSCAD fit check.
 
 == 3D Exports & Renders
 
-Alongside the fabrication outputs (gerbers, drill, position files), the
-CI workflow uses a newer `kicad-cli` (KiCad 9, `pcb export`/`pcb render`)
-to produce:
+Alongside the fabrication outputs (gerbers, drill, position files),
+`kicad-cli` (KiCad 9, `pcb export`/`pcb render`) produces:
 
-* `pb3-replacement.step` — a STEP solid model of the board, for import
-  into any MCAD tool (FreeCAD, Fusion 360, SolidWorks, etc.).
-* `pb3-replacement.glb` — a binary glTF of the same board. This is the
-  format actually consumed by the mechanical fit-check: a small Python
-  script (`trimesh`, see `.github/workflows/build.yml`) rescales it from
-  meters to millimetres, rotates it from glTF's Y-up axes to OpenSCAD's
-  Z-up axes, and re-origins it to `[0,0,0]`, producing
-  `results/cad/pb3-replacement-board.stl`.
-* `pb3-replacement-render-top.png` and `-render-iso.png` — photorealistic
-  raytraced renders (`kicad-cli pcb render`) of the finished board, top-
-  down and isometric, for a "what does the real board actually look
-  like" view without opening KiCad.
+* `pb3-replacement.step` — STEP solid model, for any MCAD tool.
+* `pb3-replacement.glb` — binary glTF, converted to
+  `results/cad/pb3-replacement-board.stl` by the `containers/trimesh`
+  container (rescale, re-axis, re-origin — see its README).
+* `pb3-replacement-render-top.png` / `-render-iso.png` — photorealistic
+  raytraced renders of the finished board.
 
 .Isometric render of the replacement board
 image::pb3-replacement-render-iso.png[]
 
-The STL feeds directly into `openscad/pb3-fit-check.scad` — see
-"Mechanical Design (OpenSCAD)" for the fit-check render that overlays
-this board inside the measured envelope.
+The STL feeds `openscad/pb3-fit-check.scad` — see "Mechanical Design
+(OpenSCAD)" for the fit-check render.
 
 == Free Training & Docs
 

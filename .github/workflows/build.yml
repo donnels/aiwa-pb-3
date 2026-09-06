@@ -75,21 +75,10 @@ jobs:
           [[ "$DEBUG" == "true" ]] && ls -lh results/kicad/pb3-replacement.step results/kicad/pb3-replacement.glb results/kicad/pb3-replacement-render-*.png
       - name: Convert board GLB to STL for OpenSCAD fit-check
         run: |
-          pip install --quiet trimesh
-          python3 - << 'PYEOF'
-          import numpy as np
-          import trimesh
-
-          mesh = trimesh.load("results/kicad/pb3-replacement.glb")
-          board = trimesh.util.concatenate(list(mesh.geometry.values()))
-          board.apply_scale(1000.0)  # metres (glTF) -> millimetres (OpenSCAD)
-          board.apply_transform(
-              trimesh.transformations.rotation_matrix(np.radians(-90), [1, 0, 0])
-          )  # glTF Y-up -> OpenSCAD Z-up
-          board.apply_translation(-board.bounds[0])  # origin-align at [0,0,0]
-          board.export("results/cad/pb3-replacement-board.stl")
-          print("board bounds (mm):", board.bounds.tolist())
-          PYEOF
+          docker build -t aiwa-pb3-trimesh containers/trimesh
+          docker run --rm -v "$PWD":/w -w /w aiwa-pb3-trimesh \
+            /w/containers/trimesh/convert-glb-to-stl.py \
+            /w/results/kicad/pb3-replacement.glb /w/results/cad/pb3-replacement-board.stl
       - name: Render OpenSCAD
         run: |
           mkdir -p results/cad

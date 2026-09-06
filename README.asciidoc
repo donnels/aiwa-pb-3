@@ -93,8 +93,9 @@ include::adr/README.adoc[leveloffset=+2]
 
 == Containerized builds
 
-The GitHub Actions `Build` workflow runs OpenSCAD, PlantUML, KiCad, AsciiDoc,
-and ngspice in containers. Generated board renders, circuit diagrams,
+Every step in the `Build` workflow runs in a container — OpenSCAD,
+PlantUML, KiCad, AsciiDoc, ngspice, and the GLB→STL board conversion.
+Nothing installs directly on the runner. Generated renders, diagrams,
 fabrication files, simulation logs, and documents are committed under
-`results/`. The ngspice image and local runner are defined in
-`containers/ngspice/`.
+`results/`. Locally-built images (ngspice, trimesh) and their Dockerfiles
+live in `containers/`, each with its own README.

@@ -30,29 +30,25 @@ image::pb3-fit-check.png[]
 link:pb3-fit-check.stl[Download STL]
 
 This is the digital half of the same fit check. The measured envelope
-(from `include-pb3-envelope.scad`, the same dimensions used by
-`pb3-pack`) is rendered transparent, and the real PB-3 replacement board
-is imported inside it. The board comes from the KiCad step's STEP/GLB
-export, converted to an origin-aligned STL by the CI workflow (see
-"Circuit Design & Emulation" for the export commands). If the board mesh
-pokes through the envelope walls in the render, the PCB outline needs to
-shrink before fabrication; if it sits fully inside, the electrical design
-is confirmed to fit the mechanical envelope proven by `pb3-pack`.
+(`include-pb3-envelope.scad`, shared with `pb3-pack`) renders transparent
+around the real PB-3 board, imported from the KiCad STEP/GLB export
+converted by `containers/trimesh` (see "Circuit Design & Emulation"). A
+board that pokes through the envelope walls means the PCB outline needs
+to shrink; a board that sits fully inside confirms the electrical design
+fits the envelope `pb3-pack` proved.
 
-The measure → model → print → test-fit → import-board-STL loop is the
-full physical-compliance chain for this project:
+Full physical-compliance chain, measure to board:
 
 . Measure the original pack (`measurements/README.adoc`).
 . Model the envelope in OpenSCAD (`pb3-pack`, above).
 . Print `pb3-pack.stl` and test it in the real PB-3 housing.
 . Lay out the PCB in KiCad to the same envelope.
 . Import the KiCad board STL into `pb3-fit-check` and confirm it still
-  fits — catching any drift between the OpenSCAD model and the actual
-  board outline before ordering boards.
+  fits, catching any drift before ordering boards.
 
-`include-pb3-envelope.scad` holds the shared envelope dimensions/module
-used by both files above. Per link:../adr/adr-004-file-extension-conventions.adoc[ADR-004],
-`include-*.scad` files are libraries and are skipped by the CI render loop.
+`include-pb3-envelope.scad` holds the shared envelope dimensions/module.
+Per link:../adr/adr-004-file-extension-conventions.adoc[ADR-004],
+`include-*.scad` files are libraries, skipped by the CI render loop.
 
 == Free Training & Docs
 

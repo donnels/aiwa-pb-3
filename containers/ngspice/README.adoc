@@ -1,0 +1,23 @@
+= ngspice Container
+
+`debian:bookworm-slim` + `ngspice`. Runs the circuit emulation described
+in `kicad/README.adoc`.
+
+== Build & Run
+
+[source,bash]
+----
+docker build -t aiwa-pb3-ngspice containers/ngspice
+docker run --rm \
+  -v "$PWD/kicad":/work:ro \
+  -v "$PWD/results/circuit":/results \
+  aiwa-pb3-ngspice \
+  -b -o /results/pb3-replacement.log /work/pb3-replacement.cir
+----
+
+Or run `run.sh` — it does the same build-and-run in one call.
+
+== Files
+
+* `Dockerfile` — the image.
+* `run.sh` — local convenience wrapper (build, run, write to `results/circuit/`).

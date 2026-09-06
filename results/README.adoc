@@ -40,19 +40,16 @@ needs to build the board that has to fit inside that same envelope.
 .`pb3-fit-check` render: real board (green) inside the measured envelope (transparent)
 image::cad/pb3-fit-check.png[]
 
-`cad/pb3-fit-check.stl` and the render above are the digital counterpart
-to the `pb3-pack` print test: `cad/pb3-replacement-board.stl` (converted
-from `kicad/pb3-replacement.glb`, see "Circuit Design & Emulation") is
-imported into the same envelope OpenSCAD model. The board fitting
-entirely inside the transparent walls confirms the KiCad layout matches
-the physically-verified envelope, closing the measure → model → print →
-test-fit → import-board-STL loop described in "Mechanical Design
-(OpenSCAD)".
+`cad/pb3-fit-check.stl` is the digital counterpart to the `pb3-pack`
+print test: `cad/pb3-replacement-board.stl` (converted from
+`kicad/pb3-replacement.glb`, see "Circuit Design & Emulation") is
+imported into the same envelope model. The board fitting entirely
+inside the transparent walls confirms the KiCad layout matches the
+physically-verified envelope.
 
-`kicad/pb3-replacement.step` and `kicad/pb3-replacement.glb` are the raw
-3D exports of the board, usable in any MCAD/3D tool.
-`kicad/pb3-replacement-render-top.png` and `-render-iso.png` are
-photorealistic renders of the finished board.
+`kicad/pb3-replacement.step` and `.glb` are the raw 3D exports of the
+board, usable in any MCAD/3D tool. `kicad/pb3-replacement-render-top.png`
+and `-render-iso.png` are photorealistic renders of the finished board.
 
 == Electrical Compliance
 
