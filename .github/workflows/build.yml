@@ -13,6 +13,9 @@ on:
       - "**/*.kicad_sch"
       - "**/*.kicad_pro"
       - "**/kibot.yaml"
+      - "**/*.cir"
+      - "containers/**"
+      - "results/**"
       - ".github/workflows/build.yml"
   workflow_dispatch:
 
@@ -37,6 +40,7 @@ jobs:
           fetch-depth: 0
       - name: Render OpenSCAD
         run: |
+          mkdir -p results/cad
           [[ "$DEBUG" == "true" ]] && echo "=== Finding .scad files ==="
           [[ "$DEBUG" == "true" ]] && find . -name "*.scad" ! -name "include-*.scad"
           for f in $(find . -name "*.scad" ! -name "include-*.scad"); do
@@ -44,71 +48,86 @@ jobs:
             base=$(basename "$f" .scad)
             [[ "$DEBUG" == "true" ]] && echo "Rendering: $f -> ${dir}/${base}.{stl,png}"
             docker run --rm -v "$PWD":/w "$IMG_SCAD" \
-              openscad -o "/w/${dir}/${base}.stl" "/w/$f" &
+              openscad -o "/w/results/cad/${base}.stl" "/w/$f" &
             docker run --rm -v "$PWD":/w "$IMG_SCAD" \
               openscad --imgsize 1600,1200 --colorscheme Tomorrow \
-              -o "/w/${dir}/${base}.png" "/w/$f" &
+              -o "/w/results/cad/${base}.png" "/w/$f" &
             wait
           done
           [[ "$DEBUG" == "true" ]] && echo "=== Generated OpenSCAD files ==="
           [[ "$DEBUG" == "true" ]] && find . -name "*.stl" -o -name "*.png" | grep -E '\.(stl|png)$'
       - name: Render PlantUML
         run: |
+          mkdir -p results/diagrams
           [[ "$DEBUG" == "true" ]] && echo "=== Finding .plantuml/.puml files ==="
           [[ "$DEBUG" == "true" ]] && find . -name "*.plantuml" -o -name "*.puml"
           for f in $(find . -name "*.plantuml" -o -name "*.puml"); do
             dir=$(dirname "$f")
             [[ "$DEBUG" == "true" ]] && echo "Rendering: $f -> ${dir}/{svg,png}"
             docker run --rm -v "$PWD":/w "$IMG_PUML" \
-              plantuml -tsvg -o "/w/${dir}" "/w/$f"
+              plantuml -tsvg -o "/w/results/diagrams" "/w/$f"
             docker run --rm -v "$PWD":/w "$IMG_PUML" \
-              plantuml -tpng -o "/w/${dir}" "/w/$f"
+              plantuml -tpng -o "/w/results/diagrams" "/w/$f"
           done
           [[ "$DEBUG" == "true" ]] && echo "=== Generated PlantUML files ==="
           [[ "$DEBUG" == "true" ]] && find . \( -name "*.svg" -o -name "*.png" \) ! -path "./docs/*"
       - name: Render KiCad
         run: |
+          mkdir -p results/kicad
+          docker run --rm -v "$PWD":/w -w /w/kicad "$IMG_KICAD" \
+            kicad-cli sch export pdf -o /w/results/kicad/pb3-replacement-schematic.pdf pb3-replacement.kicad_sch
+          docker run --rm -v "$PWD":/w -w /w/kicad "$IMG_KICAD" \
+            kicad-cli sch export svg -o /w/results/kicad pb3-replacement.kicad_sch
+          mv results/kicad/pb3-replacement.svg results/kicad/pb3-replacement-schematic.svg
           [[ "$DEBUG" == "true" ]] && echo "=== Finding KiCad projects with kibot.yaml ==="
           [[ "$DEBUG" == "true" ]] && find . -name "kibot.yaml"
           for cfg in $(find . -name "kibot.yaml"); do
             dir=$(dirname "$cfg")
             [[ "$DEBUG" == "true" ]] && echo "Rendering KiCad project in: $dir"
             docker run --rm -v "$PWD":/w -w "/w/$dir" "$IMG_KICAD" \
-              kibot -c kibot.yaml -s all
+              kibot -c kibot.yaml -d /w/results/kicad -s all
           done
           [[ "$DEBUG" == "true" ]] && echo "=== Generated KiCad outputs ==="
           [[ "$DEBUG" == "true" ]] && find . -name "kibot_errors.filter" -o -name "*.pdf" -o -name "*.svg" | grep -v docs/
+      - name: Run circuit simulation
+        run: |
+          mkdir -p results/circuit
+          docker build -t aiwa-pb3-ngspice containers/ngspice
+          docker run --rm \
+            -v "$PWD/kicad":/work:ro \
+            -v "$PWD/results/circuit":/results \
+            aiwa-pb3-ngspice \
+            -b -o /results/pb3-replacement.log /work/pb3-replacement.cir
+          grep -E 'vout_|load_current|vbat' results/circuit/pb3-replacement.log
       - name: Build AsciiDoc
         run: |
-          mkdir -p docs
+          mkdir -p results/docs
           [[ "$DEBUG" == "true" ]] && echo "=== Finding .asciidoc files ==="
           [[ "$DEBUG" == "true" ]] && find . -name '*.asciidoc'
           for f in $(find . -name '*.asciidoc'); do
             base=$(basename "$f" .asciidoc)
-            [[ "$DEBUG" == "true" ]] && echo "Building: $f -> docs/${base}.{html,pdf}"
+            [[ "$DEBUG" == "true" ]] && echo "Building: $f -> results/docs/${base}.{html,pdf}"
             docker run --rm -v "$PWD":/w "$IMG_ADOC" \
-              asciidoctor -r asciidoctor-diagram -o "/w/docs/${base}.html" "/w/$f"
+              asciidoctor -r asciidoctor-diagram -o "/w/results/docs/${base}.html" "/w/$f"
             docker run --rm -v "$PWD":/w "$IMG_ADOC" \
-              asciidoctor-pdf -r asciidoctor-diagram -o "/w/docs/${base}.pdf" "/w/$f"
+              asciidoctor-pdf -r asciidoctor-diagram -o "/w/results/docs/${base}.pdf" "/w/$f"
           done
           [[ "$DEBUG" == "true" ]] && echo "=== Generated docs ==="
-          [[ "$DEBUG" == "true" ]] && ls -lh docs/
+          [[ "$DEBUG" == "true" ]] && ls -lh results/docs/
       - name: Commit all outputs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           [[ "$DEBUG" == "true" ]] && echo "=== Adding all generated files ==="
-          find . \( -name "*.stl" -o -name "*.png" \) ! -path "./docs/*" | xargs -r git add
-          find . \( -name "*.svg" \) ! -path "./docs/*" | xargs -r git add
+          git add results/
           find kicad-hello-world -name "*.pdf" -o -name "*.svg" -o -name "*.txt" -o -name "*.pos" | xargs -r git add
-          git add docs/
           [[ "$DEBUG" == "true" ]] && echo "=== Git status ==="
           [[ "$DEBUG" == "true" ]] && git status
           git diff --cached --quiet || (git commit -m "ci: render all outputs [skip ci]" && git push)
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: results/docs
 
   deploy:
     runs-on: ubuntu-latest

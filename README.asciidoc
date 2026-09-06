@@ -47,3 +47,10 @@ include::adr/README.adoc[leveloffset=+2]
 * PlantUML: https://github.com/donnels/plantuml[ghcr.io/donnels/plantuml:main]
 * KiBot: https://github.com/INTI-CMNB/KiBot[INTI-CMNB/KiBot@v2_dk8]
 
+== Containerized builds
+
+The GitHub Actions `Build` workflow runs OpenSCAD, PlantUML, KiCad, AsciiDoc,
+and ngspice in containers. Generated board renders, circuit diagrams,
+fabrication files, simulation logs, and documents are committed under
+`results/`. The ngspice image and local runner are defined in
+`containers/ngspice/`.
