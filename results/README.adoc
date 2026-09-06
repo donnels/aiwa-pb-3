@@ -40,12 +40,9 @@ needs to build the board that has to fit inside that same envelope.
 == Electrical Compliance
 
 `circuit/pb3-replacement.log` is the ngspice run of the circuit emulation
-described in the "Circuit Design & Emulation" step. It should show
-approximately 1.98V at the deck output, 198mA load current, and 3.7V at
-the idealized cell — the pass condition for the regulated rail before
-any bench measurement is taken.
-`kicad/pb3-replacement-schematic.pdf` and `-schematic.svg` are the
-schematic exports of the same design.
+described in the "Circuit Design & Emulation" step — see that step for
+the expected pass values. `kicad/pb3-replacement-schematic.pdf` and
+`-schematic.svg` are the schematic exports of the same design.
 
 == Toolchain Proof
 
