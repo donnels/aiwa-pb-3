@@ -68,8 +68,11 @@ grep -E 'vout_|load_current|vbat' pb3-replacement.log
 ----
 
 Expected nominal results are approximately 1.98V at the deck output, 198mA
-load current, and 3.7V at the idealized cell. Verify the real circuit with
-vendor SPICE models and bench measurements before connecting an AIWA deck.
+load current, and 3.7V at the idealized cell. The model hard-codes a 2.0V
+buck target — it does not use the ~127kΩ feedback-resistor estimate from
+Component Selection above, which is for the real IC's feedback divider,
+not this behavioral model. Verify the real circuit with vendor SPICE
+models and bench measurements before connecting an AIWA deck.
 This is the electrical half of the pack's compliance check; the mechanical
 half is the OpenSCAD fit check.
 
