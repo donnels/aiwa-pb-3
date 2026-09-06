@@ -1,0 +1,42 @@
+kibot:
+  version: 1
+
+preflight:
+  run_erc: false
+  run_drc: true
+  check_zone_fills: false
+  ignore_unconnected: true
+
+outputs:
+  - name: pcb_gerbers
+    comment: PB-3 fabrication Gerbers
+    type: gerber
+    dir: fabrication
+    layers:
+      - F.Cu
+      - B.Cu
+      - F.Mask
+      - B.Mask
+      - F.SilkS
+      - B.SilkS
+      - Edge.Cuts
+  - name: pcb_drill
+    comment: PB-3 fabrication drill files
+    type: excellon
+    dir: fabrication
+  - name: pcb_position
+    comment: PB-3 pick and place
+    type: position
+    dir: fabrication
+    options:
+      format: CSV
+  - name: pcb_svg
+    comment: PB-3 board preview
+    type: svg_pcb_print
+    dir: .
+    options:
+      output: pb3-replacement-board.svg
+      layers:
+        - layer: F.Cu
+        - layer: F.SilkS
+        - layer: Edge.Cuts
