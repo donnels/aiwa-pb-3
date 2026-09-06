@@ -36,9 +36,13 @@ still leaves the cell protected.
 
 Buck regulator (TPS61023-class)::
 Steps the raw ~3.7V cell rail down to the 2.0-2.4V the deck expects. The
-feedback resistor pair sets the output voltage — 100kΩ for 2.4V (PB-S5
-default) or 120kΩ for 2.1V, per the forum's own resistor swap. This
-project targets the original PB-3's 2.0V.
+feedback resistor pair sets the output voltage — 100kΩ gives the PB-S5
+clone's 2.4V default, and the forum's own resistor swap to 120kΩ brings
+that down to 2.1V. This project targets the original PB-3's 2.0V, which
+needs a feedback resistor value between those two forum data points;
+`pb3-replacement.cir` models the 2.0V operating point directly and the
+real resistor value must be confirmed against the vendor datasheet and
+bench measurement before fabrication.
 
 OVP clamp (Zener/TVS)::
 Added on top of what the clone boards do: clamps the output below 3V if
