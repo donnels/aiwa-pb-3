@@ -79,6 +79,15 @@ include::adr-004-file-extension-conventions.adoc[leveloffset=+2]
 
 include::adr-005-imagesdir-management.adoc[leveloffset=+2]
 
+include::adr-006-single-job-render-pipeline.adoc[leveloffset=+2]
+
+== Free Training & Docs
+
+* https://github.com/adr/madr[MADR — Markdown Architectural Decision
+  Records] — the free, GitHub-hosted format this convention is based on.
+* https://github.com/npryce/adr-tools[adr-tools] — command-line tools for
+  managing ADRs, useful reference for numbering/indexing conventions.
+
 //END OF DOC
 ifdef::flag-book[]
 :imagesdir: {imagesdir-save}

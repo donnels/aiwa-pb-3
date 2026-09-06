@@ -30,6 +30,7 @@ env:
   IMG_PUML: ghcr.io/donnels/plantuml:main
   IMG_ADOC: ghcr.io/donnels/asciidoc:main
   IMG_KICAD: ghcr.io/inti-cmnb/kicad_auto:ki8
+  IMG_KICAD3D: ghcr.io/inti-cmnb/kicad_auto:ki9
 
 jobs:
   render:
@@ -38,6 +39,57 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Render KiCad
+        run: |
+          mkdir -p results/kicad results/cad
+          docker run --rm -v "$PWD":/w -w /w/kicad "$IMG_KICAD" \
+            kicad-cli sch export pdf -o /w/results/kicad/pb3-replacement-schematic.pdf pb3-replacement.kicad_sch
+          docker run --rm -v "$PWD":/w -w /w/kicad "$IMG_KICAD" \
+            kicad-cli sch export svg -o /w/results/kicad pb3-replacement.kicad_sch
+          mv results/kicad/pb3-replacement.svg results/kicad/pb3-replacement-schematic.svg
+          [[ "$DEBUG" == "true" ]] && echo "=== Finding KiCad projects with kibot.yaml ==="
+          [[ "$DEBUG" == "true" ]] && find . -name "kibot.yaml"
+          for cfg in $(find . -name "kibot.yaml"); do
+            dir=$(dirname "$cfg")
+            [[ "$DEBUG" == "true" ]] && echo "Rendering KiCad project in: $dir"
+            docker run --rm -v "$PWD":/w -w "/w/$dir" "$IMG_KICAD" \
+              kibot -c kibot.yaml -d /w/results/kicad -s all
+          done
+          [[ "$DEBUG" == "true" ]] && echo "=== Generated KiCad outputs ==="
+          [[ "$DEBUG" == "true" ]] && find . -name "kibot_errors.filter" -o -name "*.pdf" -o -name "*.svg" | grep -v docs/
+      - name: Render KiCad 3D (STEP, GLB, photorealistic renders)
+        run: |
+          mkdir -p results/kicad results/cad
+          docker run --rm -v "$PWD":/w -w /w/kicad "$IMG_KICAD3D" \
+            kicad-cli pcb export step -o /w/results/kicad/pb3-replacement.step pb3-replacement.kicad_pcb
+          docker run --rm -v "$PWD":/w -w /w/kicad "$IMG_KICAD3D" \
+            kicad-cli pcb export glb -o /w/results/kicad/pb3-replacement.glb pb3-replacement.kicad_pcb
+          docker run --rm -v "$PWD":/w -w /w/kicad "$IMG_KICAD3D" \
+            kicad-cli pcb render --output /w/results/kicad/pb3-replacement-render-top.png \
+              --quality high --side top --width 1200 --height 900 pb3-replacement.kicad_pcb
+          docker run --rm -v "$PWD":/w -w /w/kicad "$IMG_KICAD3D" \
+            kicad-cli pcb render --output /w/results/kicad/pb3-replacement-render-iso.png \
+              --quality high --side top --perspective --rotate 25,0,135 --floor \
+              --width 1200 --height 900 pb3-replacement.kicad_pcb
+          [[ "$DEBUG" == "true" ]] && echo "=== Generated KiCad 3D outputs ==="
+          [[ "$DEBUG" == "true" ]] && ls -lh results/kicad/pb3-replacement.step results/kicad/pb3-replacement.glb results/kicad/pb3-replacement-render-*.png
+      - name: Convert board GLB to STL for OpenSCAD fit-check
+        run: |
+          pip install --quiet trimesh
+          python3 - << 'PYEOF'
+          import numpy as np
+          import trimesh
+
+          mesh = trimesh.load("results/kicad/pb3-replacement.glb")
+          board = trimesh.util.concatenate(list(mesh.geometry.values()))
+          board.apply_scale(1000.0)  # metres (glTF) -> millimetres (OpenSCAD)
+          board.apply_transform(
+              trimesh.transformations.rotation_matrix(np.radians(-90), [1, 0, 0])
+          )  # glTF Y-up -> OpenSCAD Z-up
+          board.apply_translation(-board.bounds[0])  # origin-align at [0,0,0]
+          board.export("results/cad/pb3-replacement-board.stl")
+          print("board bounds (mm):", board.bounds.tolist())
+          PYEOF
       - name: Render OpenSCAD
         run: |
           mkdir -p results/cad
@@ -71,24 +123,6 @@ jobs:
           done
           [[ "$DEBUG" == "true" ]] && echo "=== Generated PlantUML files ==="
           [[ "$DEBUG" == "true" ]] && find . \( -name "*.svg" -o -name "*.png" \) ! -path "./docs/*"
-      - name: Render KiCad
-        run: |
-          mkdir -p results/kicad
-          docker run --rm -v "$PWD":/w -w /w/kicad "$IMG_KICAD" \
-            kicad-cli sch export pdf -o /w/results/kicad/pb3-replacement-schematic.pdf pb3-replacement.kicad_sch
-          docker run --rm -v "$PWD":/w -w /w/kicad "$IMG_KICAD" \
-            kicad-cli sch export svg -o /w/results/kicad pb3-replacement.kicad_sch
-          mv results/kicad/pb3-replacement.svg results/kicad/pb3-replacement-schematic.svg
-          [[ "$DEBUG" == "true" ]] && echo "=== Finding KiCad projects with kibot.yaml ==="
-          [[ "$DEBUG" == "true" ]] && find . -name "kibot.yaml"
-          for cfg in $(find . -name "kibot.yaml"); do
-            dir=$(dirname "$cfg")
-            [[ "$DEBUG" == "true" ]] && echo "Rendering KiCad project in: $dir"
-            docker run --rm -v "$PWD":/w -w "/w/$dir" "$IMG_KICAD" \
-              kibot -c kibot.yaml -d /w/results/kicad -s all
-          done
-          [[ "$DEBUG" == "true" ]] && echo "=== Generated KiCad outputs ==="
-          [[ "$DEBUG" == "true" ]] && find . -name "kibot_errors.filter" -o -name "*.pdf" -o -name "*.svg" | grep -v docs/
       - name: Run circuit simulation
         run: |
           mkdir -p results/circuit

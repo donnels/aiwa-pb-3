@@ -18,6 +18,10 @@ image::PB3Architecture.png[]
 link:PB3Architecture.svg[SVG] 
 link:PB3Architecture.png[PNG]
 
+== Free Training & Docs
+
+* https://github.com/plantuml/plantuml[PlantUML] — official project
+  repository and documentation for the diagram-as-code syntax used here.
 
 ifdef::flag-book[]
 :imagesdir: {imagesdir-save}

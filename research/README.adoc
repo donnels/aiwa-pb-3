@@ -96,6 +96,15 @@ emulation step.
 * `kicad/README.adoc` — schematic component selection and circuit
   emulation built on the ICs identified here.
 
+== Free Training & Docs
+
+* https://stereo2go.com/forums/threads/rechargeable-battery-replacement-for-aiwa-pb-3-pb-4.9025/[Stereo2Go forum thread] —
+  the original community teardown and battery-replacement research this
+  project builds on.
+* https://github.com/kitspace/awesome-electronics[awesome-electronics] —
+  curated list of free datasheets, application notes, and component
+  references for reading the ICs cited above.
+
 //END OF DOC
 ifdef::flag-book[]
 :imagesdir: {imagesdir-save}

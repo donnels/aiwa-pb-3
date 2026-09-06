@@ -189,6 +189,13 @@ This explicitly requests all defined outputs instead of default subset.
 * link:https://contextualelectronics.com/courses/shine-on-you-crazy-kicad/[Contextual Electronics: Shine On You Crazy KiCad] (paid course)
 * link:https://docs.kicad.org/[Official KiCad Documentation]
 
+== Free Training & Docs
+
+* https://github.com/KiCad/kicad-source-mirror[KiCad source (GitHub mirror)] —
+  official source, linking to the free documentation site above.
+* https://github.com/joanbono/awesome-kicad[awesome-kicad] — curated list
+  of free KiCad tutorials, plugins, and libraries.
+
 //END OF DOC
 ifdef::flag-book[]
 :imagesdir: {imagesdir-save}

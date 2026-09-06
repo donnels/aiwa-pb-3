@@ -76,6 +76,47 @@ models and bench measurements before connecting an AIWA deck.
 This is the electrical half of the pack's compliance check; the mechanical
 half is the OpenSCAD fit check.
 
+== 3D Exports & Renders
+
+Alongside the fabrication outputs (gerbers, drill, position files), the
+CI workflow uses a newer `kicad-cli` (KiCad 9, `pcb export`/`pcb render`)
+to produce:
+
+* `pb3-replacement.step` — a STEP solid model of the board, for import
+  into any MCAD tool (FreeCAD, Fusion 360, SolidWorks, etc.).
+* `pb3-replacement.glb` — a binary glTF of the same board. This is the
+  format actually consumed by the mechanical fit-check: a small Python
+  script (`trimesh`, see `.github/workflows/build.yml`) rescales it from
+  meters to millimetres, rotates it from glTF's Y-up axes to OpenSCAD's
+  Z-up axes, and re-origins it to `[0,0,0]`, producing
+  `results/cad/pb3-replacement-board.stl`.
+* `pb3-replacement-render-top.png` and `-render-iso.png` — photorealistic
+  raytraced renders (`kicad-cli pcb render`) of the finished board, top-
+  down and isometric, for a "what does the real board actually look
+  like" view without opening KiCad.
+
+.Isometric render of the replacement board
+image::pb3-replacement-render-iso.png[]
+
+The STL feeds directly into `openscad/pb3-fit-check.scad` — see
+"Mechanical Design (OpenSCAD)" for the fit-check render that overlays
+this board inside the measured envelope.
+
+== Free Training & Docs
+
+* https://github.com/KiCad/kicad-source-mirror[KiCad source (GitHub mirror)] —
+  official KiCad source code; the repository README links to the free
+  documentation site.
+* https://github.com/joanbono/awesome-kicad[awesome-kicad] — curated list
+  of free KiCad tutorials, plugins, and libraries.
+* https://github.com/ngspice/ngspice[ngspice] — official circuit
+  simulator source and documentation used by "Circuit Emulation" above.
+* https://github.com/kitspace/awesome-electronics[awesome-electronics] —
+  curated list of free datasheets, application notes, and component
+  selection references, useful background for "Component Selection".
+* https://github.com/KhronosGroup/glTF[glTF specification] — the format
+  behind the `.glb` export used for the mechanical fit-check.
+
 //END OF DOC
 ifdef::flag-book[]
 :imagesdir: {imagesdir-save}

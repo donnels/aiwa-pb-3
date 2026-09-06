@@ -143,4 +143,13 @@ image::openscad/pb3-pack.png[]
 . Spin initial KiCad sheets with placeholders.
 . Prototype the buck on eval hardware and log noise against the audio path.
 
+== Free Training & Docs
+
+* https://github.com/adr/madr[MADR — Markdown Architectural Decision
+  Records] — the format this notebook's decisions loosely follow, free
+  and GitHub-hosted.
+* https://github.com/kitspace/awesome-electronics[awesome-electronics] —
+  same curated datasheet/reference list cited from the Research step,
+  useful when re-checking an open question against a component datasheet.
+
 //END OF DOC

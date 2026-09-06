@@ -1,19 +1,7 @@
-// PB-3 battery pack simplification: single solid block matching the outer envelope.
-// Dimensions drawn from measurement photos (measurements/IMG_9373.jpeg–IMG_9385.jpeg)
-// and the Stereo2Go teardown cached in research/.
-// Units: millimetres.
+// PB-3 battery pack simplification: single solid block matching the outer
+// envelope, embossed with a version marker. See include-pb3-envelope.scad
+// for the shared dimensions (also used by pb3-fit-check.scad).
+include <include-pb3-envelope.scad>
 
-module pb3_pack_fitting_test() {
-    outer_len = 68; 
-    outer_width = 17.8;
-    outer_height = 8;
-    textH=.5; textS=10;
-    wiggle=.01;
-    difference(){
-        cube([outer_len, outer_width, outer_height]);
-        translate([textS/2, outer_width/2,outer_height-textH]) linear_extrude(.5+wiggle) text("v0.1",size=textS,valign="center");
-    }
-}
-
-pb3_pack_fitting_test();
+pb3_envelope(emboss_version=true);
 // To test fitting, run OpenSCAD and export to STL. Then 3D print a test block to verify fit in the PB-3 housing.
