@@ -1,2 +1,22 @@
 
 
+== Circuit emulation
+
+`pb3-replacement.cir` is a system-level ngspice model of the proposed pack.
+It approximates the TP4056 charger, 1S LiPo, DW01A/FS8205A protection,
+2.0 V buck regulator, 200 mA deck load, and output clamp with behavioral
+sources. It is useful for checking operating points and assumptions. It does
+not validate the real IC compensation network, stability, thermal behavior,
+or the unverified AIWA connector pinout.
+
+Run it with ngspice:
+
+[source,bash]
+----
+ngspice -b -o pb3-replacement.log pb3-replacement.cir
+grep -E 'vout_|load_current|vbat' pb3-replacement.log
+----
+
+Expected nominal results are approximately 1.98 V at the deck output, 198 mA
+load current, and 3.7 V at the idealized cell. Verify the real circuit with
+vendor SPICE models and bench measurements before connecting an AIWA deck.

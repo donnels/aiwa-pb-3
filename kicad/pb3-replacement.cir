@@ -1,0 +1,36 @@
+* PB-3 system-level emulation.
+* This is a behavioral model, not a substitute for vendor SPICE models.
+* Nominal values follow pb3-notes.adoc: 1S LiPo, 2.0 V output, 500 mAh cell.
+
+.param RLOAD=10
+
+VUSB USB 0 5
+RUSB USB VBUS 0.5
+
+* TP4056 and 1S LiPo approximation at the nominal 3.7 V operating point.
+* The 2.6 ohm path limits USB charging to about 500 mA.
+VBAT BAT 0 3.7
+RCHARGE VBUS BAT 2.6
+RBAT BAT BMS 0.08
+
+* DW01A/FS8205A protection approximation at the nominal operating point.
+* UV/OV cutoff thresholds require a vendor model and are not asserted here.
+RBMS BMS VIN 0.03
+
+* Idealized TPS61023 buck set to 2.0 V with 100 mV source resistance.
+BBUCK VRAW 0 V=(V(BMS)>2.7) ? 2.0 : 0
+RBUCK VRAW VOUT 0.1
+
+* Deck load: 200 mA at 2.0 V.
+RDECK VOUT 0 {RLOAD}
+
+* OVP clamp approximation. It is inactive at the 2.0 V target.
+BOVP VOUT 0 I=(V(VOUT)>2.7) ? (V(VOUT)-2.7)/0.05 : 0
+
+.tran 1m 10
+.meas tran vout_avg AVG V(VOUT) FROM=5 TO=10
+.meas tran vout_min MIN V(VOUT) FROM=5 TO=10
+.meas tran vout_max MAX V(VOUT) FROM=5 TO=10
+.meas tran vbat FIND V(BAT) AT=10
+.meas tran load_current PARAM='vout_avg/RLOAD'
+.end
