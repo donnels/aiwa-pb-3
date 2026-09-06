@@ -3,7 +3,22 @@ Sean Donnellan
 :description: Complete battery circuit example for CI/CD pipeline testing
 :data-uri:
 
-This uses the batteryPack example from https://github.com/INTI-CMNB/KiBot[KiBot's test suite].
+ifndef::flag-book[]
+:toc: right
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+endif::[]
+ifdef::flag-book[]
+:imagesdir-save: {imagesdir}
+:imagesdir: kicad-hello-world
+endif::[]
+
+This is the toolchain's "hello world": before designing the real PB-3
+replacement, this project first proved KiCad + KiBot + CI could take a
+schematic to gerbers automatically, using a known-good sample project
+instead of an unfinished design. It uses the batteryPack example from
+https://github.com/INTI-CMNB/KiBot[KiBot's test suite].
 It's a complete, tested project that demonstrates KiBot automation with a real battery charging circuit.
 
 == Attribution
@@ -173,3 +188,8 @@ This explicitly requests all defined outputs instead of default subset.
 * link:https://www.youtube.com/playlist?list=PLy2022BX6Eso532xqrUxDT1u2p4VVsg-q[KiCad 6 STM32 Beginner Tutorial Series]
 * link:https://contextualelectronics.com/courses/shine-on-you-crazy-kicad/[Contextual Electronics: Shine On You Crazy KiCad] (paid course)
 * link:https://docs.kicad.org/[Official KiCad Documentation]
+
+//END OF DOC
+ifdef::flag-book[]
+:imagesdir: {imagesdir-save}
+endif::[]

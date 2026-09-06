@@ -1,0 +1,73 @@
+= Circuit Design & Emulation
+ifndef::flag-book[]
+:toc: right
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+endif::[]
+ifdef::flag-book[]
+:imagesdir-save: {imagesdir}
+:imagesdir: kicad
+endif::[]
+
+`pb3-replacement.kicad_pro` (with its `.kicad_sch`/`.kicad_pcb`) is the
+living electrical design for the replacement pack: a 68×17.8×8mm board that
+takes USB-C 5V in and delivers a regulated 2.0-2.4V deck rail from a 1S
+LiPo cell.
+
+== Component Selection
+
+Each part below was picked from the candidates surveyed in
+`research/README.adoc`, chosen for SOT-23-6 footprints (small enough for
+the enclosure) and for matching the behavior already proven on the clone
+teardown boards.
+
+CN3058E (charger)::
+Linear Li-ion/LiPo charge management IC. Takes the USB-C 5V rail, applies
+CC/CV charging to the cell, and needs only a handful of external passives
+— important with almost no board area to spare.
+
+DW01A + FS8205A (protection)::
+Discrete battery management system on the cell tabs. DW01A senses cell
+voltage and current; FS8205A is the dual N-MOSFET it drives to cut the
+path on overvoltage, undervoltage, or overcurrent/short. Chosen instead of
+trusting the charger or buck stage alone, so a fault anywhere downstream
+still leaves the cell protected.
+
+Buck regulator (TPS61023-class)::
+Steps the raw ~3.7V cell rail down to the 2.0-2.4V the deck expects. The
+feedback resistor pair sets the output voltage — 100kΩ for 2.4V (PB-S5
+default) or 120kΩ for 2.1V, per the forum's own resistor swap. This
+project targets the original PB-3's 2.0V.
+
+OVP clamp (Zener/TVS)::
+Added on top of what the clone boards do: clamps the output below 3V if
+the buck stage fails, so the deck never sees the raw 3.7V cell rail.
+
+== Circuit Emulation
+
+`pb3-replacement.cir` is a system-level ngspice model of the proposed
+pack. It approximates the CN3058E charger, 1S LiPo, DW01A/FS8205A
+protection, 2.0V buck regulator, 200mA deck load, and output clamp with
+behavioral sources. It is useful for checking operating points and
+assumptions. It does not validate the real IC compensation network,
+stability, thermal behavior, or the unverified AIWA connector pinout.
+
+Run it with ngspice:
+
+[source,bash]
+----
+ngspice -b -o pb3-replacement.log pb3-replacement.cir
+grep -E 'vout_|load_current|vbat' pb3-replacement.log
+----
+
+Expected nominal results are approximately 1.98V at the deck output, 198mA
+load current, and 3.7V at the idealized cell. Verify the real circuit with
+vendor SPICE models and bench measurements before connecting an AIWA deck.
+This is the electrical half of the pack's compliance check; the mechanical
+half is the OpenSCAD fit check.
+
+//END OF DOC
+ifdef::flag-book[]
+:imagesdir: {imagesdir-save}
+endif::[]

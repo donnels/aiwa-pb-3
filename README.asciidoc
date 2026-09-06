@@ -30,11 +30,55 @@ This is my first outing with KICAD and PCB design; forgive stupidity and ignoran
 * **OVP (Zener/TVS)** clamps output <3V if buck fails
 * DW01A+FS8205A BMS: OV/UV/OC protection
 
-== Reverse Engineering Notes
+== How This Book Is Built
+
+This README is a step-by-step training example: it walks from raw
+research to a working, physically- and electrically-compliant battery
+pack, including the toolchain checks done along the way. Every step below
+is its own `README.adoc` in its own directory, assembled here with
+`include::` and `leveloffset` — nothing is a link, so the whole story
+reads top to bottom in one document.
+
+. *Research* — collect teardown photos, forum knowledge, and IC datasheets.
+. *Measurements* — caliper the original pack and derive the mechanical envelope.
+. *Design Notebook* — turn research and measurements into requirements.
+. *KiCad Hello World* — prove the KiCad → KiBot → CI toolchain on a known-good project.
+. *Mechanical Design* — OpenSCAD fit-check model of the envelope.
+. *Circuit Design & Emulation* — KiCad schematic, component selection, ngspice model.
+. *Architecture Diagrams* — PlantUML system diagrams.
+. *Results & Compliance* — generated evidence that the design fits and works.
+
+== Step 1: Research
+
+include::research/README.adoc[leveloffset=+2]
+
+== Step 2: Measurements
+
+include::measurements/README.adoc[leveloffset=+2]
+
+== Step 3: Design Notebook
 
 include::pb3-notes.adoc[leveloffset=+2]
 
-include::measurements/README.adoc[leveloffset=+2]
+== Step 4: KiCad Hello World
+
+include::kicad-hello-world/README.adoc[leveloffset=+2]
+
+== Step 5: Mechanical Design (OpenSCAD)
+
+include::openscad/README.adoc[leveloffset=+2]
+
+== Step 6: Circuit Design & Emulation (KiCad)
+
+include::kicad/README.adoc[leveloffset=+2]
+
+== Step 7: Architecture Diagrams
+
+include::images/README.adoc[leveloffset=+2]
+
+== Step 8: Results & Compliance
+
+include::results/README.adoc[leveloffset=+2]
 
 == Architecture Decisions
 

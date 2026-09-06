@@ -9,9 +9,9 @@ ifndef::flag-book[]
 :sectnumlevels: 5
 endif::[]
 ifdef::flag-book[]
+//image paths in this file are already root-relative (e.g. openscad/pb3-pack.png)
 :imagesdir-save: {imagesdir}
-//set to the directory that contains the images for this subdocument
-:imagesdir: subdoc
+:imagesdir!:
 endif::[]
 
 == Objective
