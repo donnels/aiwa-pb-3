@@ -565,8 +565,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#_component_selection">9.1.1. Component Selection</a></li>
 <li><a href="#_circuit_emulation">9.1.2. Circuit Emulation</a></li>
-<li><a href="#_3d_exports_renders">9.1.3. 3D Exports &amp; Renders</a></li>
-<li><a href="#_free_training_docs_6">9.1.4. Free Training &amp; Docs</a></li>
+<li><a href="#_pcb_routing">9.1.3. PCB Routing</a></li>
+<li><a href="#_3d_exports_renders">9.1.4. 3D Exports &amp; Renders</a></li>
+<li><a href="#_free_training_docs_6">9.1.5. Free Training &amp; Docs</a></li>
 </ul>
 </li>
 </ul>
@@ -1985,7 +1986,70 @@ mechanical half is the OpenSCAD fit check.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_3d_exports_renders">9.1.3. 3D Exports &amp; Renders</h4>
+<h4 id="_pcb_routing">9.1.3. PCB Routing</h4>
+<div class="paragraph">
+<p><code>pb3-replacement.kicad_pcb</code> places footprints for the 1S protection/buck
+power path (<code>J1</code> USB-C, <code>U1</code> TP4056 charger, <code>U2</code> DW01A protection IC,
+<code>Q1</code> FS8205A dual-FET, <code>U3</code> buck regulator, <code>J2</code> deck connector, <code>BT1</code>
+LiPo cell) but the schematic (<code>pb3-replacement.kicad_sch</code>) is a
+block/documentation diagram with global labels only, not real pin-to-pin
+wiring, and the generic pad numbering on each footprint has no documented
+mapping to the chips' real pin functions. Nets and copper traces were
+added directly to the PCB (not derived from the schematic) using
+verified, datasheet-cited pinouts for the actual parts placed on the
+board:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>TP4056 (SOIC-8): 1=TEMP, 2=PROG, 3=GND, 4=VCC, 5=BAT, 6=~STDBY, 7=~CHRG, 8=CE.</p>
+</li>
+<li>
+<p>DW01A (SOT-23-6): 1=OD, 2=CS, 3=OC, 4=TD, 5=VCC, 6=GND — cross-checked
+against Fortune Semiconductor datasheet DW01A-DS-12_EN Rev 1.2, Section 6.</p>
+</li>
+<li>
+<p>FS8205A (SOT-23-6): 1=S1, 2/5=D12 (common drain), 3=S2, 4=G2, 6=G1.</p>
+</li>
+<li>
+<p>TPS62200DBV (SOT-23-5): 1=VIN, 2=GND, 3=EN, 4=FB, 5=SW. The PCB
+footprint is labelled <code>TPS61023</code>, but the real TI TPS61023 is a 6-pin
+SOT-563 part that doesn&#8217;t match this board&#8217;s 5-pad SOT-23-5 footprint.
+The schematic&#8217;s actual symbol for <code>U3</code> is <code>Regulator_Switching:TPS62200</code>
+(a real SOT-23-5 buck), so the TPS62200 pinout was used to route the 5
+pads that exist — the footprint name is a pre-existing naming
+inconsistency in the repo, left unchanged.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Routed nets: <code>VBUS</code>, <code>GND</code> (includes TEMP/CE tied low and the
+DW01A/FS8205A current-sense node), <code>VBAT</code> (cell/protected-positive rail,
+includes <code>EN</code> tied high for an always-on regulator), <code>VBAT_RAW_NEG</code>
+(raw/unprotected cell negative — kept separate from <code>GND</code> so the
+protection circuit still does its job), and the DW01A→FS8205A gate
+signals <code>OD</code>/<code>OC</code>.</p>
+</div>
+<div class="paragraph">
+<p>Several pins are intentionally left as single-pad, unrouted nets
+(<code>NC_PROG</code>, <code>NC_STDBY</code>, <code>NC_CHRG</code>, <code>NC_TD</code>, <code>NC_FB</code>, <code>NC_SW</code>,
+<code>NC_VOUT</code>) because the passives their function depends on — the PROG
+resistor, charger status LEDs, the buck&#8217;s inductor, the FB feedback
+divider, and the output capacitor — do not exist as footprints in this
+PCB revision (they&#8217;re only referenced in the block-diagram schematic).
+<code>kibot.yaml&#8217;s `ignore_unconnected</code> preflight option keeps DRC clean
+despite this. Adding those passives and wiring them in is a follow-up,
+not part of this routing pass.</p>
+</div>
+<div class="paragraph">
+<p>This is a best-effort prototype routing based on standard reference-design
+pinouts, not a verified production layout — confirm every net against the
+real datasheets and bench-test before fabrication, same as the existing
+disclaimers on connector pinout and the feedback resistor value above.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_3d_exports_renders">9.1.4. 3D Exports &amp; Renders</h4>
 <div class="paragraph">
 <p>Alongside the fabrication outputs (gerbers, drill, position files),
 <code>kicad-cli</code> (KiCad 9, <code>pcb export</code>/<code>pcb render</code>) produces:</p>
@@ -2018,7 +2082,7 @@ raytraced renders of the finished board.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_free_training_docs_6">9.1.4. Free Training &amp; Docs</h4>
+<h4 id="_free_training_docs_6">9.1.5. Free Training &amp; Docs</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -3690,7 +3754,7 @@ live in <code>containers/</code>, each with its own README.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-06 11:37:04 UTC
+Last updated 2026-09-06 14:30:26 UTC
 </div>
 </div>
 </body>

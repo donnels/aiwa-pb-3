@@ -35,17 +35,17 @@ vbat                =  3.700000e+00
 load_current        =  1.98020e-01
 
 
-Total analysis time (seconds) = 0.03
+Total analysis time (seconds) = 0.028
 
-Total elapsed time (seconds) = 0.033 
+Total elapsed time (seconds) = 0.032 
 
-Total DRAM available = 15989.691 MB.
-DRAM currently available = 7022.211 MB.
-Maximum ngspice program size =   22.141 MB.
-Current ngspice program size =   12.438 MB.
+Total DRAM available = 15989.699 MB.
+DRAM currently available = 8860.473 MB.
+Maximum ngspice program size =   22.145 MB.
+Current ngspice program size =   12.387 MB.
 
-Shared ngspice pages =   10.512 MB.
+Shared ngspice pages =   10.457 MB.
 Text (code) pages =    5.430 MB.
 Stack = 0 bytes.
-Library pages =    2.395 MB.
+Library pages =    2.398 MB.
 
