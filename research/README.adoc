@@ -79,9 +79,10 @@ stage misbehaves.
 TPS61023 — DC-DC regulator::
 `tps61023.pdf`. SOT-23-6 DC-DC IC used to regulate the raw ~3.7V cell rail
 down to the 2.0–2.4V the deck expects, with the feedback resistor pair
-setting the output voltage (the same resistor the forum thread swaps —
-100kΩ for the PB-S5 clone's 2.4V default, 120kΩ for 2.1V — to move the
-output). Its behavioral model stands in for the buck stage in
+setting the output voltage — a higher resistor lowers the output. The
+forum thread's own swap goes 100kΩ (PB-S5 clone's 2.4V default) to 120kΩ
+(2.1V); reaching this project's 2.0V target extrapolates to a resistor
+above 120kΩ. Its behavioral model stands in for the buck stage in
 `kicad/pb3-replacement.cir`, described in the circuit design and
 emulation step.
 
