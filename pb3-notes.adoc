@@ -2,16 +2,13 @@
 // PB-3 Reverse-Engineering Notebook
 // Included in README.asciidoc
 // Do not render standalone
+// This file lives at repo root and its image paths (e.g. openscad/pb3-pack.png)
+// are already root-relative, so no imagesdir save/override/restore is needed here.
 ifndef::flag-book[]
 :toc: right
 :toclevels: 5
 :sectnums:
 :sectnumlevels: 5
-endif::[]
-ifdef::flag-book[]
-//image paths in this file are already root-relative (e.g. openscad/pb3-pack.png)
-:imagesdir-save: {imagesdir}
-:imagesdir!:
 endif::[]
 
 == Objective
@@ -147,7 +144,3 @@ image::openscad/pb3-pack.png[]
 . Prototype the buck on eval hardware and log noise against the audio path.
 
 //END OF DOC
-
-ifdef::flag-book[]
-:imagesdir: {imagesdir-save}
-endif::[]
