@@ -72,6 +72,53 @@ vendor SPICE models and bench measurements before connecting an AIWA
 deck. This is the electrical half of the compliance check; the
 mechanical half is the OpenSCAD fit check.
 
+== PCB Routing
+
+`pb3-replacement.kicad_pcb` places footprints for the 1S protection/buck
+power path (`J1` USB-C, `U1` TP4056 charger, `U2` DW01A protection IC,
+`Q1` FS8205A dual-FET, `U3` buck regulator, `J2` deck connector, `BT1`
+LiPo cell) but the schematic (`pb3-replacement.kicad_sch`) is a
+block/documentation diagram with global labels only, not real pin-to-pin
+wiring, and the generic pad numbering on each footprint has no documented
+mapping to the chips' real pin functions. Nets and copper traces were
+added directly to the PCB (not derived from the schematic) using
+verified, datasheet-cited pinouts for the actual parts placed on the
+board:
+
+* TP4056 (SOIC-8): 1=TEMP, 2=PROG, 3=GND, 4=VCC, 5=BAT, 6=~STDBY, 7=~CHRG, 8=CE.
+* DW01A (SOT-23-6): 1=OD, 2=CS, 3=OC, 4=TD, 5=VCC, 6=GND — cross-checked
+  against Fortune Semiconductor datasheet DW01A-DS-12_EN Rev 1.2, Section 6.
+* FS8205A (SOT-23-6): 1=S1, 2/5=D12 (common drain), 3=S2, 4=G2, 6=G1.
+* TPS62200DBV (SOT-23-5): 1=VIN, 2=GND, 3=EN, 4=FB, 5=SW. The PCB
+  footprint is labelled `TPS61023`, but the real TI TPS61023 is a 6-pin
+  SOT-563 part that doesn't match this board's 5-pad SOT-23-5 footprint.
+  The schematic's actual symbol for `U3` is `Regulator_Switching:TPS62200`
+  (a real SOT-23-5 buck), so the TPS62200 pinout was used to route the 5
+  pads that exist — the footprint name is a pre-existing naming
+  inconsistency in the repo, left unchanged.
+
+Routed nets: `VBUS`, `GND` (includes TEMP/CE tied low and the
+DW01A/FS8205A current-sense node), `VBAT` (cell/protected-positive rail,
+includes `EN` tied high for an always-on regulator), `VBAT_RAW_NEG`
+(raw/unprotected cell negative — kept separate from `GND` so the
+protection circuit still does its job), and the DW01A→FS8205A gate
+signals `OD`/`OC`.
+
+Several pins are intentionally left as single-pad, unrouted nets
+(`NC_PROG`, `NC_STDBY`, `NC_CHRG`, `NC_TD`, `NC_FB`, `NC_SW`,
+`NC_VOUT`) because the passives their function depends on — the PROG
+resistor, charger status LEDs, the buck's inductor, the FB feedback
+divider, and the output capacitor — do not exist as footprints in this
+PCB revision (they're only referenced in the block-diagram schematic).
+`kibot.yaml`'s `ignore_unconnected` preflight option keeps DRC clean
+despite this. Adding those passives and wiring them in is a follow-up,
+not part of this routing pass.
+
+This is a best-effort prototype routing based on standard reference-design
+pinouts, not a verified production layout — confirm every net against the
+real datasheets and bench-test before fabrication, same as the existing
+disclaimers on connector pinout and the feedback resistor value above.
+
 == 3D Exports & Renders
 
 Alongside the fabrication outputs (gerbers, drill, position files),

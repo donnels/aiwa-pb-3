@@ -29,7 +29,7 @@ env:
   IMG_SCAD: ghcr.io/donnels/openscad:main
   IMG_PUML: ghcr.io/donnels/plantuml:main
   IMG_ADOC: ghcr.io/donnels/asciidoc:main
-  IMG_KICAD: ghcr.io/inti-cmnb/kicad_auto:ki8
+  IMG_KICAD: ghcr.io/inti-cmnb/kicad_auto:ki9
   IMG_KICAD3D: ghcr.io/inti-cmnb/kicad_auto:ki9
 
 jobs:
