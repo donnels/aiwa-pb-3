@@ -39,8 +39,8 @@ Steps the ~3.7V cell rail down to the 2.0-2.4V the deck expects. The
 feedback resistor sets the output: 100kΩ gives the PB-S5 clone's default
 2.4V; the forum's 120kΩ swap gives 2.1V. Extrapolating those two points
 puts 2.0V at roughly 130kΩ — an unverified estimate, not a datasheet
-value. `pb3-replacement.cir` models 2.0V directly; confirm the real
-resistor against the vendor datasheet and bench measurement before
+value. `pb3-architecture-sizing.cir` models 2.0V directly; confirm the
+real resistor against the vendor datasheet and bench measurement before
 fabrication.
 
 OVP clamp (Zener/TVS)::
@@ -49,27 +49,65 @@ the buck stage fails, so the deck never sees the raw 3.7V cell rail.
 
 == Circuit Emulation
 
-`pb3-replacement.cir` is a system-level ngspice model of the proposed
-pack. It approximates the CN3058E charger, 1S LiPo, DW01A/FS8205A
-protection, 2.0V buck regulator, 200mA deck load, and output clamp with
-behavioral sources. It is useful for checking operating points and
-assumptions. It does not validate the real IC compensation network,
-stability, thermal behavior, or the unverified AIWA connector pinout.
+Emulation happens in two stages so a passing simulation always means
+something about the *real* board, not just about an idealized stand-in.
+See `pb3-notes.adoc`'s "Verification Chain" for how this fits the
+project's broader print/fit/design/verify sequence.
+
+=== Stage 1 — Architecture Sizing (exploratory, not a verification)
+
+`pb3-architecture-sizing.cir` is a system-level ngspice model used to
+pick topology and nominal values *before* the schematic below existed.
+It approximates the CN3058E charger, 1S LiPo, DW01A/FS8205A protection,
+2.0V buck regulator, 200mA deck load, and output clamp with behavioral
+sources (idealized voltages/thresholds, not real part models). It is
+useful for checking operating points and assumptions. It does **not**
+validate the real IC compensation network, stability, thermal behavior,
+the unverified AIWA connector pinout, or — critically — the actual
+schematic/PCB below: the netlist is hand-written, independent of
+`pb3-replacement.kicad_sch`, so a passing run only proves the idealized
+model is self-consistent.
 
 Run it with ngspice:
 
 [source,bash]
 ----
-ngspice -b -o pb3-replacement.log pb3-replacement.cir
-grep -E 'vout_|load_current|vbat' pb3-replacement.log
+ngspice -b -o pb3-architecture-sizing.log pb3-architecture-sizing.cir
+grep -E 'vout_|load_current|vbat' pb3-architecture-sizing.log
 ----
 
 Expected results: ~1.98V at the deck output, 198mA load current, 3.7V
 at the idealized cell. The model hard-codes a 2.0V buck target — it
 does not use the ~130kΩ feedback-resistor estimate above, which is for
-the real IC's feedback divider, not this behavioral model. Verify with
-vendor SPICE models and bench measurements before connecting an AIWA
-deck. This is the electrical half of the compliance check; the
+the real IC's feedback divider, not this behavioral model.
+
+=== Stage 2 — Schematic-Derived Simulation (the real verification, currently blocked)
+
+The step that actually verifies the design would generate a SPICE
+netlist *from* `pb3-replacement.kicad_sch` (e.g. `kicad-cli sch export
+netlist`) and simulate it with real or vendor-published SPICE models for
+`U1` (TP4056), `U2` (DW01A), `Q1` (FS8205A), `U3` (TPS62200), and `D1`
+(Zener) wherever such models exist. That would check the same reference
+designators and values that get fabricated, closing the gap that Stage 1
+leaves open.
+
+This is **not implemented yet**, and not faked: as documented in "PCB
+Routing" below, `pb3-replacement.kicad_sch` is currently a
+block/documentation diagram with global labels only, not real
+pin-to-pin symbol wiring, and its `lib_symbols` table is empty. Exporting
+a netlist from it today would not produce a meaningful circuit — there is
+nothing yet to simulate that represents the actual feedback dividers,
+current-sense nodes, or gate signals routed on the PCB. Unblocking Stage
+2 requires: (1) real KiCad symbols with pins for `U1`/`U2`/`Q1`/`U3`/`D1`
+wired to match the PCB nets already routed (`VBUS`, `VBAT`,
+`VBAT_RAW_NEG`, `GND`, `OD`/`OC`), and (2) sourcing or approximating SPICE
+models per part — some of which (DW01A, FS8205A) have no public vendor
+model, a gap that should stay documented rather than papered over with an
+idealized threshold. Until then, Stage 1 remains the only simulation, and
+it is labeled as sizing/exploratory, not verification.
+
+Verify with vendor SPICE models and bench measurements before connecting
+an AIWA deck. This is the electrical half of the compliance check; the
 mechanical half is the OpenSCAD fit check.
 
 == PCB Routing

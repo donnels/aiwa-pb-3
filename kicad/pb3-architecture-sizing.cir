@@ -1,4 +1,7 @@
-* PB-3 system-level emulation.
+* Stage 1: PB-3 architecture sizing model. Decides topology/values BEFORE
+* the schematic is drawn. It is not a verification of the KiCad circuit in
+* pb3-replacement.kicad_sch/.kicad_pcb - see kicad/README.adoc for Stage 2,
+* the schematic-derived simulation that actually checks the real design.
 * This is a behavioral model, not a substitute for vendor SPICE models.
 * Nominal values follow pb3-notes.adoc: 1S LiPo, 2.0 V output, 500 mAh cell.
 

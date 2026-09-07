@@ -9,4 +9,4 @@ docker run --rm \
   -v "${repo_root}/kicad:/work:ro" \
   -v "${repo_root}/results/circuit:/results" \
   aiwa-pb3-ngspice \
-  -b -o /results/pb3-replacement.log /work/pb3-replacement.cir
+  -b -o /results/pb3-architecture-sizing.log /work/pb3-architecture-sizing.cir

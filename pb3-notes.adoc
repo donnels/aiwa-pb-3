@@ -118,6 +118,38 @@ image::openscad/pb3-pack.png[]
 * `mechanical/pb3-shell.step` — shell model for fit checks.
 * `library/connector_aiwa_pb3.kicad_mod` — blade footprint.
 
+== Verification Chain
+Each step in the road to a fabricated board is meant to verify the step
+before it, not stand alone. Simulation and physical test are chained,
+not two disconnected box-ticks:
+
+. *Sizing model* (`kicad/pb3-architecture-sizing.cir`, Stage 1) — decides
+  topology and nominal values (1S LiPo, 2.0V buck output, 2.7V OV
+  threshold) before any schematic exists. Behavioral, idealized, useful
+  for picking numbers — not a check of the real circuit.
+. *Schematic* (`kicad/pb3-replacement.kicad_sch`) — carries those same
+  nominal values forward into a design with real parts (TP4056, DW01A,
+  FS8205A, TPS62200, Zener). Currently a block/documentation diagram
+  without full pin-to-pin wiring — see `kicad/README.adoc`'s "PCB
+  Routing" section for the tracked gap.
+. *Netlist-derived sim* (Stage 2, not yet implemented) — would generate
+  a netlist from that schematic and re-run it in ngspice with real or
+  vendor SPICE models, so a pass means the design that gets fabricated
+  works, not a stand-in. Blocked until the schematic has real wiring;
+  see `kicad/README.adoc` and `containers/ngspice/README.adoc` for what
+  unblocks it.
+. *Bench measurement* — once a board is built, measure the same
+  quantities (deck output voltage, load current, OV cutoff point) called
+  out in Stage 1/2 and log the delta here. A delta flags either a bad
+  sizing assumption, a missing vendor model, or a real fault — not a
+  simulation to ignore.
+
+Same as the mechanical chain (print the gauge block, verify the fit,
+only then route the board), no stage's pass/fail claims more than it
+tests: a circuit that hits 2.0V in `pb3-architecture-sizing.cir` proves
+the idealized model balances, nothing about the TP4056/DW01A/FS8205A/
+TPS62200 board until Stage 2 or the bench confirms it too.
+
 == Validation & Test Plan
 *Functional*
 * Charge through USB-C. Log voltage and current curves.

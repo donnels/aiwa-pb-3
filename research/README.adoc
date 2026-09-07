@@ -83,8 +83,8 @@ setting the output voltage — a higher resistor lowers the output. The
 forum thread's own swap goes 100kΩ (PB-S5 clone's 2.4V default) to 120kΩ
 (2.1V); reaching this project's 2.0V target extrapolates to a resistor
 above 120kΩ. Its behavioral model stands in for the buck stage in
-`kicad/pb3-replacement.cir`, described in the circuit design and
-emulation step.
+`kicad/pb3-architecture-sizing.cir`, described in the circuit design and
+emulation step (Stage 1).
 
 == What This Enabled
 
