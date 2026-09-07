@@ -81,30 +81,65 @@ at the idealized cell. The model hard-codes a 2.0V buck target — it
 does not use the ~130kΩ feedback-resistor estimate above, which is for
 the real IC's feedback divider, not this behavioral model.
 
-=== Stage 2 — Schematic-Derived Simulation (the real verification, currently blocked)
+=== Stage 2 — Schematic-Derived Simulation (netlist export unblocked; full SPICE sim still partial)
 
-The step that actually verifies the design would generate a SPICE
-netlist *from* `pb3-replacement.kicad_sch` (e.g. `kicad-cli sch export
-netlist`) and simulate it with real or vendor-published SPICE models for
-`U1` (TP4056), `U2` (DW01A), `Q1` (FS8205A), `U3` (TPS62200), and `D1`
-(Zener) wherever such models exist. That would check the same reference
-designators and values that get fabricated, closing the gap that Stage 1
-leaves open.
+The step that actually verifies the design generates a SPICE netlist
+*from* `pb3-replacement.kicad_sch` (`kicad-cli sch export netlist
+--format spice`) and simulates it with real or vendor-published SPICE
+models for `U1` (TP4056), `U2` (DW01A), `Q1` (FS8205A substitute, see
+below), `U3` (TPS62200), and `D1` (Zener) wherever such models exist.
+That checks the same reference designators and values that get
+fabricated, closing the gap that Stage 1 leaves open.
 
-This is **not implemented yet**, and not faked: as documented in "PCB
-Routing" below, `pb3-replacement.kicad_sch` is currently a
-block/documentation diagram with global labels only, not real
-pin-to-pin symbol wiring, and its `lib_symbols` table is empty. Exporting
-a netlist from it today would not produce a meaningful circuit — there is
-nothing yet to simulate that represents the actual feedback dividers,
-current-sense nodes, or gate signals routed on the PCB. Unblocking Stage
-2 requires: (1) real KiCad symbols with pins for `U1`/`U2`/`Q1`/`U3`/`D1`
-wired to match the PCB nets already routed (`VBUS`, `VBAT`,
-`VBAT_RAW_NEG`, `GND`, `OD`/`OC`), and (2) sourcing or approximating SPICE
-models per part — some of which (DW01A, FS8205A) have no public vendor
-model, a gap that should stay documented rather than papered over with an
-idealized threshold. Until then, Stage 1 remains the only simulation, and
-it is labeled as sizing/exploratory, not verification.
+`pb3-replacement.kicad_sch` is now a real, pin-wired schematic instead of
+a block/documentation diagram: every component is a real KiCad library
+symbol (embedded in `lib_symbols`), and every pin is tied to its net via a
+same-named global label placed at the pin, reusing the exact net names
+already routed on the PCB (`VBUS`, `VBAT`, `VBAT_RAW_NEG`, `GND`,
+`OD`/`OC`) plus new nets for the passives the PCB was missing (see "PCB
+Routing" below). `kicad-cli sch erc` on this schematic reports **0
+errors** (down from 19 dangling/unconnected errors on the old block
+diagram); the remaining ~40 warnings are expected/documented — footprint
+library-table warnings from running outside a configured KiCad project,
+`NC_*` single-pin nets that are intentionally left dangling (documented
+below), and off-grid cosmetic placements from the label-per-pin layout
+strategy.
+
+Three of the schematic's original `lib_id`s did not just lack wiring —
+they were **unresolvable against real KiCad libraries** and would have
+failed to open cleanly in KiCad at all. They were corrected to real,
+pin-compatible library parts:
+
+* `Battery_Management:TP4056` → `Battery_Management:TP4056-42-ESOP8`
+  (same SOIC-8 pinout already used for PCB routing).
+* `Regulator_Switching:TPS62200` → `Regulator_Switching:TPS62200DBV`
+  (same SOT-23-5 pinout already used for PCB routing).
+* `Connector:USB_C_Receptacle_USB2.0` → `Connector:USB_C_Receptacle_PowerOnly_6P`
+  (matches the existing 6-pad `GCT_USB4105-xx-A` footprint already
+  placed on the PCB; note the CC1/CC2 pins are wired to `NC_CC1`/`NC_CC2`
+  — proper USB-C power-only negotiation needs 5.1kΩ pull-downs on both,
+  which this revision does not add — a newly-discovered, real gap,
+  documented here rather than fixed silently).
+* `Transistor_FET:FS8205A` does not exist in any public KiCad library.
+  `Transistor_FET:DMG9926UDM` (a real Diodes Inc. common-drain dual
+  N-MOSFET, SOT-23-6) is used as a documented substitute: its pin
+  numbering (1=D1, 2/5=common S1/D2, 3=S2, 4=G2, 6=G1) maps pin-for-pin
+  onto the FS8205A pinout already cited in "PCB Routing" below. This is a
+  schematic-symbol substitution for simulation/ERC purposes only — it
+  does not change which part is fabricated.
+
+Exporting the netlist now succeeds structurally
+(`kicad-cli sch export netlist --format spice`), where it previously had
+nothing valid to export. It is **still not a fully simulatable SPICE
+netlist**: `kicad-cli`'s built-in SPICE exporter only resolves passives
+(`R`/`L`/`C`) by reference-designator convention; multi-pin parts
+(`U1`/`U2`/`Q1`/`U3`/diodes/connectors) need `Sim.Device`/`Sim.Pins`/
+`Sim.Model` fields added per-symbol before ngspice can use them, and two
+of those parts have no public SPICE model to attach in the first place
+(DW01A, FS8205A/DMG9926UDM) — the same documented gap Stage 1 already
+calls out. Adding those Spice fields for the parts that do have public
+models (TPS62200, and third-party TP4056 models) is the concrete next
+step to get from "netlist exports" to "netlist simulates."
 
 Verify with vendor SPICE models and bench measurements before connecting
 an AIWA deck. This is the electrical half of the compliance check; the
@@ -158,10 +193,10 @@ comments).
   and a built-in interactive waveform viewer; another schematic-first
   alternative to hand-editing `.cir` files.
 * *KiCad's own "Simulate" tab* (eeschem, ngspice-integrated) — click a
-  net on the schematic to probe it interactively. This only becomes
-  usable once the schematic has real pin-to-pin wiring, i.e. once
-  Stage 2 above is unblocked; today's block-diagram schematic has
-  nothing for it to probe.
+  net on the schematic to probe it interactively. The schematic now has
+  real pin-to-pin wiring (see Stage 2 above), so this is usable for
+  probing net connectivity; full transient simulation in this tab still
+  needs the same per-symbol Spice model fields called out in Stage 2.
 
 **Turning an exploration finding into a physical POC:** when interactive
 exploration flags a node ngspice can't be trusted for — DW01A/FS8205A
@@ -181,22 +216,25 @@ where this loop sits relative to Stage 1/Stage 2/bench test.
 `pb3-replacement.kicad_pcb` places footprints for the 1S protection/buck
 power path (`J1` USB-C, `U1` TP4056 charger, `U2` DW01A protection IC,
 `Q1` FS8205A dual-FET, `U3` buck regulator, `J2` deck connector, `BT1`
-LiPo cell) but the schematic (`pb3-replacement.kicad_sch`) is a
-block/documentation diagram with global labels only, not real pin-to-pin
-wiring, and the generic pad numbering on each footprint has no documented
-mapping to the chips' real pin functions. Nets and copper traces were
-added directly to the PCB (not derived from the schematic) using
+LiPo cell). `pb3-replacement.kicad_sch` is now a real, pin-wired
+schematic (see "Circuit Emulation" → Stage 2 above) that documents the
+same pinouts used for PCB routing below, so this section and the
+schematic no longer disagree with each other. Nets and copper traces on
+the PCB were still added directly (not derived from the schematic, since
+KiCad's PCB-from-schematic re-annotation was not run this pass) using
 verified, datasheet-cited pinouts for the actual parts placed on the
 board:
 
 * TP4056 (SOIC-8): 1=TEMP, 2=PROG, 3=GND, 4=VCC, 5=BAT, 6=~STDBY, 7=~CHRG, 8=CE.
 * DW01A (SOT-23-6): 1=OD, 2=CS, 3=OC, 4=TD, 5=VCC, 6=GND — cross-checked
   against Fortune Semiconductor datasheet DW01A-DS-12_EN Rev 1.2, Section 6.
-* FS8205A (SOT-23-6): 1=S1, 2/5=D12 (common drain), 3=S2, 4=G2, 6=G1.
+* FS8205A (SOT-23-6): 1=S1, 2/5=D12 (common drain), 3=S2, 4=G2, 6=G1. The
+  schematic's `Q1` symbol is `DMG9926UDM` (documented substitute, see
+  Stage 2 above) with the same pin mapping.
 * TPS62200DBV (SOT-23-5): 1=VIN, 2=GND, 3=EN, 4=FB, 5=SW. The PCB
   footprint is labelled `TPS61023`, but the real TI TPS61023 is a 6-pin
   SOT-563 part that doesn't match this board's 5-pad SOT-23-5 footprint.
-  The schematic's actual symbol for `U3` is `Regulator_Switching:TPS62200`
+  The schematic's actual symbol for `U3` is `Regulator_Switching:TPS62200DBV`
   (a real SOT-23-5 buck), so the TPS62200 pinout was used to route the 5
   pads that exist — the footprint name is a pre-existing naming
   inconsistency in the repo, left unchanged.
@@ -208,15 +246,34 @@ includes `EN` tied high for an always-on regulator), `VBAT_RAW_NEG`
 protection circuit still does its job), and the DW01A→FS8205A gate
 signals `OD`/`OC`.
 
-Several pins are intentionally left as single-pad, unrouted nets
-(`NC_PROG`, `NC_STDBY`, `NC_CHRG`, `NC_TD`, `NC_FB`, `NC_SW`,
+Several pins are still left as single-pad, unrouted `NC_*` nets on the
+**PCB** (`NC_PROG`, `NC_STDBY`, `NC_CHRG`, `NC_TD`, `NC_FB`, `NC_SW`,
 `NC_VOUT`) because the passives their function depends on — the PROG
-resistor, charger status LEDs, the buck's inductor, the FB feedback
-divider, and the output capacitor — do not exist as footprints in this
-PCB revision (they're only referenced in the block-diagram schematic).
+resistor (`R2`), charger status LEDs (`D2`/`D3`) with their current-limit
+resistors (`R3`/`R4`), the buck's inductor (`L1`), the FB feedback
+divider's second resistor (`R5`), and the output capacitor (`C1`) — have
+footprints in the schematic now (used for Stage 2 netlist export) but
+**not yet as PCB footprints/copper on this tight 68×17.8mm board**.
 `kibot.yaml`'s `ignore_unconnected` preflight option keeps DRC clean
-despite this. Adding those passives and wiring them in is a follow-up,
-not part of this routing pass.
+despite this. Placing and routing those 6 new footprints (`R2`-`R5`,
+`L1`, `C1`, plus `D2`/`D3` LEDs) is the concrete next task to close this
+gap — precisely scoped now that the schematic fixes their values and net
+names, but not attempted in this pass given the board's limited area.
+
+Component values chosen for the schematic (flagged by confidence level,
+not asserted as final):
+
+* `R2` (PROG) = 2.4kΩ — derived from the TP4056 datasheet formula
+  `Ichg(mA) = 1200/Rprog(kΩ)` for a 500mA charge target.
+* `L1` = 2.2µH — taken directly from `pb3-notes.adoc`'s existing
+  Electrical Block Requirements.
+* `R3`/`R4` (LED current-limit) = 1kΩ — generic placeholder, **not
+  verified** against the LED's actual forward-current spec.
+* `R5` (FB divider bottom resistor) = **TBD** — left unset; the TI
+  TPS62200 datasheet was not reachable this session to derive it from
+  `R1`'s ~130kΩ estimate above using the real feedback-voltage formula.
+* `C1` (buck output cap) = 10µF — generic typical value, **not verified**
+  against the TPS62200 datasheet's stability requirements.
 
 This is a best-effort prototype routing based on standard reference-design
 pinouts, not a verified production layout — confirm every net against the

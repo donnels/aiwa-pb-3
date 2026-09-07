@@ -13,14 +13,17 @@ TP4056 -> DW01A/FS8205A -> TPS62200 circuit in
 `pb3-replacement.kicad_sch`/`.kicad_pcb`.
 
 Stage 2 — netlist-derived simulation of the actual KiCad schematic — is
-the step that would verify the real design. It is not implemented yet:
-`pb3-replacement.kicad_sch` is currently a block/documentation diagram
-with global labels only (see "PCB Routing" in `kicad/README.adoc`), not
-real pin-to-pin wiring, so a `kicad-cli sch export netlist` of it would
-not produce a meaningful netlist. Stage 2 becomes possible once the
-schematic carries real symbol pins and wiring for `U1`/`U2`/`Q1`/`U3`/`D1`
-matching the PCB. See `kicad/README.adoc` for the tracked gap and what
-unblocks it.
+the step that would verify the real design. Netlist export is now
+unblocked: `pb3-replacement.kicad_sch` has real pin-to-pin wiring and
+resolvable `lib_id`s (see "Circuit Emulation" → Stage 2 in
+`kicad/README.adoc`), so `kicad-cli sch export netlist --format spice`
+produces a real netlist from it. Full ngspice simulation of that netlist
+is still partial: passives (`R`/`L`/`C`) resolve automatically, but the
+IC symbols (`U1`/`U2`/`Q1`/`U3`) need `Sim.Device`/`Sim.Pins`/`Sim.Model`
+fields added per-symbol, and two of those parts (DW01A, and the
+FS8205A/DMG9926UDM substitute) have no public SPICE model to attach
+regardless — this container does not run that simulation yet. See
+`kicad/README.adoc` for the exact remaining steps.
 
 == Build & Run
 

@@ -137,15 +137,20 @@ not two disconnected box-ticks:
   `kicad/README.adoc`.
 . *Schematic* (`kicad/pb3-replacement.kicad_sch`) — carries those same
   nominal values forward into a design with real parts (TP4056, DW01A,
-  FS8205A, TPS62200, Zener). Currently a block/documentation diagram
-  without full pin-to-pin wiring — see `kicad/README.adoc`'s "PCB
-  Routing" section for the tracked gap.
-. *Netlist-derived sim* (Stage 2, not yet implemented) — would generate
-  a netlist from that schematic and re-run it in ngspice with real or
-  vendor SPICE models, so a pass means the design that gets fabricated
-  works, not a stand-in. Blocked until the schematic has real wiring;
-  see `kicad/README.adoc` and `containers/ngspice/README.adoc` for what
-  unblocks it.
+  a documented DMG9926UDM substitute for the unavailable FS8205A symbol,
+  TPS62200DBV, Zener). Now real, pin-to-pin wired with corrected/real
+  `lib_id`s and 0 `kicad-cli sch erc` errors — see `kicad/README.adoc`'s
+  "PCB Routing" and "Circuit Emulation" → Stage 2 sections for the exact
+  substitutions made and the still-open PCB-footprint gap (`R2`-`R5`,
+  `L1`, `C1`, `D2`/`D3` exist in the schematic but not yet on the PCB).
+. *Netlist-derived sim* (Stage 2, netlist export unblocked; full SPICE
+  sim still partial) — `kicad-cli sch export netlist --format spice` now
+  produces a real netlist from the schematic instead of nothing. Passives
+  (`R`/`L`/`C`) resolve automatically; multi-pin ICs still need
+  `Sim.Device`/`Sim.Pins`/`Sim.Model` fields added per-symbol before
+  ngspice can simulate them, and DW01A/FS8205A substitute have no public
+  SPICE model to attach regardless — see `kicad/README.adoc` and
+  `containers/ngspice/README.adoc` for the exact remaining steps.
 . *Bench measurement* — once a board is built, measure the same
   quantities (deck output voltage, load current, OV cutoff point) called
   out in Stage 1/2 and log the delta here. A delta flags either a bad
