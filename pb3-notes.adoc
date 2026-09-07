@@ -127,6 +127,14 @@ not two disconnected box-ticks:
   topology and nominal values (1S LiPo, 2.0V buck output, 2.7V OV
   threshold) before any schematic exists. Behavioral, idealized, useful
   for picking numbers — not a check of the real circuit.
+. *Interactive exploration + dead-bug POC loop* (optional, between Stage
+  1 and the schematic) — run the sizing model interactively in ngspice
+  (or a graphical front end) to find nodes the behavioral model can't be
+  trusted for (protection IC trip behavior, buck transient response),
+  then build the smallest physical dead-bug/breadboard rig with the real
+  part to measure that node, and fold the measurement back into the
+  `.cir` file. See "Interactive Exploration & Physical POC Loop" in
+  `kicad/README.adoc`.
 . *Schematic* (`kicad/pb3-replacement.kicad_sch`) — carries those same
   nominal values forward into a design with real parts (TP4056, DW01A,
   FS8205A, TPS62200, Zener). Currently a block/documentation diagram

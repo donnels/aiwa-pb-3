@@ -110,6 +110,72 @@ Verify with vendor SPICE models and bench measurements before connecting
 an AIWA deck. This is the electrical half of the compliance check; the
 mechanical half is the OpenSCAD fit check.
 
+=== Interactive Exploration & Physical POC Loop
+
+CI only ever runs `ngspice -b` (batch mode): fixed inputs in, a log file
+out, useful for a pass/fail gate but not for poking at the circuit. Use
+an interactive ngspice session to explore *before* trusting a number:
+
+[source,bash]
+----
+docker run --rm -it -v "$PWD/kicad":/work -w /work --entrypoint ngspice \
+  aiwa-pb3-ngspice pb3-architecture-sizing.cir
+----
+
+At the `ngspice>` prompt:
+
+* `run` — execute the `.tran` analysis already in the file.
+* `plot v(vout) v(bat) v(bms)` — waveform the deck output, cell, and
+  protected-rail nodes against each other.
+* `alter vbat = 3.5` / `alter rload = 20` then `rerun` — sweep a
+  parameter (end-of-discharge cell voltage, heavier deck load) without
+  editing the file and re-running batch.
+* `iplot vout` before `run` — live-updating plot while the transient
+  computes, useful for long sweeps.
+
+This is where the model's idealizations get tested on purpose: try to
+`alter` the OVP/UV thresholds in `pb3-architecture-sizing.cir` to
+something that should visibly fail and see if the behavioral `B` sources
+even react with a realistic shape (delay, ringing, hysteresis) or just
+snap instantly. A too-clean reaction is the signal that a part is not
+meaningfully simulated yet — currently true for the DW01A/FS8205A
+trip behavior and the TPS62200 loop response (see the model's own
+comments).
+
+**Graphical tools for exploring the circuit:**
+
+* *ngspice's own plotting* — if built with X11/Qt support (the Debian
+  `ngspice` package used by `containers/ngspice/Dockerfile` is), `plot`/
+  `iplot` open native graph windows. Run the container with `-it` and
+  forward the display (`-e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix`
+  on Linux) instead of running headless.
+* *Xschem + ngspice* — free schematic-capture front end that drives
+  ngspice directly: draw the circuit, click a wire/pin to place a probe,
+  hit simulate, see the waveform in the same window. Good for exploring
+  the TP4056/DW01A/FS8205A/TPS62200 topology graphically without waiting
+  on Stage 2's KiCad netlist export.
+* *QUCS-S* — schematic capture with ngspice as its simulation backend
+  and a built-in interactive waveform viewer; another schematic-first
+  alternative to hand-editing `.cir` files.
+* *KiCad's own "Simulate" tab* (eeschem, ngspice-integrated) — click a
+  net on the schematic to probe it interactively. This only becomes
+  usable once the schematic has real pin-to-pin wiring, i.e. once
+  Stage 2 above is unblocked; today's block-diagram schematic has
+  nothing for it to probe.
+
+**Turning an exploration finding into a physical POC:** when interactive
+exploration flags a node ngspice can't be trusted for — DW01A/FS8205A
+trip voltage and timing, TPS62200 transient response under a real deck
+load step, the Zener/TVS clamp's actual knee — build the smallest
+dead-bug/breadboard rig that isolates just that question, using the real
+part: bench supply standing in for the cell, a scope on the node in
+doubt, a load step or ramp matching what the deck actually does. Measure
+it, then fold the number back into `pb3-architecture-sizing.cir` (replace
+the idealized threshold/step in the relevant `B` source) with a comment
+citing the POC measurement, so the next simulation run reflects reality
+instead of an assumption. See `pb3-notes.adoc`'s "Verification Chain" for
+where this loop sits relative to Stage 1/Stage 2/bench test.
+
 == PCB Routing
 
 `pb3-replacement.kicad_pcb` places footprints for the 1S protection/buck

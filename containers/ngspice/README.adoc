@@ -36,6 +36,10 @@ docker run --rm \
 
 Or run `run.sh` — it does the same build-and-run in one call.
 
+For interactive exploration (waveform plotting, live parameter sweeps,
+graphical schematic-probe tools) instead of this batch invocation, see
+"Interactive Exploration & Physical POC Loop" in `kicad/README.adoc`.
+
 == Files
 
 * `Dockerfile` — the image.
