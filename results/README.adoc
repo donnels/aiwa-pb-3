@@ -53,10 +53,12 @@ and `-render-iso.png` are photorealistic renders of the finished board.
 
 == Electrical Compliance
 
-`circuit/pb3-replacement.log` is the ngspice run of the circuit emulation
-described in the "Circuit Design & Emulation" step — see that step for
-the expected pass values. `kicad/pb3-replacement-schematic.pdf` and
-`-schematic.svg` are the schematic exports of the same design.
+`circuit/pb3-architecture-sizing.log` is the ngspice run of Stage 1
+(architecture sizing) of the circuit emulation described in the "Circuit
+Design & Emulation" step — see that step for the expected pass values
+and for why Stage 1 alone is not a verification of the real schematic.
+`kicad/pb3-replacement-schematic.pdf` and `-schematic.svg` are the
+schematic exports of the same design.
 
 == Toolchain Proof
 

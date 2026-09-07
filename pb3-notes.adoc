@@ -118,6 +118,51 @@ image::openscad/pb3-pack.png[]
 * `mechanical/pb3-shell.step` — shell model for fit checks.
 * `library/connector_aiwa_pb3.kicad_mod` — blade footprint.
 
+== Verification Chain
+Each step in the road to a fabricated board is meant to verify the step
+before it, not stand alone. Simulation and physical test are chained,
+not two disconnected box-ticks:
+
+. *Sizing model* (`kicad/pb3-architecture-sizing.cir`, Stage 1) — decides
+  topology and nominal values (1S LiPo, 2.0V buck output, 2.7V OV
+  threshold) before any schematic exists. Behavioral, idealized, useful
+  for picking numbers — not a check of the real circuit.
+. *Interactive exploration + dead-bug POC loop* (optional, between Stage
+  1 and the schematic) — run the sizing model interactively in ngspice
+  (or a graphical front end) to find nodes the behavioral model can't be
+  trusted for (protection IC trip behavior, buck transient response),
+  then build the smallest physical dead-bug/breadboard rig with the real
+  part to measure that node, and fold the measurement back into the
+  `.cir` file. See "Interactive Exploration & Physical POC Loop" in
+  `kicad/README.adoc`.
+. *Schematic* (`kicad/pb3-replacement.kicad_sch`) — carries those same
+  nominal values forward into a design with real parts (TP4056, DW01A,
+  a documented DMG9926UDM substitute for the unavailable FS8205A symbol,
+  TPS62200DBV, Zener). Now real, pin-to-pin wired with corrected/real
+  `lib_id`s and 0 `kicad-cli sch erc` errors — see `kicad/README.adoc`'s
+  "PCB Routing" and "Circuit Emulation" → Stage 2 sections for the exact
+  substitutions made and the still-open PCB-footprint gap (`R2`-`R5`,
+  `L1`, `C1`, `D2`/`D3` exist in the schematic but not yet on the PCB).
+. *Netlist-derived sim* (Stage 2, netlist export unblocked; full SPICE
+  sim still partial) — `kicad-cli sch export netlist --format spice` now
+  produces a real netlist from the schematic instead of nothing. Passives
+  (`R`/`L`/`C`) resolve automatically; multi-pin ICs still need
+  `Sim.Device`/`Sim.Pins`/`Sim.Model` fields added per-symbol before
+  ngspice can simulate them, and DW01A/FS8205A substitute have no public
+  SPICE model to attach regardless — see `kicad/README.adoc` and
+  `containers/ngspice/README.adoc` for the exact remaining steps.
+. *Bench measurement* — once a board is built, measure the same
+  quantities (deck output voltage, load current, OV cutoff point) called
+  out in Stage 1/2 and log the delta here. A delta flags either a bad
+  sizing assumption, a missing vendor model, or a real fault — not a
+  simulation to ignore.
+
+Same as the mechanical chain (print the gauge block, verify the fit,
+only then route the board), no stage's pass/fail claims more than it
+tests: a circuit that hits 2.0V in `pb3-architecture-sizing.cir` proves
+the idealized model balances, nothing about the TP4056/DW01A/FS8205A/
+TPS62200 board until Stage 2 or the bench confirms it too.
+
 == Validation & Test Plan
 *Functional*
 * Charge through USB-C. Log voltage and current curves.

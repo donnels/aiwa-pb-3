@@ -1,7 +1,29 @@
 = ngspice Container
 
-`debian:bookworm-slim` + `ngspice`. Runs the circuit emulation described
-in `kicad/README.adoc`.
+`debian:bookworm-slim` + `ngspice`. Runs Stage 1 (architecture sizing)
+of the two-stage circuit emulation model described in `kicad/README.adoc`.
+
+== Stage 1 vs Stage 2
+
+This container only runs Stage 1: a hand-written behavioral model
+(`kicad/pb3-architecture-sizing.cir`) used to pick topology and nominal
+values *before* the schematic exists. A passing run here proves the
+idealized model is self-consistent — it does not verify the real
+TP4056 -> DW01A/FS8205A -> TPS62200 circuit in
+`pb3-replacement.kicad_sch`/`.kicad_pcb`.
+
+Stage 2 — netlist-derived simulation of the actual KiCad schematic — is
+the step that would verify the real design. Netlist export is now
+unblocked: `pb3-replacement.kicad_sch` has real pin-to-pin wiring and
+resolvable `lib_id`s (see "Circuit Emulation" → Stage 2 in
+`kicad/README.adoc`), so `kicad-cli sch export netlist --format spice`
+produces a real netlist from it. Full ngspice simulation of that netlist
+is still partial: passives (`R`/`L`/`C`) resolve automatically, but the
+IC symbols (`U1`/`U2`/`Q1`/`U3`) need `Sim.Device`/`Sim.Pins`/`Sim.Model`
+fields added per-symbol, and two of those parts (DW01A, and the
+FS8205A/DMG9926UDM substitute) have no public SPICE model to attach
+regardless — this container does not run that simulation yet. See
+`kicad/README.adoc` for the exact remaining steps.
 
 == Build & Run
 
@@ -12,10 +34,14 @@ docker run --rm \
   -v "$PWD/kicad":/work:ro \
   -v "$PWD/results/circuit":/results \
   aiwa-pb3-ngspice \
-  -b -o /results/pb3-replacement.log /work/pb3-replacement.cir
+  -b -o /results/pb3-architecture-sizing.log /work/pb3-architecture-sizing.cir
 ----
 
 Or run `run.sh` — it does the same build-and-run in one call.
+
+For interactive exploration (waveform plotting, live parameter sweeps,
+graphical schematic-probe tools) instead of this batch invocation, see
+"Interactive Exploration & Physical POC Loop" in `kicad/README.adoc`.
 
 == Files
 

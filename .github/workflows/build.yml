@@ -112,7 +112,7 @@ jobs:
           done
           [[ "$DEBUG" == "true" ]] && echo "=== Generated PlantUML files ==="
           [[ "$DEBUG" == "true" ]] && find . \( -name "*.svg" -o -name "*.png" \) ! -path "./docs/*"
-      - name: Run circuit simulation
+      - name: Run circuit simulation (Stage 1: architecture sizing)
         run: |
           mkdir -p results/circuit
           docker build -t aiwa-pb3-ngspice containers/ngspice
@@ -120,8 +120,8 @@ jobs:
             -v "$PWD/kicad":/work:ro \
             -v "$PWD/results/circuit":/results \
             aiwa-pb3-ngspice \
-            -b -o /results/pb3-replacement.log /work/pb3-replacement.cir
-          grep -E 'vout_|load_current|vbat' results/circuit/pb3-replacement.log
+            -b -o /results/pb3-architecture-sizing.log /work/pb3-architecture-sizing.cir
+          grep -E 'vout_|load_current|vbat' results/circuit/pb3-architecture-sizing.log
       - name: Build AsciiDoc
         run: |
           mkdir -p results/docs
